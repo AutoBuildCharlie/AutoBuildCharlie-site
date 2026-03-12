@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Log In — AutoBuildCharlie</title>
+  <title>Start Free Trial — AutoBuildCharlie</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -15,8 +15,6 @@
       --text: #f0f0f0;
       --text-muted: #888;
       --border: rgba(255,255,255,0.08);
-      --glow-purple: 0 0 18px rgba(191,90,242,0.45);
-      --glow-cyan: 0 0 18px rgba(0,212,255,0.35);
     }
 
     body {
@@ -28,11 +26,10 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      overflow-x: hidden;
       position: relative;
     }
 
-    /* BACKGROUND GLOW ORBS */
     .bg-orb {
       position: fixed;
       border-radius: 50%;
@@ -40,32 +37,9 @@
       pointer-events: none;
       z-index: 0;
     }
+    .bg-orb-1 { width: 500px; height: 500px; background: rgba(191,90,242,0.12); top: -100px; left: -100px; }
+    .bg-orb-2 { width: 400px; height: 400px; background: rgba(0,212,255,0.08); bottom: -80px; right: -80px; }
 
-    .bg-orb-1 {
-      width: 500px;
-      height: 500px;
-      background: rgba(191,90,242,0.12);
-      top: -100px;
-      left: -100px;
-    }
-
-    .bg-orb-2 {
-      width: 400px;
-      height: 400px;
-      background: rgba(0,212,255,0.08);
-      bottom: -80px;
-      right: -80px;
-    }
-
-    .bg-orb-3 {
-      width: 300px;
-      height: 300px;
-      background: rgba(191,90,242,0.06);
-      bottom: 20%;
-      left: 30%;
-    }
-
-    /* GRID PATTERN */
     body::before {
       content: '';
       position: fixed;
@@ -78,7 +52,6 @@
       z-index: 0;
     }
 
-    /* LOGO */
     .login-logo {
       position: fixed;
       top: 1.75rem;
@@ -90,15 +63,13 @@
       text-decoration: none;
       z-index: 10;
     }
-
     .login-logo span { color: var(--accent); }
 
-    /* CARD */
-    .login-card {
+    .signup-card {
       position: relative;
       z-index: 1;
       width: 100%;
-      max-width: 420px;
+      max-width: 440px;
       background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
       border: 1px solid rgba(191,90,242,0.2);
       border-radius: 24px;
@@ -112,8 +83,7 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* AVATAR */
-    .login-avatar {
+    .signup-avatar {
       width: 64px;
       height: 64px;
       border-radius: 50%;
@@ -124,10 +94,30 @@
       align-items: center;
       justify-content: center;
       font-size: 1.8rem;
-      margin: 0 auto 1.5rem;
+      margin: 0 auto 1.25rem;
     }
 
-    .login-title {
+    .trial-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .trial-badge span {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-cyan);
+      background: rgba(0,212,255,0.1);
+      border: 1px solid rgba(0,212,255,0.25);
+      border-radius: 100px;
+      padding: 0.3rem 0.9rem;
+    }
+
+    .signup-title {
       font-size: 1.6rem;
       font-weight: 800;
       text-align: center;
@@ -137,15 +127,15 @@
       -webkit-text-fill-color: transparent;
     }
 
-    .login-sub {
+    .signup-sub {
       font-size: 0.875rem;
       color: var(--text-muted);
       text-align: center;
       margin-bottom: 2rem;
+      line-height: 1.5;
     }
 
-    /* FORM */
-    .login-form { display: flex; flex-direction: column; gap: 1rem; }
+    .signup-form { display: flex; flex-direction: column; gap: 1rem; }
 
     .field { display: flex; flex-direction: column; gap: 0.4rem; }
 
@@ -190,25 +180,20 @@
 
     .field input::placeholder { color: rgba(255,255,255,0.2); }
 
-    /* FORGOT */
-    .forgot-row {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: -0.4rem;
+    .toggle-pw {
+      position: absolute;
+      right: 0.9rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0;
+      transition: color 0.15s;
     }
+    .toggle-pw:hover { color: var(--text); }
 
-    .forgot-link {
-      font-size: 0.78rem;
-      color: var(--accent);
-      text-decoration: none;
-      opacity: 0.8;
-      transition: opacity 0.15s;
-    }
-
-    .forgot-link:hover { opacity: 1; }
-
-    /* SUBMIT */
-    .login-btn {
+    .signup-btn {
       width: 100%;
       padding: 0.85rem;
       border-radius: 10px;
@@ -225,78 +210,41 @@
       letter-spacing: 0.02em;
     }
 
-    .login-btn:hover {
+    .signup-btn:hover {
       box-shadow: 0 0 30px rgba(191,90,242,0.6), 0 4px 20px rgba(0,0,0,0.3);
       transform: translateY(-1px);
     }
 
-    .login-btn:active { transform: translateY(0); }
+    .signup-btn:active { transform: translateY(0); }
+    .signup-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-    /* DIVIDER */
-    .divider {
+    .perks {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 1rem 1.1rem;
+      background: rgba(191,90,242,0.05);
+      border: 1px solid rgba(191,90,242,0.12);
+      border-radius: 12px;
+    }
+
+    .perk {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin: 0.25rem 0;
-    }
-
-    .divider-line {
-      flex: 1;
-      height: 1px;
-      background: rgba(255,255,255,0.07);
-    }
-
-    .divider span {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    /* GOOGLE BUTTON */
-    .google-btn {
-      width: 100%;
-      padding: 0.8rem;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.04);
-      color: var(--text);
-      font-size: 0.92rem;
-      font-weight: 600;
-      font-family: inherit;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       gap: 0.6rem;
-      transition: background 0.2s, border-color 0.2s;
-    }
-
-    .google-btn:hover {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.2);
-    }
-
-    .google-icon {
-      width: 18px;
-      height: 18px;
-    }
-
-    /* SIGNUP LINK */
-    .signup-row {
-      text-align: center;
       font-size: 0.82rem;
       color: var(--text-muted);
-      margin-top: 1.25rem;
     }
 
-    .signup-row a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 600;
+    .perk-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
     }
 
-    .signup-row a:hover { text-decoration: underline; }
-
-    /* ERROR MESSAGE */
     .error-msg {
       background: rgba(255,60,60,0.08);
       border: 1px solid rgba(255,60,60,0.25);
@@ -306,26 +254,44 @@
       color: #ff6b6b;
       display: none;
     }
-
     .error-msg.visible { display: block; }
 
-    /* PASSWORD TOGGLE */
-    .toggle-pw {
-      position: absolute;
-      right: 0.9rem;
-      background: none;
-      border: none;
+    .success-msg {
+      background: rgba(0,212,100,0.08);
+      border: 1px solid rgba(0,212,100,0.25);
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.82rem;
+      color: #4cff91;
+      display: none;
+      text-align: center;
+    }
+    .success-msg.visible { display: block; }
+
+    .login-row {
+      text-align: center;
+      font-size: 0.82rem;
       color: var(--text-muted);
-      cursor: pointer;
-      font-size: 0.85rem;
-      padding: 0;
-      transition: color 0.15s;
+      margin-top: 1.25rem;
+    }
+    .login-row a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .login-row a:hover { text-decoration: underline; }
+
+    .terms-note {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 0.75rem;
+      opacity: 0.7;
+      line-height: 1.5;
     }
 
-    .toggle-pw:hover { color: var(--text); }
-
     @media (max-width: 480px) {
-      .login-card { margin: 1rem; padding: 2rem 1.5rem; border-radius: 18px; }
+      .signup-card { margin: 1rem; padding: 2rem 1.5rem; border-radius: 18px; }
     }
   </style>
 </head>
@@ -333,19 +299,36 @@
 
   <div class="bg-orb bg-orb-1"></div>
   <div class="bg-orb bg-orb-2"></div>
-  <div class="bg-orb bg-orb-3"></div>
 
   <a href="index.html" class="login-logo">AutoBuild<span>Charlie</span></a>
 
-  <div class="login-card">
+  <div class="signup-card">
 
-    <div class="login-avatar">&#129302;</div>
-    <div class="login-title">Welcome back</div>
-    <p class="login-sub">Log in to manage your Charlie AI Agent</p>
+    <div class="signup-avatar">&#129302;</div>
 
-    <form class="login-form" id="loginForm">
+    <div class="trial-badge"><span>&#10024; Free Trial — No Credit Card Needed</span></div>
 
-      <div class="error-msg" id="errorMsg">Invalid email or password. Please try again.</div>
+    <div class="signup-title">Meet your Charlie</div>
+    <p class="signup-sub">Create your account and get instant access to your personal AI automation agent.</p>
+
+    <div class="perks">
+      <div class="perk"><div class="perk-dot"></div>Your own Charlie AI Agent</div>
+      <div class="perk"><div class="perk-dot"></div>Access to your personal dashboard</div>
+      <div class="perk"><div class="perk-dot"></div>No credit card required to start</div>
+    </div>
+
+    <form class="signup-form" id="signupForm">
+
+      <div class="error-msg" id="errorMsg"></div>
+      <div class="success-msg" id="successMsg"></div>
+
+      <div class="field">
+        <label>Full name</label>
+        <div class="field-wrap">
+          <span class="field-icon">&#128100;</span>
+          <input type="text" id="nameInput" placeholder="Your name" required />
+        </div>
+      </div>
 
       <div class="field">
         <label>Email address</label>
@@ -359,37 +342,19 @@
         <label>Password</label>
         <div class="field-wrap">
           <span class="field-icon">&#128274;</span>
-          <input type="password" id="pwInput" placeholder="Enter your password" required />
-          <button type="button" class="toggle-pw" onclick="togglePw()" id="toggleBtn">Show</button>
+          <input type="password" id="pwInput" placeholder="Create a password (min 6 chars)" required minlength="6" />
+          <button type="button" class="toggle-pw" id="toggleBtn">Show</button>
         </div>
       </div>
 
-      <div class="forgot-row">
-        <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
-      </div>
-
-      <button type="submit" class="login-btn" id="loginBtn">Log in to Charlie &rarr;</button>
+      <button type="submit" class="signup-btn" id="signupBtn">Start My Free Trial &rarr;</button>
 
     </form>
 
-    <div class="divider">
-      <div class="divider-line"></div>
-      <span>or</span>
-      <div class="divider-line"></div>
-    </div>
+    <p class="terms-note">By signing up you agree to our terms of service and privacy policy.</p>
 
-    <button class="google-btn" id="googleBtn" type="button">
-      <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
-        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-      </svg>
-      Continue with Google
-    </button>
-
-    <div class="signup-row">
-      Don't have an account? <a href="signup.html">Get started free</a>
+    <div class="login-row">
+      Already have an account? <a href="login.html">Log in</a>
     </div>
 
   </div>
@@ -406,61 +371,56 @@
     const { data: { session } } = await supabase.auth.getSession();
     if (session) window.location.href = 'dashboard.html';
 
-    // Login form
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    // Signup form
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      const email = document.getElementById('emailInput').value;
+      const name = document.getElementById('nameInput').value.trim();
+      const email = document.getElementById('emailInput').value.trim();
       const password = document.getElementById('pwInput').value;
-      const btn = document.getElementById('loginBtn');
+      const btn = document.getElementById('signupBtn');
       const errorMsg = document.getElementById('errorMsg');
+      const successMsg = document.getElementById('successMsg');
 
-      btn.textContent = 'Logging in...';
+      btn.textContent = 'Creating your account...';
       btn.disabled = true;
       errorMsg.classList.remove('visible');
+      successMsg.classList.remove('visible');
 
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: name },
+          emailRedirectTo: 'https://autobuildcharlie.netlify.app/dashboard.html'
+        }
+      });
 
       if (error) {
         errorMsg.textContent = error.message;
         errorMsg.classList.add('visible');
-        btn.textContent = 'Log in to Charlie →';
+        btn.textContent = 'Start My Free Trial →';
         btn.disabled = false;
       } else {
-        window.location.href = 'dashboard.html';
-      }
-    });
-
-    // Google login
-    document.getElementById('googleBtn').addEventListener('click', async () => {
-      await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin + '/dashboard.html' }
-      });
-    });
-
-    // Forgot password
-    document.getElementById('forgotLink').addEventListener('click', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('emailInput').value;
-      if (!email) {
-        alert('Enter your email address first, then click Forgot password.');
-        return;
-      }
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
-      if (error) {
-        alert('Error: ' + error.message);
-      } else {
-        alert('Password reset email sent! Check your inbox.');
+        // Auto-sign in after signup
+        const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
+        if (!loginError) {
+          window.location.href = 'dashboard.html';
+        } else {
+          successMsg.textContent = '✓ Account created! Check your email to confirm, then log in.';
+          successMsg.classList.add('visible');
+          btn.textContent = 'Start My Free Trial →';
+          btn.disabled = false;
+        }
       }
     });
 
     // Show/hide password
-    window.togglePw = function() {
+    document.getElementById('toggleBtn').addEventListener('click', () => {
       const input = document.getElementById('pwInput');
       const btn = document.getElementById('toggleBtn');
       input.type = input.type === 'password' ? 'text' : 'password';
       btn.textContent = input.type === 'password' ? 'Show' : 'Hide';
-    };
+    });
   </script>
 
 </body>
