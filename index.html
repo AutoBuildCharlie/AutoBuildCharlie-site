@@ -1119,39 +1119,36 @@
       <a href="#how" class="btn btn-ghost btn-lg">See how it works</a>
     </div>
 
-    <!-- VISUAL MOCKUP -->
-    <div class="hero-visual">
-      <div class="browser-bar">
-        <div class="dot red"></div>
-        <div class="dot yellow"></div>
-        <div class="dot green"></div>
+    <!-- HOW IT WORKS -->
+    <div class="hero-visual" style="background:transparent; border:none; box-shadow:none; padding: 0;">
+      <div style="text-align:center; margin-bottom:2rem;">
+        <span style="font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">How it works</span>
+        <h3 style="font-size:1.5rem;font-weight:800;margin:0.5rem 0 0.25rem;">3 steps. That's it.</h3>
+        <p style="font-size:0.9rem;color:var(--text-muted);">No coding. No tech skills. Just tell Charlie what you need.</p>
       </div>
-      <div class="visual-content">
-        <div class="visual-sidebar">
-          <div class="sidebar-title">Automations</div>
-          <div class="sidebar-item active"><div class="sidebar-icon"></div> Email Responder</div>
-          <div class="sidebar-item"><div class="sidebar-icon"></div> Lead Qualifier</div>
-          <div class="sidebar-item"><div class="sidebar-icon"></div> Content Writer</div>
-          <div class="sidebar-item"><div class="sidebar-icon"></div> Data Extractor</div>
-          <div class="sidebar-item"><div class="sidebar-icon"></div> + New automation</div>
+      <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:1.5rem; max-width:860px; margin:0 auto;">
+
+        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2rem 1.5rem; text-align:center; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--glow-purple)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:2.5rem; margin-bottom:1rem;">📋</div>
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;">Step 1</div>
+          <div style="font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;">Tell Charlie your job</div>
+          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.6;">Describe what's eating your time — like "reply to customer emails" or "post to Instagram every Monday." No technical words needed.</p>
         </div>
-        <div class="visual-main">
-          <div class="flow-row">
-            <div class="flow-node accent">Trigger: New Email</div>
-            <div class="flow-arrow">&rarr;</div>
-            <div class="flow-node">Classify Intent <span class="ai-tag">AI</span></div>
-            <div class="flow-arrow">&rarr;</div>
-            <div class="flow-node">Draft Reply <span class="ai-tag">AI</span></div>
-          </div>
-          <div class="flow-row">
-            <div class="flow-arrow" style="margin-left:1.5rem; transform:rotate(90deg);">&rarr;</div>
-          </div>
-          <div class="flow-row">
-            <div class="flow-node" style="margin-left:1.5rem;">Human Review?</div>
-            <div class="flow-arrow">&rarr;</div>
-            <div class="flow-node">Send &amp; Log</div>
-          </div>
+
+        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2rem 1.5rem; text-align:center; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--glow-cyan)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:2.5rem; margin-bottom:1rem;">⚡</div>
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:var(--accent-cyan);text-transform:uppercase;margin-bottom:0.5rem;">Step 2</div>
+          <div style="font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;">Charlie builds it for you</div>
+          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.6;">Your Charlie AI Agent sets up the automation — it learns your tone, your style, and what matters most to your customers.</p>
         </div>
+
+        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2rem 1.5rem; text-align:center; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--glow-purple)'" onmouseout="this.style.boxShadow='none'">
+          <div style="font-size:2.5rem; margin-bottom:1rem;">🔁</div>
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;">Step 3</div>
+          <div style="font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;">It runs itself — forever</div>
+          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.6;">Once it's on, it works 24/7 — nights, weekends, holidays. You stop doing the boring stuff and focus on what actually matters.</p>
+        </div>
+
       </div>
     </div>
   </section>
