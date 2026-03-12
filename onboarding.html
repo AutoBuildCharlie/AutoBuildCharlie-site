@@ -445,6 +445,20 @@
         }
       });
 
+      // Send to Make.com webhook
+      const user = (await supabase.auth.getUser()).data.user;
+      fetch('https://hook.us2.make.com/4yaljf3mso85t3wa255abjme5iyi6ma7', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: user?.email || '',
+          name: user?.user_metadata?.full_name || '',
+          daily_tasks: tasks,
+          apps_tools: apps,
+          goals: goal
+        })
+      }).catch(() => {}); // fire and forget
+
       // Show final screen
       document.getElementById('step3').classList.remove('active');
       document.getElementById('stepFinal').classList.add('active');
