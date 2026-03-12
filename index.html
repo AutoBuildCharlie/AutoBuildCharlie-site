@@ -1462,7 +1462,14 @@
   </footer>
 
   <!-- CHATBOT WIDGET -->
-  <button class="chat-bubble" onclick="toggleChat()" title="Chat with us">&#128172;</button>
+  <button class="chat-bubble" onclick="toggleChat()" title="Chat with us">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="18" height="18">
+      <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 12H6l-2 2V4h16v10z"/>
+      <rect x="6" y="7" width="12" height="1.5" rx="0.75" fill="white"/>
+      <rect x="6" y="10" width="9" height="1.5" rx="0.75" fill="white"/>
+      <rect x="6" y="13" width="6" height="1.5" rx="0.75" fill="white"/>
+    </svg>
+  </button>
 
   <div class="chat-window" id="chatWindow">
     <div class="chat-header">
