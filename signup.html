@@ -404,7 +404,7 @@
         // Auto-sign in after signup
         const { error: loginError } = await supabase.auth.signInWithPassword({ email, password });
         if (!loginError) {
-          window.location.href = 'dashboard.html';
+          window.location.href = 'onboarding.html';
         } else {
           successMsg.textContent = '✓ Account created! Check your email to confirm, then log in.';
           successMsg.classList.add('visible');

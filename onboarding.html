@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Set Up Charlie — AutoBuildCharlie</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #bf5af2;
+      --accent-cyan: #00d4ff;
+      --bg: #080808;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb-1 { width: 500px; height: 500px; background: rgba(191,90,242,0.10); top: -100px; left: -100px; }
+    .bg-orb-2 { width: 400px; height: 400px; background: rgba(0,212,255,0.07); bottom: -80px; right: -80px; }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .logo {
+      position: fixed;
+      top: 1.75rem;
+      left: 2rem;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+      z-index: 10;
+    }
+    .logo span { color: var(--accent); }
+
+    /* PROGRESS */
+    .progress-wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 520px;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-cyan));
+      border-radius: 100px;
+      transition: width 0.4s ease;
+    }
+
+    /* CARD */
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 520px;
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid rgba(191,90,242,0.2);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 0 40px rgba(191,90,242,0.10), 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    /* STEPS */
+    .step { display: none; animation: fadeIn 0.3s ease both; }
+    .step.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(191,90,242,0.1);
+      border: 1px solid rgba(191,90,242,0.25);
+      border-radius: 100px;
+      padding: 0.3rem 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .step-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.25;
+    }
+
+    .step-sub {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1.75rem;
+      line-height: 1.6;
+    }
+
+    textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-family: inherit;
+      padding: 1rem 1.1rem;
+      outline: none;
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.6;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    textarea:focus {
+      border-color: rgba(191,90,242,0.6);
+      box-shadow: 0 0 0 3px rgba(191,90,242,0.1);
+    }
+
+    textarea::placeholder { color: rgba(255,255,255,0.2); }
+
+    .btn-row {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn-next {
+      flex: 1;
+      padding: 0.85rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #bf5af2 0%, #9b35d4 100%);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.15s;
+      box-shadow: 0 0 20px rgba(191,90,242,0.35);
+      letter-spacing: 0.02em;
+    }
+
+    .btn-next:hover {
+      box-shadow: 0 0 30px rgba(191,90,242,0.6), 0 4px 20px rgba(0,0,0,0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-next:active { transform: translateY(0); }
+    .btn-next:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .btn-back {
+      padding: 0.85rem 1.25rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-back:hover {
+      border-color: rgba(255,255,255,0.25);
+      color: var(--text);
+    }
+
+    /* FINAL STEP */
+    .final-icon {
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .final-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .final-sub {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .skip-link {
+      display: block;
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
+      cursor: pointer;
+      text-decoration: none;
+      opacity: 0.6;
+      transition: opacity 0.15s;
+    }
+    .skip-link:hover { opacity: 1; }
+
+    @media (max-width: 480px) {
+      .card { padding: 2rem 1.5rem; border-radius: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <a href="index.html" class="logo">AutoBuild<span>Charlie</span></a>
+
+  <div class="progress-wrap">
+    <div class="progress-labels">
+      <span id="progressLabel">Step 1 of 3</span>
+      <span id="progressPct">33%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 33%"></div>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <!-- STEP 1 -->
+    <div class="step active" id="step1">
+      <div class="step-tag">&#129302; Meet Charlie</div>
+      <div class="step-title">What does your day-to-day look like?</div>
+      <p class="step-sub">Tell Charlie what tasks you do every day — things like sending emails, following up with clients, posting on social media, data entry, scheduling, invoicing, anything.</p>
+      <textarea id="tasks" placeholder="e.g. I send follow-up emails to leads every morning, post on Instagram, update a spreadsheet with new orders, respond to the same questions over and over..."></textarea>
+      <div class="btn-row">
+        <button class="btn-next" onclick="goNext(1)">Next &rarr;</button>
+      </div>
+      <a class="skip-link" onclick="skipAll()">Skip for now</a>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" id="step2">
+      <div class="step-tag">&#128279; Apps & Tools</div>
+      <div class="step-title">What websites and apps do you use?</div>
+      <p class="step-sub">List the tools you already use in your business — or tools you'd love Charlie to connect with. Examples: Gmail, Instagram, Shopify, QuickBooks, Slack, Notion, Google Sheets, WhatsApp...</p>
+      <textarea id="apps" placeholder="e.g. I use Gmail, Instagram, Shopify, and a Google Sheet to track inventory. I'd also love to connect with WhatsApp and Stripe..."></textarea>
+      <div class="btn-row">
+        <button class="btn-back" onclick="goBack(2)">&#8592; Back</button>
+        <button class="btn-next" onclick="goNext(2)">Next &rarr;</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step" id="step3">
+      <div class="step-tag">&#127919; Your Goal</div>
+      <div class="step-title">What do you want Charlie to take off your plate?</div>
+      <p class="step-sub">What's the one thing eating up the most of your time? What would free you up to focus on growing your business?</p>
+      <textarea id="goal" placeholder="e.g. I spend 2 hours a day on follow-up emails and I just want that to be automatic. Or: I want my new orders to automatically go into a spreadsheet and send me a Slack message..."></textarea>
+      <div class="btn-row">
+        <button class="btn-back" onclick="goBack(3)">&#8592; Back</button>
+        <button class="btn-next" id="submitBtn" onclick="submitOnboarding()">Send to Charlie &rarr;</button>
+      </div>
+    </div>
+
+    <!-- FINAL -->
+    <div class="step" id="stepFinal">
+      <div class="final-icon">&#129302;</div>
+      <div class="final-title">Charlie's on it.</div>
+      <p class="final-sub">Your answers have been saved. The AutoBuildCharlie team will review your setup and get Charlie working for you. Check your dashboard for updates.</p>
+      <button class="btn-next" onclick="window.location.href='dashboard.html'">Go to my dashboard &rarr;</button>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const supabase = createClient(
+      'https://sqizjjclcxfbxwyajskk.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxaXpqamNsY3hmYnh3eWFqc2trIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDQ5NDgsImV4cCI6MjA4ODkyMDk0OH0.Y5PFJarJyEXE6uU5A1pUTTxp0pnb6z6ZISi7l3yPVkg'
+    );
+
+    // Check session
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) { window.location.href = 'login.html'; }
+
+    const steps = { 1: 33, 2: 66, 3: 100 };
+
+    window.goNext = function(current) {
+      document.getElementById('step' + current).classList.remove('active');
+      document.getElementById('step' + (current + 1)).classList.add('active');
+      const pct = steps[current + 1] || 100;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent = 'Step ' + (current + 1) + ' of 3';
+      document.getElementById('progressPct').textContent = pct + '%';
+    };
+
+    window.goBack = function(current) {
+      document.getElementById('step' + current).classList.remove('active');
+      document.getElementById('step' + (current - 1)).classList.add('active');
+      const pct = steps[current - 1];
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent = 'Step ' + (current - 1) + ' of 3';
+      document.getElementById('progressPct').textContent = pct + '%';
+    };
+
+    window.skipAll = function() {
+      window.location.href = 'dashboard.html';
+    };
+
+    window.submitOnboarding = async function() {
+      const btn = document.getElementById('submitBtn');
+      btn.textContent = 'Saving...';
+      btn.disabled = true;
+
+      const tasks = document.getElementById('tasks').value.trim();
+      const apps = document.getElementById('apps').value.trim();
+      const goal = document.getElementById('goal').value.trim();
+
+      // Save to Supabase user metadata
+      await supabase.auth.updateUser({
+        data: {
+          onboarding_tasks: tasks,
+          onboarding_apps: apps,
+          onboarding_goal: goal,
+          onboarding_complete: true
+        }
+      });
+
+      // Show final screen
+      document.getElementById('step3').classList.remove('active');
+      document.getElementById('stepFinal').classList.add('active');
+      document.getElementById('progressFill').style.width = '100%';
+      document.querySelector('.progress-wrap').style.display = 'none';
+    };
+  </script>
+
+</body>
+</html>
