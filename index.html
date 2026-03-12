@@ -719,6 +719,163 @@
       color: var(--text-muted);
     }
 
+    /* HOW IT WORKS - VISUAL */
+    .hiw-wrapper {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    .hiw-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .hiw-header h3 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0.4rem 0 0.5rem;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.7) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hiw-steps {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 0;
+    }
+
+    .hiw-card {
+      background: linear-gradient(160deg, #111 0%, #0a0a0a 100%);
+      border-radius: 20px;
+      padding: 2.5rem 1.75rem;
+      text-align: center;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+      cursor: default;
+    }
+
+    .hiw-card:hover {
+      transform: translateY(-6px);
+    }
+
+    .hiw-card.purple:hover {
+      border-color: rgba(191,90,242,0.5);
+      box-shadow: 0 0 30px rgba(191,90,242,0.25), 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    .hiw-card.cyan:hover {
+      border-color: rgba(0,212,255,0.5);
+      box-shadow: 0 0 30px rgba(0,212,255,0.2), 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    .hiw-num {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 900;
+      margin: 0 auto 1.25rem;
+    }
+
+    .hiw-num.purple {
+      background: rgba(191,90,242,0.12);
+      border: 2px solid rgba(191,90,242,0.5);
+      color: #bf5af2;
+      box-shadow: 0 0 16px rgba(191,90,242,0.35);
+    }
+
+    .hiw-num.cyan {
+      background: rgba(0,212,255,0.1);
+      border: 2px solid rgba(0,212,255,0.4);
+      color: #00d4ff;
+      box-shadow: 0 0 16px rgba(0,212,255,0.25);
+    }
+
+    .hiw-icon {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .hiw-card h4 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 0.6rem;
+      color: #fff;
+    }
+
+    .hiw-card p {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+    }
+
+    .hiw-connector {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 0 0.5rem;
+    }
+
+    .hiw-connector-arrow {
+      font-size: 1.5rem;
+      color: rgba(191,90,242,0.5);
+      line-height: 1;
+    }
+
+    .hiw-connector-dots {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hiw-connector-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(191,90,242,0.4);
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .hiw-connector-dot:nth-child(1) { animation: pulse-dot 1.4s ease-in-out infinite 0s; }
+    .hiw-connector-dot:nth-child(2) { animation: pulse-dot 1.4s ease-in-out infinite 0.2s; }
+    .hiw-connector-dot:nth-child(3) { animation: pulse-dot 1.4s ease-in-out infinite 0.4s; }
+
+    .hiw-tag {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      margin-bottom: 0.75rem;
+    }
+
+    .hiw-tag.purple {
+      background: rgba(191,90,242,0.12);
+      color: #bf5af2;
+      border: 1px solid rgba(191,90,242,0.3);
+    }
+
+    .hiw-tag.cyan {
+      background: rgba(0,212,255,0.08);
+      color: #00d4ff;
+      border: 1px solid rgba(0,212,255,0.25);
+    }
+
     /* RESPONSIVE */
     @media (max-width: 680px) {
       .nav-links { display: none; }
@@ -1120,33 +1277,65 @@
     </div>
 
     <!-- HOW IT WORKS -->
-    <div class="hero-visual" style="background:transparent; border:none; box-shadow:none; padding: 0;">
-      <div style="text-align:center; margin-bottom:2rem;">
-        <span style="font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);">How it works</span>
-        <h3 style="font-size:1.5rem;font-weight:800;margin:0.5rem 0 0.25rem;">3 steps. That's it.</h3>
-        <p style="font-size:0.9rem;color:var(--text-muted);">No coding. No tech skills. Just tell Charlie what you need.</p>
+    <div class="hiw-wrapper">
+      <div class="hiw-header">
+        <span class="section-label">How it works</span>
+        <h3>3 steps. That's it.</h3>
+        <p style="font-size:0.92rem;color:var(--text-muted);">No coding. No tech skills. Just tell Charlie what you need.</p>
       </div>
-      <div style="display:grid; grid-template-columns: repeat(3,1fr); gap:1.5rem; max-width:860px; margin:0 auto;">
 
-        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2rem 1.5rem; text-align:center; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--glow-purple)'" onmouseout="this.style.boxShadow='none'">
-          <div style="font-size:2.5rem; margin-bottom:1rem;">📋</div>
-          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;">Step 1</div>
-          <div style="font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;">Tell Charlie your job</div>
-          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.6;">Describe what's eating your time — like "reply to customer emails" or "post to Instagram every Monday." No technical words needed.</p>
+      <div class="hiw-steps">
+
+        <div class="hiw-card purple">
+          <div class="hiw-num purple">1</div>
+          <span class="hiw-icon">📋</span>
+          <div class="hiw-tag purple">Step 1</div>
+          <h4>Tell Charlie your job</h4>
+          <p>Describe what's eating your time — like "reply to customer emails" or "post to Instagram every Monday." No technical words needed.</p>
         </div>
 
-        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2rem 1.5rem; text-align:center; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--glow-cyan)'" onmouseout="this.style.boxShadow='none'">
-          <div style="font-size:2.5rem; margin-bottom:1rem;">⚡</div>
-          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:var(--accent-cyan);text-transform:uppercase;margin-bottom:0.5rem;">Step 2</div>
-          <div style="font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;">Charlie builds it for you</div>
-          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.6;">Your Charlie AI Agent sets up the automation — it learns your tone, your style, and what matters most to your customers.</p>
+        <div class="hiw-connector">
+          <div class="hiw-connector-dots">
+            <div class="hiw-connector-dot"></div>
+            <div class="hiw-connector-dot"></div>
+            <div class="hiw-connector-dot"></div>
+          </div>
+          <div class="hiw-connector-arrow">&#8594;</div>
+          <div class="hiw-connector-dots">
+            <div class="hiw-connector-dot"></div>
+            <div class="hiw-connector-dot"></div>
+            <div class="hiw-connector-dot"></div>
+          </div>
         </div>
 
-        <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:2rem 1.5rem; text-align:center; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='var(--glow-purple)'" onmouseout="this.style.boxShadow='none'">
-          <div style="font-size:2.5rem; margin-bottom:1rem;">🔁</div>
-          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;color:var(--accent);text-transform:uppercase;margin-bottom:0.5rem;">Step 3</div>
-          <div style="font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;">It runs itself — forever</div>
-          <p style="font-size:0.85rem;color:var(--text-muted);line-height:1.6;">Once it's on, it works 24/7 — nights, weekends, holidays. You stop doing the boring stuff and focus on what actually matters.</p>
+        <div class="hiw-card cyan">
+          <div class="hiw-num cyan">2</div>
+          <span class="hiw-icon">⚡</span>
+          <div class="hiw-tag cyan">Step 2</div>
+          <h4>Charlie builds it for you</h4>
+          <p>Your Charlie AI Agent sets up the automation — it learns your tone, your style, and what matters most to your customers.</p>
+        </div>
+
+        <div class="hiw-connector">
+          <div class="hiw-connector-dots">
+            <div class="hiw-connector-dot"></div>
+            <div class="hiw-connector-dot"></div>
+            <div class="hiw-connector-dot"></div>
+          </div>
+          <div class="hiw-connector-arrow">&#8594;</div>
+          <div class="hiw-connector-dots">
+            <div class="hiw-connector-dot"></div>
+            <div class="hiw-connector-dot"></div>
+            <div class="hiw-connector-dot"></div>
+          </div>
+        </div>
+
+        <div class="hiw-card purple">
+          <div class="hiw-num purple">3</div>
+          <span class="hiw-icon">🔁</span>
+          <div class="hiw-tag purple">Step 3</div>
+          <h4>It runs itself — forever</h4>
+          <p>Once it's on, it works 24/7 — nights, weekends, holidays. You stop doing the boring stuff and focus on what actually matters.</p>
         </div>
 
       </div>
