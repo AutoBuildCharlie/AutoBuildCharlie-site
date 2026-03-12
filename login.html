@@ -343,7 +343,7 @@
     <div class="login-title">Welcome back</div>
     <p class="login-sub">Log in to manage your Charlie AI Agent</p>
 
-    <form class="login-form" onsubmit="handleLogin(event)">
+    <form class="login-form" id="loginForm">
 
       <div class="error-msg" id="errorMsg">Invalid email or password. Please try again.</div>
 
@@ -365,10 +365,10 @@
       </div>
 
       <div class="forgot-row">
-        <a href="#" class="forgot-link">Forgot password?</a>
+        <a href="#" class="forgot-link" id="forgotLink">Forgot password?</a>
       </div>
 
-      <button type="submit" class="login-btn">Log in to Charlie &rarr;</button>
+      <button type="submit" class="login-btn" id="loginBtn">Log in to Charlie &rarr;</button>
 
     </form>
 
@@ -378,7 +378,7 @@
       <div class="divider-line"></div>
     </div>
 
-    <button class="google-btn" onclick="alert('Google login coming soon!')">
+    <button class="google-btn" id="googleBtn" type="button">
       <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
         <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -394,23 +394,73 @@
 
   </div>
 
-  <script>
-    function handleLogin(e) {
-      e.preventDefault();
-      document.getElementById('errorMsg').classList.add('visible');
-    }
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
-    function togglePw() {
+    const supabase = createClient(
+      'https://sqizjjclcxfbwyajskk.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxaXpqamNsY3hmYnh3eWFqc2trIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDQ5NDgsImV4cCI6MjA4ODkyMDk0OH0.Y5PFJarJyEXE6uU5A1pUTTxp0pnb6z6ZISi7l3yPVkg'
+    );
+
+    // Redirect if already logged in
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) window.location.href = 'dashboard.html';
+
+    // Login form
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      const password = document.getElementById('pwInput').value;
+      const btn = document.getElementById('loginBtn');
+      const errorMsg = document.getElementById('errorMsg');
+
+      btn.textContent = 'Logging in...';
+      btn.disabled = true;
+      errorMsg.classList.remove('visible');
+
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (error) {
+        errorMsg.textContent = error.message;
+        errorMsg.classList.add('visible');
+        btn.textContent = 'Log in to Charlie →';
+        btn.disabled = false;
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    });
+
+    // Google login
+    document.getElementById('googleBtn').addEventListener('click', async () => {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: window.location.origin + '/dashboard.html' }
+      });
+    });
+
+    // Forgot password
+    document.getElementById('forgotLink').addEventListener('click', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      if (!email) {
+        alert('Enter your email address first, then click Forgot password.');
+        return;
+      }
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) {
+        alert('Error: ' + error.message);
+      } else {
+        alert('Password reset email sent! Check your inbox.');
+      }
+    });
+
+    // Show/hide password
+    window.togglePw = function() {
       const input = document.getElementById('pwInput');
       const btn = document.getElementById('toggleBtn');
-      if (input.type === 'password') {
-        input.type = 'text';
-        btn.textContent = 'Hide';
-      } else {
-        input.type = 'password';
-        btn.textContent = 'Show';
-      }
-    }
+      input.type = input.type === 'password' ? 'text' : 'password';
+      btn.textContent = input.type === 'password' ? 'Show' : 'Hide';
+    };
   </script>
 
 </body>

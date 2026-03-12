@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — AutoBuildCharlie</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #bf5af2;
+      --accent-cyan: #00d4ff;
+      --bg: #080808;
+      --bg-card: #111;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* GRID PATTERN */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* BACKGROUND ORBS */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .bg-orb-1 { width: 500px; height: 500px; background: rgba(191,90,242,0.10); top: -100px; left: -100px; }
+    .bg-orb-2 { width: 400px; height: 400px; background: rgba(0,212,255,0.07); bottom: -80px; right: -80px; }
+
+    /* NAV */
+    nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-email {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(191,90,242,0.3);
+      background: transparent;
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .logout-btn:hover {
+      background: rgba(191,90,242,0.1);
+      border-color: rgba(191,90,242,0.6);
+    }
+
+    /* MAIN */
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    .welcome-block {
+      margin-bottom: 2.5rem;
+    }
+
+    .welcome-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(191,90,242,0.1);
+      border: 1px solid rgba(191,90,242,0.25);
+      border-radius: 100px;
+      padding: 0.3rem 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .welcome-title {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-sub {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 520px;
+      line-height: 1.6;
+    }
+
+    /* CARDS GRID */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .dash-card {
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .dash-card:hover {
+      border-color: rgba(191,90,242,0.3);
+      box-shadow: 0 0 24px rgba(191,90,242,0.08);
+    }
+
+    .card-icon {
+      font-size: 1.75rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .card-desc {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      background: rgba(191,90,242,0.12);
+      border: 1px solid rgba(191,90,242,0.3);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .card-btn:hover { background: rgba(191,90,242,0.22); }
+
+    /* COMING SOON BADGE */
+    .badge-soon {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      padding: 0.2rem 0.6rem;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* AUTH LOADING STATE */
+    #authLoading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    #dashContent { display: none; }
+
+    @media (max-width: 600px) {
+      main { padding: 2rem 1rem; }
+      .welcome-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">AutoBuild<span>Charlie</span></a>
+    <div class="nav-right">
+      <span class="user-email" id="userEmail"></span>
+      <button class="logout-btn" id="logoutBtn">Log out</button>
+    </div>
+  </nav>
+
+  <main>
+    <div id="authLoading">Checking your session...</div>
+
+    <div id="dashContent">
+      <div class="welcome-block">
+        <div class="welcome-tag">&#129302; Your Dashboard</div>
+        <div class="welcome-title">Welcome back<span id="firstName"></span></div>
+        <p class="welcome-sub">Your Charlie AI Agent is ready to work. Explore what's available below — more features are coming soon.</p>
+      </div>
+
+      <div class="cards-grid">
+
+        <div class="dash-card">
+          <div class="card-icon">&#9889;</div>
+          <div class="card-title">My Workflows <span class="badge-soon">Coming Soon</span></div>
+          <p class="card-desc">View, edit, and manage all the automations your Charlie agent is running for you.</p>
+          <a href="https://tally.so/r/aQxXME" target="_blank" class="card-btn">Request a Workflow &rarr;</a>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-icon">&#128196;</div>
+          <div class="card-title">Onboarding Checklist <span class="badge-soon">Coming Soon</span></div>
+          <p class="card-desc">Get set up fast. Complete your onboarding so Charlie knows your business inside and out.</p>
+          <a href="https://calendly.com/aestheticcal22/30min" target="_blank" class="card-btn">Book Setup Call &rarr;</a>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-icon">&#128202;</div>
+          <div class="card-title">Usage & Reports <span class="badge-soon">Coming Soon</span></div>
+          <p class="card-desc">See how many hours Charlie has saved you this month and what tasks were automated.</p>
+          <span class="card-btn" style="cursor:default;opacity:0.5;">Coming Soon</span>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-icon">&#129309;</div>
+          <div class="card-title">Talk to Support</div>
+          <p class="card-desc">Need help or want to upgrade your plan? Reach out and we'll get back to you fast.</p>
+          <a href="https://tally.so/r/aQxXME" target="_blank" class="card-btn">Contact Us &rarr;</a>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const supabase = createClient(
+      'https://sqizjjclcxfbwyajskk.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxaXpqamNsY3hmYnh3eWFqc2trIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDQ5NDgsImV4cCI6MjA4ODkyMDk0OH0.Y5PFJarJyEXE6uU5A1pUTTxp0pnb6z6ZISi7l3yPVkg'
+    );
+
+    // Check session — redirect to login if not authenticated
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      window.location.href = 'login.html';
+    } else {
+      const email = session.user.email || '';
+      document.getElementById('userEmail').textContent = email;
+
+      // Show first name if available
+      const meta = session.user.user_metadata;
+      const first = meta?.full_name?.split(' ')[0] || meta?.name?.split(' ')[0] || '';
+      if (first) document.getElementById('firstName').textContent = ', ' + first;
+
+      document.getElementById('authLoading').style.display = 'none';
+      document.getElementById('dashContent').style.display = 'block';
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      window.location.href = 'login.html';
+    });
+  </script>
+
+</body>
+</html>
