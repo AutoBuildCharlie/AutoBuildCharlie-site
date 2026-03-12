@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Log In — AutoBuildCharlie</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #bf5af2;
+      --accent-cyan: #00d4ff;
+      --bg: #080808;
+      --bg-card: #111;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --border: rgba(255,255,255,0.08);
+      --glow-purple: 0 0 18px rgba(191,90,242,0.45);
+      --glow-cyan: 0 0 18px rgba(0,212,255,0.35);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* BACKGROUND GLOW ORBS */
+    .bg-orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-orb-1 {
+      width: 500px;
+      height: 500px;
+      background: rgba(191,90,242,0.12);
+      top: -100px;
+      left: -100px;
+    }
+
+    .bg-orb-2 {
+      width: 400px;
+      height: 400px;
+      background: rgba(0,212,255,0.08);
+      bottom: -80px;
+      right: -80px;
+    }
+
+    .bg-orb-3 {
+      width: 300px;
+      height: 300px;
+      background: rgba(191,90,242,0.06);
+      bottom: 20%;
+      left: 30%;
+    }
+
+    /* GRID PATTERN */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* LOGO */
+    .login-logo {
+      position: fixed;
+      top: 1.75rem;
+      left: 2rem;
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+      z-index: 10;
+    }
+
+    .login-logo span { color: var(--accent); }
+
+    /* CARD */
+    .login-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid rgba(191,90,242,0.2);
+      border-radius: 24px;
+      padding: 3rem 2.5rem;
+      box-shadow: 0 0 40px rgba(191,90,242,0.12), 0 20px 60px rgba(0,0,0,0.5);
+      animation: fadeUp 0.4s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* AVATAR */
+    .login-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(191,90,242,0.2), rgba(0,212,255,0.1));
+      border: 2px solid rgba(191,90,242,0.4);
+      box-shadow: 0 0 20px rgba(191,90,242,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      margin: 0 auto 1.5rem;
+    }
+
+    .login-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 0.4rem;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .login-sub {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    /* FORM */
+    .login-form { display: flex; flex-direction: column; gap: 1rem; }
+
+    .field { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    .field label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+    }
+
+    .field-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 0.9rem;
+      color: var(--text-muted);
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    .field input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-family: inherit;
+      padding: 0.75rem 1rem 0.75rem 2.6rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .field input:focus {
+      border-color: rgba(191,90,242,0.6);
+      box-shadow: 0 0 0 3px rgba(191,90,242,0.1);
+    }
+
+    .field input::placeholder { color: rgba(255,255,255,0.2); }
+
+    /* FORGOT */
+    .forgot-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -0.4rem;
+    }
+
+    .forgot-link {
+      font-size: 0.78rem;
+      color: var(--accent);
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.15s;
+    }
+
+    .forgot-link:hover { opacity: 1; }
+
+    /* SUBMIT */
+    .login-btn {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #bf5af2 0%, #9b35d4 100%);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.15s;
+      box-shadow: 0 0 20px rgba(191,90,242,0.35);
+      margin-top: 0.5rem;
+      letter-spacing: 0.02em;
+    }
+
+    .login-btn:hover {
+      box-shadow: 0 0 30px rgba(191,90,242,0.6), 0 4px 20px rgba(0,0,0,0.3);
+      transform: translateY(-1px);
+    }
+
+    .login-btn:active { transform: translateY(0); }
+
+    /* DIVIDER */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.25rem 0;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.07);
+    }
+
+    .divider span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* GOOGLE BUTTON */
+    .google-btn {
+      width: 100%;
+      padding: 0.8rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-size: 0.92rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .google-btn:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .google-icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* SIGNUP LINK */
+    .signup-row {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 1.25rem;
+    }
+
+    .signup-row a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .signup-row a:hover { text-decoration: underline; }
+
+    /* ERROR MESSAGE */
+    .error-msg {
+      background: rgba(255,60,60,0.08);
+      border: 1px solid rgba(255,60,60,0.25);
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.82rem;
+      color: #ff6b6b;
+      display: none;
+    }
+
+    .error-msg.visible { display: block; }
+
+    /* PASSWORD TOGGLE */
+    .toggle-pw {
+      position: absolute;
+      right: 0.9rem;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0;
+      transition: color 0.15s;
+    }
+
+    .toggle-pw:hover { color: var(--text); }
+
+    @media (max-width: 480px) {
+      .login-card { margin: 1rem; padding: 2rem 1.5rem; border-radius: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <a href="index.html" class="login-logo">AutoBuild<span>Charlie</span></a>
+
+  <div class="login-card">
+
+    <div class="login-avatar">&#129302;</div>
+    <div class="login-title">Welcome back</div>
+    <p class="login-sub">Log in to manage your Charlie AI Agent</p>
+
+    <form class="login-form" onsubmit="handleLogin(event)">
+
+      <div class="error-msg" id="errorMsg">Invalid email or password. Please try again.</div>
+
+      <div class="field">
+        <label>Email address</label>
+        <div class="field-wrap">
+          <span class="field-icon">&#9993;</span>
+          <input type="email" id="emailInput" placeholder="you@example.com" required />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <div class="field-wrap">
+          <span class="field-icon">&#128274;</span>
+          <input type="password" id="pwInput" placeholder="Enter your password" required />
+          <button type="button" class="toggle-pw" onclick="togglePw()" id="toggleBtn">Show</button>
+        </div>
+      </div>
+
+      <div class="forgot-row">
+        <a href="#" class="forgot-link">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="login-btn">Log in to Charlie &rarr;</button>
+
+    </form>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span>or</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <button class="google-btn" onclick="alert('Google login coming soon!')">
+      <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continue with Google
+    </button>
+
+    <div class="signup-row">
+      Don't have an account? <a href="https://tally.so/r/aQxXME" target="_blank">Get started free</a>
+    </div>
+
+  </div>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      document.getElementById('errorMsg').classList.add('visible');
+    }
+
+    function togglePw() {
+      const input = document.getElementById('pwInput');
+      const btn = document.getElementById('toggleBtn');
+      if (input.type === 'password') {
+        input.type = 'text';
+        btn.textContent = 'Hide';
+      } else {
+        input.type = 'password';
+        btn.textContent = 'Show';
+      }
+    }
+  </script>
+
+</body>
+</html>
