@@ -221,6 +221,41 @@
       color: var(--text);
     }
 
+    /* SUGGESTION CHIPS */
+    .suggestions-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .chip {
+      padding: 0.4rem 0.85rem;
+      border-radius: 100px;
+      border: 1px solid rgba(191,90,242,0.3);
+      background: rgba(191,90,242,0.07);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      text-align: left;
+    }
+
+    .chip:hover, .chip.selected {
+      background: rgba(191,90,242,0.18);
+      border-color: rgba(191,90,242,0.6);
+      color: var(--text);
+    }
+
     /* FINAL STEP */
     .final-icon {
       font-size: 3rem;
@@ -311,8 +346,23 @@
     <div class="step" id="step3">
       <div class="step-tag">&#127919; Your Goal</div>
       <div class="step-title">What do you want Charlie to take off your plate?</div>
-      <p class="step-sub">What's the one thing eating up the most of your time? What would free you up to focus on growing your business?</p>
-      <textarea id="goal" placeholder="e.g. I spend 2 hours a day on follow-up emails and I just want that to be automatic. Or: I want my new orders to automatically go into a spreadsheet and send me a Slack message..."></textarea>
+      <p class="step-sub">What's the one thing eating up the most of your time? Not sure? Pick from the ideas below — or write your own.</p>
+
+      <div class="suggestions-label">&#9889; Popular automations — tap any that apply:</div>
+      <div class="chips">
+        <button type="button" class="chip" onclick="addChip(this, 'Auto-send follow-up emails to new leads')">Follow-up emails to leads</button>
+        <button type="button" class="chip" onclick="addChip(this, 'Auto-post content to social media (Instagram, Facebook, TikTok)')">Social media posting</button>
+        <button type="button" class="chip" onclick="addChip(this, 'Send invoices automatically when a job is done')">Automatic invoicing</button>
+        <button type="button" class="chip" onclick="addChip(this, 'Log new orders or clients into a spreadsheet automatically')">Track orders in a spreadsheet</button>
+        <button type="button" class="chip" onclick="addChip(this, 'Send appointment reminders to clients via email or text')">Appointment reminders</button>
+        <button type="button" class="chip" onclick="addChip(this, 'Auto-reply to common customer questions')">Auto-reply to customers</button>
+        <button type="button" class="chip" onclick="addChip(this, 'Get notified on my phone when a new sale or lead comes in')">Instant sale/lead alerts</button>
+        <button type="button" class="chip" onclick="addChip(this, 'Collect reviews from customers automatically after a purchase')">Collect customer reviews</button>
+        <button type="button" class="chip" onclick="addChip(this, 'Organize and sort incoming emails automatically')">Organize my inbox</button>
+        <button type="button" class="chip" onclick="addChip(this, 'Schedule and send weekly reports to myself or my team')">Weekly reports</button>
+      </div>
+
+      <textarea id="goal" placeholder="Or describe it in your own words... e.g. I spend 2 hours a day on follow-up emails and I just want that to be automatic."></textarea>
       <div class="btn-row">
         <button class="btn-back" onclick="goBack(3)">&#8592; Back</button>
         <button class="btn-next" id="submitBtn" onclick="submitOnboarding()">Send to Charlie &rarr;</button>
@@ -340,6 +390,17 @@
     // Check session
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) { window.location.href = 'login.html'; }
+
+    // Chip selection — appends to textarea
+    window.addChip = function(btn, text) {
+      btn.classList.toggle('selected');
+      const textarea = document.getElementById('goal');
+      if (btn.classList.contains('selected')) {
+        textarea.value = textarea.value ? textarea.value + '\n' + text : text;
+      } else {
+        textarea.value = textarea.value.replace('\n' + text, '').replace(text + '\n', '').replace(text, '').trim();
+      }
+    };
 
     const steps = { 1: 33, 2: 66, 3: 100 };
 
