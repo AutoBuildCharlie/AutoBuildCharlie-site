@@ -26,7 +26,6 @@
       overflow-x: hidden;
     }
 
-    /* GRID PATTERN */
     body::before {
       content: '';
       position: fixed;
@@ -39,18 +38,10 @@
       z-index: 0;
     }
 
-    /* BACKGROUND ORBS */
-    .bg-orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(80px);
-      pointer-events: none;
-      z-index: 0;
-    }
+    .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
     .bg-orb-1 { width: 500px; height: 500px; background: rgba(191,90,242,0.10); top: -100px; left: -100px; }
     .bg-orb-2 { width: 400px; height: 400px; background: rgba(0,212,255,0.07); bottom: -80px; right: -80px; }
 
-    /* NAV */
     nav {
       position: relative;
       z-index: 10;
@@ -61,25 +52,11 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .nav-logo {
-      font-size: 1.1rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: var(--text);
-      text-decoration: none;
-    }
+    .nav-logo { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
     .nav-logo span { color: var(--accent); }
 
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .user-email {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .user-email { font-size: 0.85rem; color: var(--text-muted); }
 
     .logout-btn {
       padding: 0.5rem 1rem;
@@ -93,12 +70,8 @@
       cursor: pointer;
       transition: background 0.2s, border-color 0.2s;
     }
-    .logout-btn:hover {
-      background: rgba(191,90,242,0.1);
-      border-color: rgba(191,90,242,0.6);
-    }
+    .logout-btn:hover { background: rgba(191,90,242,0.1); border-color: rgba(191,90,242,0.6); }
 
-    /* MAIN */
     main {
       position: relative;
       z-index: 1;
@@ -107,38 +80,91 @@
       padding: 3rem 2rem;
     }
 
-    .welcome-block {
-      margin-bottom: 2.5rem;
+    /* COMPANY HEADER */
+    .company-header {
+      margin-bottom: 2rem;
+      padding: 2rem 2.5rem;
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid rgba(191,90,242,0.2);
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(191,90,242,0.08);
     }
 
-    .welcome-tag {
-      display: inline-block;
+    .company-name {
+      font-size: 2.6rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+      margin-bottom: 0.4rem;
+    }
+
+    .company-field {
+      font-size: 1rem;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    /* ENCOURAGEMENT */
+    .encouragement {
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      background: rgba(0,212,255,0.05);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 12px;
+      font-size: 0.9rem;
+      color: rgba(0,212,255,0.9);
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    /* ONBOARDING SUMMARY */
+    .section-title {
       font-size: 0.75rem;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--accent);
-      background: rgba(191,90,242,0.1);
-      border: 1px solid rgba(191,90,242,0.25);
-      border-radius: 100px;
-      padding: 0.3rem 0.9rem;
+      color: var(--text-muted);
       margin-bottom: 1rem;
     }
 
-    .welcome-title {
-      font-size: 2rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 0.5rem;
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
     }
 
-    .welcome-sub {
-      font-size: 0.95rem;
+    .summary-card {
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+
+    .summary-card-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .summary-card-text {
+      font-size: 0.875rem;
       color: var(--text-muted);
-      max-width: 520px;
       line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .summary-card-empty {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.2);
+      font-style: italic;
     }
 
     /* CARDS GRID */
@@ -156,28 +182,11 @@
       transition: border-color 0.2s, box-shadow 0.2s;
     }
 
-    .dash-card:hover {
-      border-color: rgba(191,90,242,0.3);
-      box-shadow: 0 0 24px rgba(191,90,242,0.08);
-    }
+    .dash-card:hover { border-color: rgba(191,90,242,0.3); box-shadow: 0 0 24px rgba(191,90,242,0.08); }
 
-    .card-icon {
-      font-size: 1.75rem;
-      margin-bottom: 0.9rem;
-    }
-
-    .card-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 0.4rem;
-    }
-
-    .card-desc {
-      font-size: 0.83rem;
-      color: var(--text-muted);
-      line-height: 1.55;
-      margin-bottom: 1.25rem;
-    }
+    .card-icon { font-size: 1.75rem; margin-bottom: 0.9rem; }
+    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .card-desc { font-size: 0.83rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 1.25rem; }
 
     .card-btn {
       display: inline-block;
@@ -195,7 +204,6 @@
     }
     .card-btn:hover { background: rgba(191,90,242,0.22); }
 
-    /* COMING SOON BADGE */
     .badge-soon {
       display: inline-block;
       font-size: 0.65rem;
@@ -211,7 +219,6 @@
       vertical-align: middle;
     }
 
-    /* AUTH LOADING STATE */
     #authLoading {
       display: flex;
       align-items: center;
@@ -223,9 +230,99 @@
 
     #dashContent { display: none; }
 
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.visible { display: flex; }
+
+    .modal {
+      background: linear-gradient(160deg, #1a1a1a 0%, #111 100%);
+      border: 1px solid rgba(191,90,242,0.3);
+      border-radius: 20px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 0 60px rgba(191,90,242,0.2);
+      animation: fadeUp 0.3s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .modal-sub {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .modal-field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+
+    .modal-field label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .modal-field input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-family: inherit;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .modal-field input:focus {
+      border-color: rgba(191,90,242,0.6);
+      box-shadow: 0 0 0 3px rgba(191,90,242,0.1);
+    }
+
+    .modal-field input::placeholder { color: rgba(255,255,255,0.2); }
+
+    .modal-btn {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #bf5af2 0%, #9b35d4 100%);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      box-shadow: 0 0 20px rgba(191,90,242,0.35);
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+    .modal-btn:hover { box-shadow: 0 0 30px rgba(191,90,242,0.6); transform: translateY(-1px); }
+
     @media (max-width: 600px) {
       main { padding: 2rem 1rem; }
-      .welcome-title { font-size: 1.5rem; }
+      .company-name { font-size: 1.8rem; }
+      .modal { margin: 1rem; }
     }
   </style>
 </head>
@@ -233,6 +330,23 @@
 
   <div class="bg-orb bg-orb-1"></div>
   <div class="bg-orb bg-orb-2"></div>
+
+  <!-- COMPANY INFO MODAL -->
+  <div class="modal-overlay" id="companyModal">
+    <div class="modal">
+      <div class="modal-title">One quick thing &#128075;</div>
+      <p class="modal-sub">Tell us about your business so Charlie can personalize your dashboard.</p>
+      <div class="modal-field">
+        <label>Company / Business Name</label>
+        <input type="text" id="companyInput" placeholder="e.g. Bright Media Co." />
+      </div>
+      <div class="modal-field">
+        <label>Field / Industry</label>
+        <input type="text" id="fieldInput" placeholder="e.g. Marketing, Real Estate, E-commerce..." />
+      </div>
+      <button class="modal-btn" id="saveCompanyBtn">Save & Continue &rarr;</button>
+    </div>
+  </div>
 
   <nav>
     <a href="index.html" class="nav-logo">AutoBuild<span>Charlie</span></a>
@@ -246,12 +360,29 @@
     <div id="authLoading">Checking your session...</div>
 
     <div id="dashContent">
-      <div class="welcome-block">
-        <div class="welcome-tag">&#129302; Your Dashboard</div>
-        <div class="welcome-title">Welcome back<span id="firstName"></span></div>
-        <p class="welcome-sub">Your Charlie AI Agent is ready to work. Explore what's available below — more features are coming soon.</p>
+
+      <!-- COMPANY HEADER -->
+      <div class="company-header">
+        <div class="company-name" id="companyName"></div>
+        <div class="company-field" id="companyField"></div>
+        <div class="encouragement" id="encouragementMsg"></div>
       </div>
 
+      <!-- ONBOARDING SUMMARY -->
+      <div class="section-title">&#128203; Your Onboarding Answers</div>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-card-label">&#9201; Daily Tasks</div>
+          <div class="summary-card-text" id="summaryTasks"></div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-label">&#127919; Goals</div>
+          <div class="summary-card-text" id="summaryGoals"></div>
+        </div>
+      </div>
+
+      <!-- CARDS -->
+      <div class="section-title">&#9889; Your Charlie Tools</div>
       <div class="cards-grid">
 
         <div class="dash-card">
@@ -294,7 +425,24 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxaXpqamNsY3hmYnh3eWFqc2trIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDQ5NDgsImV4cCI6MjA4ODkyMDk0OH0.Y5PFJarJyEXE6uU5A1pUTTxp0pnb6z6ZISi7l3yPVkg'
     );
 
-    // Check session — redirect to login if not authenticated
+    const encouragements = [
+      "Every big company started exactly where you are. The automation you're building today is the foundation that will carry you to the top.",
+      "You're not just saving time — you're creating space to think bigger. The companies at the top automate everything. Now you do too.",
+      "While your competitors are still doing things manually, you're building systems that scale. That's how you win.",
+      "The difference between a small business and an empire is systems. You're building yours right now.",
+      "Charlie is working behind the scenes so you can focus on what only you can do. That's leverage — and it's how the big players operate.",
+      "Automation isn't just for big companies anymore. You're leveling the playing field, one workflow at a time.",
+      "Every hour Charlie saves you is an hour you can pour into growth, relationships, and vision. Keep going.",
+      "You're building the kind of business that runs even when you step away. That's real freedom.",
+      "The best investment you'll ever make is in systems that work for you 24/7. That's exactly what you're doing.",
+      "Small businesses that automate grow 3x faster. You're already ahead of the curve.",
+      "Think of every automation as a team member that never sleeps, never calls in sick, and never makes the same mistake twice.",
+      "You're not just a business owner — you're becoming an operator. That's the mindset of every successful company out there.",
+      "The gap between where you are and where the top companies are is just systems. Charlie is closing that gap for you.",
+      "Consistency at scale is what separates the good from the great. Your automations are your consistency engine.",
+      "Every workflow you build is a brick in the foundation of a business that lasts. Keep stacking."
+    ];
+
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
@@ -303,16 +451,54 @@
       const email = session.user.email || '';
       document.getElementById('userEmail').textContent = email;
 
-      // Show first name if available
-      const meta = session.user.user_metadata;
-      const first = meta?.full_name?.split(' ')[0] || meta?.name?.split(' ')[0] || '';
-      if (first) document.getElementById('firstName').textContent = ', ' + first;
+      const meta = session.user.user_metadata || {};
+
+      // Random encouragement
+      const msg = encouragements[Math.floor(Math.random() * encouragements.length)];
+      document.getElementById('encouragementMsg').textContent = '"' + msg + '"';
+
+      // Company name & field
+      const company = meta.company_name || '';
+      const field = meta.field_of_work || '';
+
+      if (!company || !field) {
+        document.getElementById('companyModal').classList.add('visible');
+      } else {
+        showDashboard(company, field, meta);
+      }
+
+      // Save company info
+      document.getElementById('saveCompanyBtn').addEventListener('click', async () => {
+        const companyVal = document.getElementById('companyInput').value.trim();
+        const fieldVal = document.getElementById('fieldInput').value.trim();
+        if (!companyVal || !fieldVal) return;
+
+        await supabase.auth.updateUser({
+          data: { company_name: companyVal, field_of_work: fieldVal }
+        });
+
+        document.getElementById('companyModal').classList.remove('visible');
+        showDashboard(companyVal, fieldVal, meta);
+      });
+    }
+
+    function showDashboard(company, field, meta) {
+      document.getElementById('companyName').textContent = company;
+      document.getElementById('companyField').textContent = field;
+
+      const tasks = meta.onboarding_tasks || '';
+      const goals = meta.onboarding_goal || '';
+
+      document.getElementById('summaryTasks').textContent = tasks || '';
+      document.getElementById('summaryGoals').textContent = goals || '';
+
+      if (!tasks) document.getElementById('summaryTasks').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
+      if (!goals) document.getElementById('summaryGoals').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
 
       document.getElementById('authLoading').style.display = 'none';
       document.getElementById('dashContent').style.display = 'block';
     }
 
-    // Logout
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await supabase.auth.signOut();
       window.location.href = 'login.html';
