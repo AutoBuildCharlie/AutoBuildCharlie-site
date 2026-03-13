@@ -210,6 +210,22 @@
       min-height: 90px;
       line-height: 1.6;
     }
+    .suggestion-chip {
+      padding: 0.4rem 0.85rem;
+      border-radius: 100px;
+      border: 1px solid rgba(0,212,255,0.3);
+      background: rgba(0,212,255,0.06);
+      color: rgba(0,212,255,0.9);
+      font-size: 0.76rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .suggestion-chip:hover {
+      background: rgba(0,212,255,0.15);
+      border-color: rgba(0,212,255,0.6);
+    }
+
     .goal-save-btn {
       margin-top: 0.5rem;
       padding: 0.5rem 1.1rem;
@@ -441,7 +457,9 @@
           <div class="summary-card-text" id="summaryGoals"></div>
           <button class="imagination-btn" id="editGoalBtn">&#10024; Your only limit is your imagination</button>
           <div class="goal-edit-area" id="goalEditArea">
-            <textarea id="goalEditInput" placeholder="What do you want Charlie to automate next?"></textarea>
+            <div class="suggestions-label" id="suggestionsLabel" style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.6rem;font-weight:600;">&#9889; Suggested for your business — tap to add:</div>
+            <div class="chips" id="suggestionChips" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;"></div>
+            <textarea id="goalEditInput" placeholder="Or describe it in your own words..."></textarea>
             <button class="goal-save-btn" id="goalSaveBtn">Save Goal</button>
           </div>
         </div>
@@ -581,12 +599,56 @@
       document.getElementById('tasksEditArea').style.display = 'none';
     });
 
+    const fieldSuggestions = {
+      marketing:    ['Auto-send personalized email campaigns based on customer behavior', 'Automatically repurpose blog posts into social media content', 'Track competitor mentions and get daily alerts'],
+      'real estate':['Auto-send follow-up emails to leads after property viewings', 'Generate and send listing reports to clients weekly', 'Alert you instantly when a new lead fills out a contact form'],
+      ecommerce:    ['Auto-send abandoned cart recovery emails', 'Notify you on your phone when a new order comes in', 'Auto-request a review from customers 3 days after delivery'],
+      retail:       ['Auto-send restock alerts to customers for sold-out items', 'Generate a daily sales summary and email it to yourself', 'Auto-reply to common customer questions about hours and returns'],
+      restaurant:   ['Auto-send reservation confirmations and reminders via text', 'Collect customer feedback automatically after each visit', 'Post your daily specials to Instagram and Facebook automatically'],
+      fitness:      ['Auto-send class reminders to members 24 hours before', 'Follow up with inactive members after 2 weeks of no visits', 'Auto-collect testimonials from clients after milestones'],
+      healthcare:   ['Auto-send appointment reminders via email or text', 'Follow up with patients after visits with care instructions', 'Auto-collect patient intake forms before appointments'],
+      coaching:     ['Auto-send session prep materials before each coaching call', 'Follow up with clients after sessions with action items', 'Auto-schedule discovery calls from your website'],
+      finance:      ['Auto-send monthly financial summaries to clients', 'Alert clients when account thresholds are reached', 'Auto-generate invoices when a project milestone is hit'],
+      construction: ['Auto-send project status updates to clients weekly', 'Generate and send quotes automatically from a form', 'Alert your team when materials need to be reordered'],
+      photography:  ['Auto-send gallery delivery emails when photos are ready', 'Follow up with leads who inquired but never booked', 'Auto-post behind-the-scenes content to social media'],
+      legal:        ['Auto-send document signing reminders to clients', 'Follow up with leads after initial consultations', 'Auto-schedule intake calls from your website contact form'],
+      education:    ['Auto-send course reminders and progress nudges to students', 'Generate certificates automatically when a course is completed', 'Follow up with leads who downloaded a free resource'],
+      logistics:    ['Auto-send shipment tracking updates to customers', 'Alert your team when a delivery is delayed', 'Auto-generate daily route summary reports'],
+      default:      ['Auto-send follow-up emails to new leads within minutes', 'Get a phone notification every time a new client signs up', 'Auto-generate and send weekly business summary reports to yourself']
+    };
+
+    function getSuggestions(field, existingGoals) {
+      const key = Object.keys(fieldSuggestions).find(k => field.toLowerCase().includes(k)) || 'default';
+      const all = fieldSuggestions[key];
+      return all.filter(s => !existingGoals.toLowerCase().includes(s.toLowerCase().slice(0, 20))).slice(0, 3);
+    }
+
     document.getElementById('editGoalBtn').addEventListener('click', () => {
       const area = document.getElementById('goalEditArea');
       const input = document.getElementById('goalEditInput');
-      input.value = document.getElementById('summaryGoals').textContent;
-      area.style.display = area.style.display === 'block' ? 'none' : 'block';
-      if (area.style.display === 'block') input.focus();
+      const isOpen = area.style.display === 'block';
+      area.style.display = isOpen ? 'none' : 'block';
+      if (!isOpen) {
+        input.value = document.getElementById('summaryGoals').textContent;
+        // Populate suggestion chips
+        const field = document.getElementById('companyField').textContent || '';
+        const existing = input.value;
+        const suggestions = getSuggestions(field, existing);
+        const chipsEl = document.getElementById('suggestionChips');
+        chipsEl.innerHTML = '';
+        suggestions.forEach(s => {
+          const btn = document.createElement('button');
+          btn.className = 'suggestion-chip';
+          btn.textContent = s;
+          btn.addEventListener('click', () => {
+            input.value = input.value ? input.value + '\n' + s : s;
+            btn.style.opacity = '0.4';
+            btn.disabled = true;
+          });
+          chipsEl.appendChild(btn);
+        });
+        input.focus();
+      }
     });
 
     document.getElementById('goalSaveBtn').addEventListener('click', async () => {
