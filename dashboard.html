@@ -167,6 +167,57 @@
       font-style: italic;
     }
 
+    .imagination-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.6rem 1.1rem;
+      border-radius: 100px;
+      border: 1px solid rgba(191,90,242,0.4);
+      background: rgba(191,90,242,0.08);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .imagination-btn:hover {
+      background: rgba(191,90,242,0.18);
+      box-shadow: 0 0 16px rgba(191,90,242,0.25);
+    }
+
+    .goal-edit-area {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .goal-edit-area textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(191,90,242,0.4);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.875rem;
+      font-family: inherit;
+      padding: 0.75rem 1rem;
+      outline: none;
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.6;
+    }
+    .goal-save-btn {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #bf5af2 0%, #9b35d4 100%);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
     /* CARDS GRID */
     .cards-grid {
       display: grid;
@@ -378,6 +429,11 @@
         <div class="summary-card">
           <div class="summary-card-label">&#127919; Goals</div>
           <div class="summary-card-text" id="summaryGoals"></div>
+          <button class="imagination-btn" id="editGoalBtn">&#10024; Your only limit is your imagination</button>
+          <div class="goal-edit-area" id="goalEditArea">
+            <textarea id="goalEditInput" placeholder="What do you want Charlie to automate next?"></textarea>
+            <button class="goal-save-btn" id="goalSaveBtn">Save Goal</button>
+          </div>
         </div>
       </div>
 
@@ -498,6 +554,22 @@
       document.getElementById('authLoading').style.display = 'none';
       document.getElementById('dashContent').style.display = 'block';
     }
+
+    document.getElementById('editGoalBtn').addEventListener('click', () => {
+      const area = document.getElementById('goalEditArea');
+      const input = document.getElementById('goalEditInput');
+      input.value = document.getElementById('summaryGoals').textContent;
+      area.style.display = area.style.display === 'block' ? 'none' : 'block';
+      if (area.style.display === 'block') input.focus();
+    });
+
+    document.getElementById('goalSaveBtn').addEventListener('click', async () => {
+      const newGoal = document.getElementById('goalEditInput').value.trim();
+      if (!newGoal) return;
+      await supabase.auth.updateUser({ data: { onboarding_goal: newGoal } });
+      document.getElementById('summaryGoals').textContent = newGoal;
+      document.getElementById('goalEditArea').style.display = 'none';
+    });
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await supabase.auth.signOut();
