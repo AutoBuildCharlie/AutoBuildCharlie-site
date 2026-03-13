@@ -425,6 +425,11 @@
         <div class="summary-card">
           <div class="summary-card-label">&#9201; Daily Tasks</div>
           <div class="summary-card-text" id="summaryTasks"></div>
+          <button class="imagination-btn" id="editTasksBtn">&#128161; Maybe you have more than you thought?</button>
+          <div class="goal-edit-area" id="tasksEditArea">
+            <textarea id="tasksEditInput" placeholder="Add more tasks Charlie can help automate..."></textarea>
+            <button class="goal-save-btn" id="tasksSaveBtn">Save Tasks</button>
+          </div>
         </div>
         <div class="summary-card">
           <div class="summary-card-label">&#127919; Goals</div>
@@ -554,6 +559,22 @@
       document.getElementById('authLoading').style.display = 'none';
       document.getElementById('dashContent').style.display = 'block';
     }
+
+    document.getElementById('editTasksBtn').addEventListener('click', () => {
+      const area = document.getElementById('tasksEditArea');
+      const input = document.getElementById('tasksEditInput');
+      input.value = document.getElementById('summaryTasks').textContent;
+      area.style.display = area.style.display === 'block' ? 'none' : 'block';
+      if (area.style.display === 'block') input.focus();
+    });
+
+    document.getElementById('tasksSaveBtn').addEventListener('click', async () => {
+      const newTasks = document.getElementById('tasksEditInput').value.trim();
+      if (!newTasks) return;
+      await supabase.auth.updateUser({ data: { onboarding_tasks: newTasks } });
+      document.getElementById('summaryTasks').textContent = newTasks;
+      document.getElementById('tasksEditArea').style.display = 'none';
+    });
 
     document.getElementById('editGoalBtn').addEventListener('click', () => {
       const area = document.getElementById('goalEditArea');
