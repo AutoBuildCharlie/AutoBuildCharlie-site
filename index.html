@@ -1295,49 +1295,6 @@
       <a href="#how" class="btn btn-ghost btn-lg">See how it works</a>
     </div>
 
-    <!-- HOW IT WORKS -->
-    <div class="hiw-wrapper">
-      <div class="hiw-header">
-        <span class="section-label">How it works</span>
-        <h3>2 steps. That's it.</h3>
-        <p style="font-size:0.92rem;color:var(--text-muted);">No coding. No tech skills. Just tell Charlie what you need.</p>
-      </div>
-
-      <div class="hiw-steps">
-
-        <div class="hiw-card purple">
-          <div class="hiw-num purple">1</div>
-          <span class="hiw-icon">📋</span>
-          <div class="hiw-tag purple">Step 1</div>
-          <h4>Tell Charlie your job</h4>
-          <p>What do you spend too much time on every day? Charlie's got it — just tell him and he'll take it from there.</p>
-        </div>
-
-        <div class="hiw-connector">
-          <div class="hiw-connector-dots">
-            <div class="hiw-connector-dot"></div>
-            <div class="hiw-connector-dot"></div>
-            <div class="hiw-connector-dot"></div>
-          </div>
-          <div class="hiw-connector-arrow">&#8594;</div>
-          <div class="hiw-connector-dots">
-            <div class="hiw-connector-dot"></div>
-            <div class="hiw-connector-dot"></div>
-            <div class="hiw-connector-dot"></div>
-          </div>
-        </div>
-
-        <div class="hiw-card cyan">
-          <div class="hiw-num cyan">2</div>
-          <span class="hiw-icon">⚡</span>
-          <div class="hiw-tag cyan">Step 2</div>
-          <h4>Meet your personal junior assistant</h4>
-          <p>Charlie is fully personalized to you — your tone, your style, your rules. Think of him as a junior assistant who always listens, never calls in sick, and is available 24/7.</p>
-        </div>
-
-
-      </div>
-    </div>
   </section>
 
   </div><!-- /hero-wrapper -->
@@ -1465,71 +1422,6 @@
     </div>
   </section>
 
-  <!-- BUSINESS IDEA GENERATOR -->
-  <section class="biz-section">
-    <div class="section-inner">
-      <div class="section-label">Not Sure Where to Start?</div>
-      <h2 class="section-title">Find the right automations for your business</h2>
-      <p class="section-sub">Tell us a little about your business and we'll show you exactly where AI can save you the most time and effort.</p>
-
-      <div class="biz-form">
-
-        <div>
-          <label class="biz-label">What kind of business do you run?</label>
-          <select class="biz-select" id="bizType" onchange="onDropdownChange()">
-            <option value="">-- Pick your business type --</option>
-            <option value="restaurant">Restaurant / Food & Drink</option>
-            <option value="retail">Retail / Online Store</option>
-            <option value="freelancer">Freelancer / Creative Agency</option>
-            <option value="realestate">Real Estate Agent / Broker</option>
-            <option value="gym">Gym / Fitness Studio</option>
-            <option value="clinic">Clinic / Healthcare</option>
-            <option value="consulting">Consulting / Law / Finance</option>
-            <option value="content">Content Creator / Influencer</option>
-          </select>
-          <div style="display:flex;align-items:center;gap:0.75rem;margin:0.75rem 0;">
-            <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
-            <span style="font-size:0.78rem;color:var(--text-muted);">or type it yourself</span>
-            <div style="flex:1;height:1px;background:rgba(255,255,255,0.08);"></div>
-          </div>
-          <input
-            class="biz-select"
-            type="text"
-            id="bizTypeText"
-            placeholder="e.g. dog grooming salon, food truck, law firm..."
-            oninput="onTextInput()"
-            style="margin-top:0;"
-          />
-        </div>
-
-        <div>
-          <label class="biz-label">What eats up most of your time? (pick all that apply)</label>
-          <div class="biz-checkboxes" id="painChips">
-            <label class="biz-chip"><input type="checkbox" value="emails"> Answering emails</label>
-            <label class="biz-chip"><input type="checkbox" value="scheduling"> Scheduling & appointments</label>
-            <label class="biz-chip"><input type="checkbox" value="social"> Posting on social media</label>
-            <label class="biz-chip"><input type="checkbox" value="followup"> Following up with customers</label>
-            <label class="biz-chip"><input type="checkbox" value="reports"> Writing reports or summaries</label>
-            <label class="biz-chip"><input type="checkbox" value="invoices"> Sending invoices</label>
-            <label class="biz-chip"><input type="checkbox" value="reviews"> Responding to reviews</label>
-          </div>
-        </div>
-
-        <button class="biz-generate-btn" onclick="generateIdeas()">Show me my automation ideas &rarr;</button>
-      </div>
-
-      <div class="biz-results" id="bizResults">
-        <div class="biz-results-title" id="bizResultsTitle"></div>
-        <div class="biz-results-sub" id="bizResultsSub"></div>
-        <div class="biz-cards" id="bizCards"></div>
-        <div class="biz-pain" id="bizPain">
-          <h4>Weaknesses AutoBuildCharlie can fix for you</h4>
-          <ul id="bizPainList"></ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- PRICING -->
   <section id="pricing" style="background: #050505; border-top: 1px solid var(--border);">
     <div class="section-inner">
@@ -1639,57 +1531,8 @@
           <summary style="font-weight: 700; font-size: 1rem; list-style: none; display: flex; justify-content: space-between; align-items: center;">
             What's the difference between Starter and Growth? <span style="color: var(--accent); font-size: 1.2rem;">+</span>
           </summary>
-          <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;">Starter gives you access to build 2 automations yourself using our guided tools. Growth is for businesses that want more automations and want us to help build and manage them — plus a monthly check-in call.</p>
+          <p style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted); line-height: 1.7;">Starter is best for businesses that want to get started with 1–2 core automations — things like follow-up emails or appointment reminders. Growth is for businesses that want more automations, faster setup, and a monthly check-in call with our team. With both plans, we build everything for you.</p>
         </details>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- TESTIMONIALS -->
-  <section style="padding: 5rem 1.5rem; background: #050505; border-top: 1px solid var(--border);">
-    <div class="section-inner">
-      <div class="section-label">Testimonials</div>
-      <h2 class="section-title">Real businesses. Real results.</h2>
-      <p class="section-sub" style="margin-bottom: 3rem;">Here's what small business owners are saying after letting Charlie handle the busywork.</p>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
-
-        <div style="background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 1.75rem;">
-          <div style="color: #f5a623; font-size: 0.9rem; margin-bottom: 1rem;">★★★★★</div>
-          <p style="font-size: 0.92rem; color: #ccc; line-height: 1.7; margin-bottom: 1.25rem;">"I was spending 2 hours every morning just sending follow-up emails. Charlie does it automatically now. I get those 2 hours back every single day."</p>
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #bf5af2, #00d4ff); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">M</div>
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 700;">Marcus T.</div>
-              <div style="font-size: 0.75rem; color: var(--text-muted);">Personal Trainer, Atlanta</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="background: #111; border: 1px solid rgba(191,90,242,0.25); border-radius: 16px; padding: 1.75rem;">
-          <div style="color: #f5a623; font-size: 0.9rem; margin-bottom: 1rem;">★★★★★</div>
-          <p style="font-size: 0.92rem; color: #ccc; line-height: 1.7; margin-bottom: 1.25rem;">"I used to forget to follow up with clients after haircuts. Now Charlie sends a thank-you text and a rebooking reminder automatically. My rebooking rate went up noticeably."</p>
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #bf5af2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">D</div>
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 700;">DeShawn R.</div>
-              <div style="font-size: 0.75rem; color: var(--text-muted);">Barbershop Owner, Houston</div>
-            </div>
-          </div>
-        </div>
-
-        <div style="background: #111; border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 1.75rem;">
-          <div style="color: #f5a623; font-size: 0.9rem; margin-bottom: 1rem;">★★★★★</div>
-          <p style="font-size: 0.92rem; color: #ccc; line-height: 1.7; margin-bottom: 1.25rem;">"Setting up was super easy and the team walked me through everything. Now my booking reminders and invoices go out without me touching anything. Worth every penny."</p>
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
-            <div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #f5a623, #bf5af2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">J</div>
-            <div>
-              <div style="font-size: 0.85rem; font-weight: 700;">Jasmine K.</div>
-              <div style="font-size: 0.75rem; color: var(--text-muted);">Dog Walker & Pet Sitter, Chicago</div>
-            </div>
-          </div>
-        </div>
 
       </div>
     </div>
