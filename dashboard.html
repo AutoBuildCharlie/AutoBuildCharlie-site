@@ -707,8 +707,6 @@
       "Every workflow you build is a brick in the foundation of a business that lasts. Keep stacking."
     ];
 
-    const { data: { session: initialSession } } = await supabase.auth.getSession();
-
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
         window.location.href = 'login.html';
@@ -717,19 +715,11 @@
       }
     });
 
+    const { data: { session: initialSession } } = await supabase.auth.getSession();
     if (initialSession) {
       initDashboard(initialSession);
-    } else {
-      // Wait for OAuth hash token to be processed
-      setTimeout(async () => {
-        if (window._dashboardLoaded) return;
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          initDashboard(session);
-        } else {
-          window.location.href = 'login.html';
-        }
-      }, 1500);
+    } else if (!window.location.hash.includes('access_token')) {
+      window.location.href = 'login.html';
     }
 
     function initDashboard(session) {
