@@ -396,6 +396,33 @@
 
     .report-label { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
 
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .checklist-item:last-child { border-bottom: none; }
+
+    .checklist-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+    .checklist-icon.done { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .checklist-icon.pending { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+
+    .checklist-label { flex: 1; }
+    .checklist-label.done { color: var(--text); }
+    .checklist-label.pending { color: var(--text-muted); }
+
     #authLoading {
       display: flex;
       align-items: center;
@@ -623,16 +650,16 @@
         <div class="dash-card">
           <div class="card-icon">&#9889;</div>
           <div class="card-title">My Workflows</div>
-          <p class="card-desc">Automations Charlie is running for your business right now.</p>
+          <p class="card-desc" id="workflowDesc">Your automations will appear here once they're live.</p>
           <ul class="workflow-list" id="workflowList"></ul>
           <a href="https://tally.so/r/aQxXME" target="_blank" class="card-btn" style="margin-top:1rem;display:inline-block;">Request a New One &rarr;</a>
         </div>
 
         <div class="dash-card">
-          <div class="card-icon">&#128196;</div>
-          <div class="card-title">Onboarding Checklist</div>
-          <p class="card-desc">Get set up fast. Complete your onboarding so Charlie knows your business inside and out.</p>
-          <a href="onboarding.html" class="card-btn">Continue Setup &rarr;</a>
+          <div class="card-icon">&#128203;</div>
+          <div class="card-title">Getting Started</div>
+          <p class="card-desc" style="margin-bottom:1.25rem;">Your setup progress with AutoBuildCharlie.</p>
+          <ul id="checklistItems" style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;"></ul>
         </div>
 
         <div class="dash-card">
@@ -737,6 +764,20 @@
       if (!tasks) document.getElementById('summaryTasks').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
       if (!goals) document.getElementById('summaryGoals').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
 
+      // Checklist
+      const checklistSteps = [
+        { label: 'Create your account', done: true },
+        { label: 'Complete your onboarding form', done: !!meta.onboarding_complete },
+        { label: 'Cal reviews your info', done: !!meta.setup_reviewed },
+        { label: 'First automation goes live', done: workflows.length > 0 }
+      ];
+      const checklistEl = document.getElementById('checklistItems');
+      checklistEl.innerHTML = checklistSteps.map(s => `
+        <li class="checklist-item">
+          <div class="checklist-icon ${s.done ? 'done' : 'pending'}">${s.done ? '✓' : '○'}</div>
+          <span class="checklist-label ${s.done ? 'done' : 'pending'}">${s.label}</span>
+        </li>`).join('');
+
       // Plan badge
       const plan = meta.plan || '';
       const planBadgeEl = document.getElementById('planBadge');
@@ -749,7 +790,9 @@
       const wfList = document.getElementById('workflowList');
       if (workflows.length === 0) {
         wfList.innerHTML = '<li class="workflow-empty">Your automations are being set up — we\'ll update this once they\'re live.</li>';
+        document.getElementById('workflowDesc').textContent = 'Your automations will appear here once they\'re live.';
       } else {
+        document.getElementById('workflowDesc').textContent = 'Automations Charlie is running for your business right now.';
         wfList.innerHTML = workflows.map(w => `
           <li class="workflow-item">
             <div class="workflow-dot"></div>
