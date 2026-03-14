@@ -627,6 +627,11 @@
           <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;" id="memberSince"></p>
         </div>
 
+        <div class="dash-card" id="planCard">
+          <div class="card-icon">&#11088;</div>
+          <div class="card-title">Your Plan</div>
+          <div id="planCardContent"><p class="card-desc">No plan assigned yet. Reach out to get set up.</p></div>
+        </div>
 
       </div>
     </div>
@@ -727,11 +732,46 @@
       if (!tasks) document.getElementById('summaryTasks').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
       if (!goals) document.getElementById('summaryGoals').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
 
-      // Plan badge
+      // Plan badge (small, in header)
       const plan = meta.plan || '';
       const planBadgeEl = document.getElementById('planBadge');
       if (plan) {
         planBadgeEl.innerHTML = `<span class="plan-badge">&#11088; ${plan} Plan</span>`;
+      }
+
+      // Plan card
+      const planInfo = {
+        'Starter': {
+          price: '$65 / month',
+          features: ['1–2 automations built for you', 'Email support', 'Monthly check-ins'],
+          upgradeText: 'Upgrade to Growth',
+          upgradeLink: 'https://buy.stripe.com/4gM28l1gd5jkcjIdA98Vi01'
+        },
+        'Growth': {
+          price: '$65/mo + $300 setup',
+          features: ['Up to 5 automations', 'We build everything for you', 'Priority support'],
+          upgradeText: 'Upgrade to Done For You',
+          upgradeLink: 'https://buy.stripe.com/14AeV7cYVcLMdnM8fP8Vi02'
+        },
+        'Done For You': {
+          price: '$500/mo + $1,500 setup',
+          features: ['Unlimited automations', 'Full management by our team', 'Dedicated support'],
+          upgradeText: null,
+          upgradeLink: null
+        }
+      };
+      const planData = planInfo[plan];
+      if (planData) {
+        document.getElementById('planCardContent').innerHTML = `
+          <p class="card-desc" style="margin-bottom:0.75rem;">${planData.price}</p>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1rem;">
+            ${planData.features.map(f => `<li style="font-size:0.85rem;color:var(--text-muted);">✓ ${f}</li>`).join('')}
+          </ul>
+          ${planData.upgradeText
+            ? `<a href="${planData.upgradeLink}" target="_blank" class="card-btn" style="display:inline-block;">${planData.upgradeText} &rarr;</a>`
+            : `<p style="font-size:0.8rem;color:var(--accent);font-weight:600;">You're on our top-tier plan.</p>`
+          }
+        `;
       }
 
       // Workflows
