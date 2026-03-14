@@ -712,6 +712,7 @@
       document.getElementById('userEmail').textContent = email;
 
       const meta = session.user.user_metadata || {};
+      meta.created_at = session.user.created_at;
 
       // Random encouragement
       const msg = encouragements[Math.floor(Math.random() * encouragements.length)];
@@ -816,7 +817,7 @@
       `;
 
       // Member since
-      const created = new Date(session.user.created_at);
+      const created = new Date(meta.created_at || Date.now());
       document.getElementById('memberSince').textContent = `Member since ${created.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
 
       document.getElementById('authLoading').style.display = 'none';
