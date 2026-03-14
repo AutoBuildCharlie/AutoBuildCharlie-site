@@ -719,6 +719,17 @@
 
     if (initialSession) {
       initDashboard(initialSession);
+    } else {
+      // Wait for OAuth hash token to be processed
+      setTimeout(async () => {
+        if (window._dashboardLoaded) return;
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          initDashboard(session);
+        } else {
+          window.location.href = 'login.html';
+        }
+      }, 1500);
     }
 
     function initDashboard(session) {
