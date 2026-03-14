@@ -741,14 +741,18 @@
       const checklistSteps = [
         { label: 'Create your account', done: true },
         { label: 'Complete your onboarding form', done: !!meta.onboarding_complete },
-        { label: 'Cal reviews your info', done: !!meta.setup_reviewed },
+        { label: 'Our team reviews your info', done: !!meta.setup_reviewed },
         { label: 'First automation goes live', done: workflows.length > 0 }
       ];
       const checklistEl = document.getElementById('checklistItems');
+      const onboardingDone = !!meta.onboarding_complete;
       checklistEl.innerHTML = checklistSteps.map(s => `
         <li class="checklist-item">
           <div class="checklist-icon ${s.done ? 'done' : 'pending'}">${s.done ? '✓' : '○'}</div>
-          <span class="checklist-label ${s.done ? 'done' : 'pending'}">${s.label}</span>
+          ${s.label === 'Complete your onboarding form' && !onboardingDone
+            ? `<a href="onboarding.html" class="checklist-label pending" style="color:var(--accent);text-decoration:none;">${s.label} →</a>`
+            : `<span class="checklist-label ${s.done ? 'done' : 'pending'}">${s.label}</span>`
+          }
         </li>`).join('');
       const wfList = document.getElementById('workflowList');
       if (workflows.length === 0) {
