@@ -434,7 +434,7 @@
     document.getElementById('googleBtn').addEventListener('click', async () => {
       await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin + '/dashboard.html' }
+        options: { redirectTo: 'https://autobuildcharlie.github.io/AutoBuildCharlie-site/dashboard.html' }
       });
     });
 
