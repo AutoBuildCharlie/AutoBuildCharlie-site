@@ -1288,8 +1288,8 @@
   <div class="hero-wrapper">
   <section class="hero">
     <div class="hero-badge">Build AI That Works For You</div>
-    <h1>Own and <em>Personalize</em> Your AI Automation</h1>
-    <p>AutoBuildCharlie lets you teach AI to do your boring, repetitive tasks — automatically. You set the rules. The AI does the work. No coding skills needed to get started.</p>
+    <h1 id="heroHeadline"></h1>
+    <p id="heroSub"></p>
     <div class="hero-actions">
       <a href="signup.html" class="btn btn-primary btn-lg">Start for free &rarr;</a>
       <a href="#how" class="btn btn-ghost btn-lg">See how it works</a>
@@ -1779,6 +1779,55 @@
       document.getElementById('waitlistForm').style.display = 'none';
       document.getElementById('waitlistMsg').style.display = 'block';
     });
+  </script>
+
+  <script>
+    const heroVariants = [
+      {
+        h: 'Stop Doing the Same Tasks Every Day. <em>Let AI Handle It.</em>',
+        p: "You're good at what you do — not at chasing emails, sending reminders, and doing admin work. AutoBuildCharlie automates the repetitive stuff so you can focus on the work that actually makes you money."
+      },
+      {
+        h: 'You Didn\'t Start a Business to Answer Emails All Day. <em>Charlie Did.</em>',
+        p: "Every hour you spend on follow-ups, scheduling, and admin is an hour you\'re not serving clients. Let Charlie handle the back-office grind while you do what you do best."
+      },
+      {
+        h: 'Your Competitors Are Using AI. <em>Now You Can Too.</em>',
+        p: "Big companies have whole teams automating their work. AutoBuildCharlie gives small business owners the same power — without the price tag or the tech headache."
+      },
+      {
+        h: 'The Busiest Business Owners Have One Secret. <em>They Automate Everything.</em>',
+        p: "Follow-up emails, appointment reminders, invoices, review requests — Charlie handles all of it automatically so nothing falls through the cracks."
+      },
+      {
+        h: 'What Would You Do With 10 Extra Hours a Week? <em>Charlie Can Give You That.</em>',
+        p: "Most small business owners spend 2–3 hours a day on tasks that could run on autopilot. AutoBuildCharlie builds those automations for you — no coding, no hassle."
+      },
+      {
+        h: 'You Handle the Clients. <em>Charlie Handles Everything Else.</em>',
+        p: "From first inquiry to follow-up review request — Charlie runs the behind-the-scenes work automatically. All you have to do is show up and do great work."
+      },
+      {
+        h: 'Tired of Doing the Same Thing Every Single Day? <em>Automate It.</em>',
+        p: "If you\'ve done a task more than 10 times, a machine can do it for you. AutoBuildCharlie turns your repetitive work into hands-free automations — built specifically for your business."
+      },
+      {
+        h: 'No-Show Clients. Forgotten Follow-Ups. Missed Invoices. <em>Not Anymore.</em>',
+        p: "Charlie sends the reminders, follows up with leads, and chases the invoices — automatically. So the things that used to fall through the cracks just... don\'t."
+      },
+      {
+        h: 'Run Your Business Like It Has a Full Team. <em>Even If It\'s Just You.</em>',
+        p: "Charlie works 24/7 in the background — sending messages, logging data, following up with clients — so your business never stops, even when you do."
+      },
+      {
+        h: 'The Admin Work Never Ends. <em>Unless You Automate It.</em>',
+        p: "Booking confirmations. Payment reminders. Review requests. Post-visit follow-ups. AutoBuildCharlie handles all of it automatically so you can finally close your laptop at a normal hour."
+      }
+    ];
+
+    const pick = heroVariants[Math.floor(Math.random() * heroVariants.length)];
+    document.getElementById('heroHeadline').innerHTML = pick.h;
+    document.getElementById('heroSub').textContent = pick.p;
   </script>
 
   <!-- FOOTER -->
