@@ -786,6 +786,16 @@
       if (!tasks) document.getElementById('summaryTasks').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
       if (!goals) document.getElementById('summaryGoals').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
 
+      // Plan badge
+      const plan = meta.plan || '';
+      const planBadgeEl = document.getElementById('planBadge');
+      if (plan) {
+        planBadgeEl.innerHTML = `<span class="plan-badge">&#11088; ${plan} Plan</span>`;
+      }
+
+      // Workflows
+      const workflows = meta.workflows || [];
+
       // Checklist
       const checklistSteps = [
         { label: 'Create your account', done: true },
@@ -799,16 +809,6 @@
           <div class="checklist-icon ${s.done ? 'done' : 'pending'}">${s.done ? '✓' : '○'}</div>
           <span class="checklist-label ${s.done ? 'done' : 'pending'}">${s.label}</span>
         </li>`).join('');
-
-      // Plan badge
-      const plan = meta.plan || '';
-      const planBadgeEl = document.getElementById('planBadge');
-      if (plan) {
-        planBadgeEl.innerHTML = `<span class="plan-badge">&#11088; ${plan} Plan</span>`;
-      }
-
-      // Workflows
-      const workflows = meta.workflows || [];
       const wfList = document.getElementById('workflowList');
       if (workflows.length === 0) {
         wfList.innerHTML = '<li class="workflow-empty">Your automations are being set up — we\'ll update this once they\'re live.</li>';
