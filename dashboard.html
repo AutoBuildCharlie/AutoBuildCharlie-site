@@ -574,25 +574,6 @@
         <div class="encouragement" id="encouragementMsg"></div>
       </div>
 
-      <!-- STATS ROW -->
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-number" id="statAutomations">0</div>
-          <div class="stat-label">Automations</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="statHours">0</div>
-          <div class="stat-label">Hours Saved</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="statTasks">0</div>
-          <div class="stat-label">Tasks Handled</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" style="font-size:1.2rem;">&#129302;</div>
-          <div class="stat-label">Charlie: Active</div>
-        </div>
-      </div>
 
       <!-- ONBOARDING SUMMARY -->
       <div class="section-title">&#128203; Your Onboarding Answers</div>
@@ -628,7 +609,7 @@
           <div class="card-title">My Workflows</div>
           <p class="card-desc" id="workflowDesc">Your automations will appear here once they're live.</p>
           <ul class="workflow-list" id="workflowList"></ul>
-          <a href="https://tally.so/r/aQxXME" target="_blank" class="card-btn" style="margin-top:1rem;display:inline-block;">Request a New One &rarr;</a>
+          <a href="https://tally.so/r/aQxXME" target="_blank" class="card-btn" style="margin-top:1rem;display:inline-block;">Request or ask a question &rarr;</a>
         </div>
 
         <div class="dash-card">
@@ -646,12 +627,6 @@
           <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;" id="memberSince"></p>
         </div>
 
-        <div class="dash-card">
-          <div class="card-icon">&#129309;</div>
-          <div class="card-title">Talk to Support</div>
-          <p class="card-desc">Need help or want to upgrade your plan? Reach out and we'll get back to you fast.</p>
-          <a href="https://tally.so/r/aQxXME" target="_blank" class="card-btn">Contact Us &rarr;</a>
-        </div>
 
       </div>
     </div>
@@ -666,21 +641,12 @@
     );
 
     const encouragements = [
-      "Every big company started exactly where you are. The automation you're building today is the foundation that will carry you to the top.",
-      "You're not just saving time — you're creating space to think bigger. The companies at the top automate everything. Now you do too.",
-      "While your competitors are still doing things manually, you're building systems that scale. That's how you win.",
-      "The difference between a small business and an empire is systems. You're building yours right now.",
-      "Charlie is working behind the scenes so you can focus on what only you can do. That's leverage — and it's how the big players operate.",
-      "Automation isn't just for big companies anymore. You're leveling the playing field, one workflow at a time.",
-      "Every hour Charlie saves you is an hour you can pour into growth, relationships, and vision. Keep going.",
-      "You're building the kind of business that runs even when you step away. That's real freedom.",
-      "The best investment you'll ever make is in systems that work for you 24/7. That's exactly what you're doing.",
-      "Small businesses that automate grow 3x faster. You're already ahead of the curve.",
-      "Think of every automation as a team member that never sleeps, never calls in sick, and never makes the same mistake twice.",
-      "You're not just a business owner — you're becoming an operator. That's the mindset of every successful company out there.",
-      "The gap between where you are and where the top companies are is just systems. Charlie is closing that gap for you.",
-      "Consistency at scale is what separates the good from the great. Your automations are your consistency engine.",
-      "Every workflow you build is a brick in the foundation of a business that lasts. Keep stacking."
+      "Charlie is handling the busywork. You focus on your clients.",
+      "Every automation running means one less thing on your plate.",
+      "Your business is working even when you're not.",
+      "Less admin. More time doing what you're good at.",
+      "Charlie's got the follow-ups covered. Go do your thing.",
+      "One less task to think about today."
     ];
 
     // Register listener FIRST so we catch the SIGNED_IN event from Google OAuth redirect
