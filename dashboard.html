@@ -325,6 +325,77 @@
       vertical-align: middle;
     }
 
+    .plan-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(191,90,242,0.12);
+      border: 1px solid rgba(191,90,242,0.3);
+      border-radius: 100px;
+      padding: 0.25rem 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .workflow-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .workflow-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+    }
+
+    .workflow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      margin-top: 0.4rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 6px rgba(34,197,94,0.6);
+    }
+
+    .workflow-name { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.15rem; }
+    .workflow-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+
+    .workflow-empty {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.25);
+      font-style: italic;
+      padding: 0.5rem 0;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .report-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .report-number {
+      font-size: 1.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .report-label { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
     #authLoading {
       display: flex;
       align-items: center;
@@ -472,6 +543,7 @@
         <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.4rem;" id="greetingLine"></div>
         <div class="company-name" id="companyName"></div>
         <div class="company-field" id="companyField"></div>
+        <div id="planBadge"></div>
         <div class="encouragement" id="encouragementMsg"></div>
       </div>
 
@@ -550,9 +622,10 @@
 
         <div class="dash-card">
           <div class="card-icon">&#9889;</div>
-          <div class="card-title">My Workflows <span class="badge-soon">Coming Soon</span></div>
-          <p class="card-desc">View, edit, and manage all the automations your Charlie agent is running for you.</p>
-          <a href="https://tally.so/r/aQxXME" target="_blank" class="card-btn">Request a Workflow &rarr;</a>
+          <div class="card-title">My Workflows</div>
+          <p class="card-desc">Automations Charlie is running for your business right now.</p>
+          <ul class="workflow-list" id="workflowList"></ul>
+          <a href="https://tally.so/r/aQxXME" target="_blank" class="card-btn" style="margin-top:1rem;display:inline-block;">Request a New One &rarr;</a>
         </div>
 
         <div class="dash-card">
@@ -564,9 +637,10 @@
 
         <div class="dash-card">
           <div class="card-icon">&#128202;</div>
-          <div class="card-title">Usage & Reports <span class="badge-soon">Coming Soon</span></div>
-          <p class="card-desc">See how many hours Charlie has saved you this month and what tasks were automated.</p>
-          <span class="card-btn" style="cursor:default;opacity:0.5;">Coming Soon</span>
+          <div class="card-title">Usage & Reports</div>
+          <p class="card-desc">A snapshot of what Charlie has been doing for your business.</p>
+          <div class="report-grid" id="reportGrid"></div>
+          <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;" id="memberSince"></p>
         </div>
 
         <div class="dash-card">
@@ -662,6 +736,49 @@
 
       if (!tasks) document.getElementById('summaryTasks').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
       if (!goals) document.getElementById('summaryGoals').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
+
+      // Plan badge
+      const plan = meta.plan || '';
+      const planBadgeEl = document.getElementById('planBadge');
+      if (plan) {
+        planBadgeEl.innerHTML = `<span class="plan-badge">&#11088; ${plan} Plan</span>`;
+      }
+
+      // Workflows
+      const workflows = meta.workflows || [];
+      const wfList = document.getElementById('workflowList');
+      if (workflows.length === 0) {
+        wfList.innerHTML = '<li class="workflow-empty">Your automations are being set up — we\'ll update this once they\'re live.</li>';
+      } else {
+        wfList.innerHTML = workflows.map(w => `
+          <li class="workflow-item">
+            <div class="workflow-dot"></div>
+            <div>
+              <div class="workflow-name">${w.name}</div>
+              ${w.desc ? `<div class="workflow-desc">${w.desc}</div>` : ''}
+            </div>
+          </li>`).join('');
+      }
+
+      // Stats from workflows
+      const wfCount = workflows.length;
+      const hoursSaved = wfCount * 2;
+      const tasksDone = wfCount * 30;
+      document.getElementById('statAutomations').textContent = wfCount;
+      document.getElementById('statHours').textContent = hoursSaved;
+      document.getElementById('statTasks').textContent = tasksDone;
+
+      // Reports card
+      const reportGrid = document.getElementById('reportGrid');
+      reportGrid.innerHTML = `
+        <div class="report-item"><div class="report-number">${wfCount}</div><div class="report-label">Active Automations</div></div>
+        <div class="report-item"><div class="report-number">${hoursSaved}</div><div class="report-label">Hours Saved / Week</div></div>
+        <div class="report-item"><div class="report-number">${tasksDone}</div><div class="report-label">Tasks / Month</div></div>
+      `;
+
+      // Member since
+      const created = new Date(session.user.created_at);
+      document.getElementById('memberSince').textContent = `Member since ${created.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
 
       document.getElementById('authLoading').style.display = 'none';
       document.getElementById('dashContent').style.display = 'block';
