@@ -766,15 +766,10 @@
           </li>`).join('');
       }
 
-      // Stats from workflows
+      // Reports card
       const wfCount = workflows.length;
       const hoursSaved = wfCount * 2;
       const tasksDone = wfCount * 30;
-      document.getElementById('statAutomations').textContent = wfCount;
-      document.getElementById('statHours').textContent = hoursSaved;
-      document.getElementById('statTasks').textContent = tasksDone;
-
-      // Reports card
       const reportGrid = document.getElementById('reportGrid');
       reportGrid.innerHTML = `
         <div class="report-item"><div class="report-number">${wfCount}</div><div class="report-label">Active Automations</div></div>
