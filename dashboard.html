@@ -710,9 +710,9 @@
     const { data: { session: initialSession } } = await supabase.auth.getSession();
 
     supabase.auth.onAuthStateChange((event, session) => {
-      if (!session) {
+      if (event === 'SIGNED_OUT') {
         window.location.href = 'login.html';
-      } else {
+      } else if (session) {
         initDashboard(session);
       }
     });
