@@ -707,11 +707,23 @@
       "Every workflow you build is a brick in the foundation of a business that lasts. Keep stacking."
     ];
 
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session: initialSession } } = await supabase.auth.getSession();
 
-    if (!session) {
-      window.location.href = 'login.html';
-    } else {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        window.location.href = 'login.html';
+      } else {
+        initDashboard(session);
+      }
+    });
+
+    if (initialSession) {
+      initDashboard(initialSession);
+    }
+
+    function initDashboard(session) {
+      if (window._dashboardLoaded) return;
+      window._dashboardLoaded = true;
       const email = session.user.email || '';
       document.getElementById('userEmail').textContent = email;
 
@@ -825,7 +837,7 @@
 
       document.getElementById('authLoading').style.display = 'none';
       document.getElementById('dashContent').style.display = 'block';
-    }
+    } // end initDashboard
 
     document.getElementById('editTasksBtn').addEventListener('click', () => {
       const area = document.getElementById('tasksEditArea');
