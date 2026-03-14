@@ -121,6 +121,40 @@
       font-style: italic;
     }
 
+    /* STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--accent), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
     /* ONBOARDING SUMMARY */
     .section-title {
       font-size: 0.75rem;
@@ -435,9 +469,30 @@
 
       <!-- COMPANY HEADER -->
       <div class="company-header">
+        <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.4rem;" id="greetingLine"></div>
         <div class="company-name" id="companyName"></div>
         <div class="company-field" id="companyField"></div>
         <div class="encouragement" id="encouragementMsg"></div>
+      </div>
+
+      <!-- STATS ROW -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-number" id="statAutomations">0</div>
+          <div class="stat-label">Automations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statHours">0</div>
+          <div class="stat-label">Hours Saved</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="statTasks">0</div>
+          <div class="stat-label">Tasks Handled</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" style="font-size:1.2rem;">&#129302;</div>
+          <div class="stat-label">Charlie: Active</div>
+        </div>
       </div>
 
       <!-- ONBOARDING SUMMARY -->
@@ -478,9 +533,9 @@
 
         <div class="dash-card">
           <div class="card-icon">&#128196;</div>
-          <div class="card-title">Onboarding Checklist <span class="badge-soon">Coming Soon</span></div>
+          <div class="card-title">Onboarding Checklist</div>
           <p class="card-desc">Get set up fast. Complete your onboarding so Charlie knows your business inside and out.</p>
-          <a href="https://calendly.com/aestheticcal22/30min" target="_blank" class="card-btn">Book Setup Call &rarr;</a>
+          <a href="onboarding.html" class="card-btn">Continue Setup &rarr;</a>
         </div>
 
         <div class="dash-card">
@@ -569,6 +624,11 @@
     function showDashboard(company, field, meta) {
       document.getElementById('companyName').textContent = company;
       document.getElementById('companyField').textContent = field;
+
+      const name = meta.full_name ? meta.full_name.split(' ')[0] : null;
+      const hour = new Date().getHours();
+      const timeGreet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+      document.getElementById('greetingLine').textContent = name ? timeGreet + ', ' + name + ' 👋' : timeGreet + ' 👋';
 
       const tasks = meta.onboarding_tasks || '';
       const goals = meta.onboarding_goal || '';
