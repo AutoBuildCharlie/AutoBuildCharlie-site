@@ -610,6 +610,34 @@
         </div>
       </div>
 
+      <!-- CLIENT INTAKE AGENT -->
+      <div class="section-title">&#129302; Client Intake Agent</div>
+      <div style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(191,90,242,0.2);border-radius:20px;padding:1.75rem;margin-bottom:2.5rem;box-shadow:0 0 40px rgba(191,90,242,0.06);">
+        <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.6;">Add a new client below — Charlie will log them to your sheet and write a follow-up email automatically.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:0.4rem;">Client Name</label>
+            <input id="intakeName" type="text" placeholder="e.g. John Smith" style="width:100%;padding:0.75rem 1rem;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f0f0f0;font-size:0.875rem;font-family:inherit;outline:none;" />
+          </div>
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:0.4rem;">Service</label>
+            <input id="intakeService" type="text" placeholder="e.g. Bookkeeping" style="width:100%;padding:0.75rem 1rem;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f0f0f0;font-size:0.875rem;font-family:inherit;outline:none;" />
+          </div>
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:0.4rem;">Amount</label>
+            <input id="intakeAmount" type="text" placeholder="e.g. $350" style="width:100%;padding:0.75rem 1rem;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f0f0f0;font-size:0.875rem;font-family:inherit;outline:none;" />
+          </div>
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:0.4rem;">Client Email</label>
+            <input id="intakeEmail" type="email" placeholder="e.g. john@email.com" style="width:100%;padding:0.75rem 1rem;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f0f0f0;font-size:0.875rem;font-family:inherit;outline:none;" />
+          </div>
+        </div>
+        <button id="intakeSubmit" style="padding:0.85rem 2rem;border-radius:10px;border:none;background:linear-gradient(135deg,#bf5af2 0%,#9b35d4 100%);color:#fff;font-size:0.95rem;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 0 20px rgba(191,90,242,0.35);transition:box-shadow 0.2s,transform 0.15s;">
+          Send to Charlie &rarr;
+        </button>
+        <div id="intakeStatus" style="margin-top:1rem;font-size:0.875rem;display:none;"></div>
+      </div>
+
       <!-- CARDS -->
       <div class="section-title">&#9889; Your Charlie Tools</div>
       <div class="cards-grid">
@@ -907,6 +935,51 @@
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await supabase.auth.signOut();
       window.location.href = 'login.html';
+    });
+
+    // CLIENT INTAKE AGENT
+    document.getElementById('intakeSubmit').addEventListener('click', async () => {
+      const name = document.getElementById('intakeName').value.trim();
+      const service = document.getElementById('intakeService').value.trim();
+      const amount = document.getElementById('intakeAmount').value.trim();
+      const email = document.getElementById('intakeEmail').value.trim();
+      const status = document.getElementById('intakeStatus');
+
+      if (!name || !service || !amount || !email) {
+        status.style.display = 'block';
+        status.style.color = '#ff6b6b';
+        status.textContent = 'Please fill in all fields.';
+        return;
+      }
+
+      document.getElementById('intakeSubmit').textContent = 'Sending to Charlie...';
+      document.getElementById('intakeSubmit').disabled = true;
+      status.style.display = 'none';
+
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVLiLMCW_oOewJQlv9EyRN2wUW_1BYvyYIjxyVTcZFg3Ni1iMhgh2SJcTreD6vF0Zp/exec';
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clientName: name, service, amount, email })
+        });
+        status.style.display = 'block';
+        status.style.color = '#00d4ff';
+        status.textContent = '✓ Done! Charlie is logging the client and writing the follow-up email now.';
+        document.getElementById('intakeName').value = '';
+        document.getElementById('intakeService').value = '';
+        document.getElementById('intakeAmount').value = '';
+        document.getElementById('intakeEmail').value = '';
+      } catch (err) {
+        status.style.display = 'block';
+        status.style.color = '#ff6b6b';
+        status.textContent = 'Something went wrong. Please try again.';
+      }
+
+      document.getElementById('intakeSubmit').textContent = 'Send to Charlie →';
+      document.getElementById('intakeSubmit').disabled = false;
     });
   </script>
 
