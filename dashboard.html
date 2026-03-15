@@ -796,7 +796,7 @@
       const wfList = document.getElementById('workflowList');
       if (workflows.length === 0) {
         wfList.innerHTML = '<li class="workflow-empty">Your automations are being set up — we\'ll update this once they\'re live.</li>';
-        document.getElementById('workflowDesc').textContent = 'Your automations will appear here once they\'re live.';
+        document.getElementById('workflowDesc').textContent = '';
       } else {
         document.getElementById('workflowDesc').textContent = 'Automations Charlie is running for your business right now.';
         wfList.innerHTML = workflows.map(w => `
