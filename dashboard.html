@@ -627,9 +627,9 @@
             <span style="width:8px;height:8px;border-radius:50%;background:#bf5af2;box-shadow:0 0 8px #bf5af2;display:inline-block;"></span>
             <span style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#bf5af2;">Live</span>
           </div>
-          <div style="font-size:1rem;font-weight:800;color:#f0f0f0;margin-bottom:0.4rem;">FreshBooks Invoice → Gmail</div>
-          <p style="font-size:0.8rem;color:#888;line-height:1.5;margin-bottom:1rem;">New invoice created in FreshBooks → AI writes follow-up email → Gmail Draft</p>
-          <div style="font-size:0.72rem;color:rgba(191,90,242,0.8);font-weight:600;">FreshBooks + AI + Gmail</div>
+          <div style="font-size:1rem;font-weight:800;color:#f0f0f0;margin-bottom:0.4rem;">Overdue Payment → Reminder Email</div>
+          <p style="font-size:0.8rem;color:#888;line-height:1.5;margin-bottom:1rem;">Overdue payment flagged → AI writes polite reminder email → Gmail Draft</p>
+          <div style="font-size:0.72rem;color:rgba(191,90,242,0.8);font-weight:600;">Webhook + AI + Gmail</div>
         </div>
         <div style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(0,212,255,0.2);border-radius:16px;padding:1.5rem;">
           <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.75rem;">
@@ -673,6 +673,30 @@
           Send Thank You Email &rarr;
         </button>
         <div id="payStatus" style="margin-top:1rem;font-size:0.875rem;display:none;"></div>
+      </div>
+
+      <!-- REMINDER AGENT -->
+      <div class="section-title">&#9201; Reminder Agent</div>
+      <div style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(255,165,0,0.2);border-radius:20px;padding:1.75rem;margin-bottom:2.5rem;box-shadow:0 0 40px rgba(255,165,0,0.06);">
+        <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.6;">Send a polite overdue payment reminder — fill in the client details and fire it directly from here.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:orange;display:block;margin-bottom:0.4rem;">Client Name</label>
+            <input id="reminderName" type="text" placeholder="e.g. Neil Dang" style="width:100%;padding:0.75rem 1rem;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f0f0f0;font-size:0.875rem;font-family:inherit;outline:none;" />
+          </div>
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:orange;display:block;margin-bottom:0.4rem;">Amount Overdue</label>
+            <input id="reminderAmount" type="text" placeholder="e.g. 150" style="width:100%;padding:0.75rem 1rem;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f0f0f0;font-size:0.875rem;font-family:inherit;outline:none;" />
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:orange;display:block;margin-bottom:0.4rem;">Client Email</label>
+            <input id="reminderEmail" type="email" placeholder="e.g. neil@email.com" style="width:100%;padding:0.75rem 1rem;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f0f0f0;font-size:0.875rem;font-family:inherit;outline:none;" />
+          </div>
+        </div>
+        <button id="reminderSubmit" style="padding:0.85rem 2rem;border-radius:10px;border:none;background:linear-gradient(135deg,#ff8c00 0%,#cc6600 100%);color:#fff;font-size:0.95rem;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 0 20px rgba(255,140,0,0.35);transition:box-shadow 0.2s,transform 0.15s;">
+          Send Reminder Email &rarr;
+        </button>
+        <div id="reminderStatus" style="margin-top:1rem;font-size:0.875rem;display:none;"></div>
       </div>
 
       <!-- WELCOME AGENT -->
@@ -1023,6 +1047,32 @@
     });
 
     // CLIENT INTAKE AGENT
+    document.getElementById('reminderSubmit').addEventListener('click', async () => {
+      const name = document.getElementById('reminderName').value.trim();
+      const amount = document.getElementById('reminderAmount').value.trim();
+      const email = document.getElementById('reminderEmail').value.trim();
+      const statusEl = document.getElementById('reminderStatus');
+      const btn = document.getElementById('reminderSubmit');
+      if (!name || !amount || !email) {
+        statusEl.style.display = 'block';
+        statusEl.style.color = '#ff6b6b';
+        statusEl.textContent = 'Please fill in all fields.';
+        return;
+      }
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      await fetch('https://hooks.zapier.com/hooks/catch/26833980/upyajt6/', {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientName: name, amount, email })
+      });
+      statusEl.style.display = 'block';
+      statusEl.style.color = 'orange';
+      statusEl.textContent = 'Fired! Check Gmail Drafts in ~30 seconds.';
+      btn.textContent = 'Send Reminder Email →';
+      btn.disabled = false;
+    });
+
     document.getElementById('welcomeSubmit').addEventListener('click', async () => {
       const name = document.getElementById('welcomeName').value.trim();
       const email = document.getElementById('welcomeEmail').value.trim();
