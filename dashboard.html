@@ -651,6 +651,30 @@
         </div>
       </div>
 
+      <!-- TRIGGER AUTOMATIONS -->
+      <div class="section-title">&#9889; Trigger an Automation</div>
+      <div style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(0,212,255,0.2);border-radius:20px;padding:1.75rem;margin-bottom:2.5rem;box-shadow:0 0 40px rgba(0,212,255,0.06);">
+        <p style="font-size:0.875rem;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.6;">Send a payment thank you email — fill in the client details and fire it directly from here.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#00d4ff;display:block;margin-bottom:0.4rem;">Client Name</label>
+            <input id="payName" type="text" placeholder="e.g. Neil Dang" style="width:100%;padding:0.75rem 1rem;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f0f0f0;font-size:0.875rem;font-family:inherit;outline:none;" />
+          </div>
+          <div>
+            <label style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#00d4ff;display:block;margin-bottom:0.4rem;">Amount</label>
+            <input id="payAmount" type="text" placeholder="e.g. 150" style="width:100%;padding:0.75rem 1rem;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f0f0f0;font-size:0.875rem;font-family:inherit;outline:none;" />
+          </div>
+          <div style="grid-column:1/-1;">
+            <label style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#00d4ff;display:block;margin-bottom:0.4rem;">Client Email</label>
+            <input id="payEmail" type="email" placeholder="e.g. neil@email.com" style="width:100%;padding:0.75rem 1rem;background:#1a1a1a;border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:#f0f0f0;font-size:0.875rem;font-family:inherit;outline:none;" />
+          </div>
+        </div>
+        <button id="paySubmit" style="padding:0.85rem 2rem;border-radius:10px;border:none;background:linear-gradient(135deg,#00d4ff 0%,#0099cc 100%);color:#000;font-size:0.95rem;font-weight:700;font-family:inherit;cursor:pointer;box-shadow:0 0 20px rgba(0,212,255,0.35);transition:box-shadow 0.2s,transform 0.15s;">
+          Send Thank You Email &rarr;
+        </button>
+        <div id="payStatus" style="margin-top:1rem;font-size:0.875rem;display:none;"></div>
+      </div>
+
       <!-- CLIENT INTAKE AGENT -->
       <div class="section-title">&#129302; Client Intake Agent</div>
       <div style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(191,90,242,0.2);border-radius:20px;padding:1.75rem;margin-bottom:2.5rem;box-shadow:0 0 40px rgba(191,90,242,0.06);">
@@ -979,6 +1003,32 @@
     });
 
     // CLIENT INTAKE AGENT
+    document.getElementById('paySubmit').addEventListener('click', async () => {
+      const name = document.getElementById('payName').value.trim();
+      const amount = document.getElementById('payAmount').value.trim();
+      const email = document.getElementById('payEmail').value.trim();
+      const statusEl = document.getElementById('payStatus');
+      const btn = document.getElementById('paySubmit');
+      if (!name || !amount || !email) {
+        statusEl.style.display = 'block';
+        statusEl.style.color = '#ff6b6b';
+        statusEl.textContent = 'Please fill in all fields.';
+        return;
+      }
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      await fetch('https://hooks.zapier.com/hooks/catch/26833980/upydiqn/', {
+        method: 'POST', mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clientName: name, amount, email })
+      });
+      statusEl.style.display = 'block';
+      statusEl.style.color = '#00d4ff';
+      statusEl.textContent = 'Fired! Check Gmail Drafts in ~30 seconds.';
+      btn.textContent = 'Send Thank You Email →';
+      btn.disabled = false;
+    });
+
     document.getElementById('intakeSubmit').addEventListener('click', async () => {
       const name = document.getElementById('intakeName').value.trim();
       const service = document.getElementById('intakeService').value.trim();
