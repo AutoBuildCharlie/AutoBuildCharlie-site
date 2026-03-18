@@ -528,6 +528,145 @@
       .company-name { font-size: 1.8rem; }
       .modal { margin: 1rem; }
     }
+
+    /* CHARLIE AI CHAT */
+    .charlie-chat-wrap {
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid rgba(191,90,242,0.25);
+      border-radius: 20px;
+      padding: 1.75rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 0 40px rgba(191,90,242,0.08);
+    }
+    .charlie-chat-msgs {
+      min-height: 180px;
+      max-height: 340px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-right: 0.25rem;
+    }
+    .charlie-chat-msgs::-webkit-scrollbar { width: 4px; }
+    .charlie-chat-msgs::-webkit-scrollbar-track { background: transparent; }
+    .charlie-chat-msgs::-webkit-scrollbar-thumb { background: rgba(191,90,242,0.3); border-radius: 4px; }
+    .charlie-msg {
+      max-width: 80%;
+      padding: 0.7rem 1rem;
+      border-radius: 14px;
+      font-size: 0.875rem;
+      line-height: 1.55;
+    }
+    .charlie-msg.from-charlie {
+      align-self: flex-start;
+      background: rgba(191,90,242,0.1);
+      border: 1px solid rgba(191,90,242,0.2);
+      color: var(--text);
+    }
+    .charlie-msg.from-charlie.action-fired {
+      background: rgba(34,197,94,0.08);
+      border-color: rgba(34,197,94,0.25);
+      color: #22c55e;
+    }
+    .charlie-msg.from-user {
+      align-self: flex-end;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text);
+    }
+    .charlie-chat-input-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+    .charlie-chat-input {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(191,90,242,0.3);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      padding: 0.75rem 1rem;
+      outline: none;
+      resize: none;
+      min-height: 46px;
+      max-height: 120px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      line-height: 1.5;
+    }
+    .charlie-chat-input:focus {
+      border-color: rgba(191,90,242,0.6);
+      box-shadow: 0 0 0 3px rgba(191,90,242,0.1);
+    }
+    .charlie-chat-input::placeholder { color: rgba(255,255,255,0.2); }
+    .charlie-send-btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #bf5af2 0%, #9b35d4 100%);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 0 16px rgba(191,90,242,0.3);
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+    .charlie-send-btn:hover { box-shadow: 0 0 24px rgba(191,90,242,0.5); transform: translateY(-1px); }
+    .charlie-send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .charlie-key-setup {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+    .charlie-key-input {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(191,90,242,0.3);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-family: inherit;
+      padding: 0.65rem 1rem;
+      outline: none;
+    }
+    .charlie-key-input:focus { border-color: rgba(191,90,242,0.6); }
+    .charlie-key-save {
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #bf5af2 0%, #9b35d4 100%);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .charlie-typing {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0.6rem 1rem;
+      background: rgba(191,90,242,0.08);
+      border: 1px solid rgba(191,90,242,0.15);
+      border-radius: 14px;
+      align-self: flex-start;
+    }
+    .charlie-typing span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(191,90,242,0.7);
+      animation: typingDot 1.2s infinite ease-in-out;
+    }
+    .charlie-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .charlie-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingDot {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -745,6 +884,21 @@
           Send to Charlie &rarr;
         </button>
         <div id="intakeStatus" style="margin-top:1rem;font-size:0.875rem;display:none;"></div>
+      </div>
+
+      <!-- CHARLIE AI CHAT -->
+      <div class="section-title">🤖 Charlie AI — Talk to Your Automations</div>
+      <div class="charlie-chat-wrap">
+        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.55;">Type a command and Charlie will fire the right automation for you. <span style="color:rgba(191,90,242,0.8);">e.g. "Send a reminder to John at john@email.com for $150"</span></p>
+        <div id="charlieKeySetup" class="charlie-key-setup" style="display:none;">
+          <input class="charlie-key-input" id="charlieKeyInput" type="password" placeholder="Paste your Claude API key (sk-ant-...)"/>
+          <button class="charlie-key-save" id="charlieKeySave">Save Key</button>
+        </div>
+        <div class="charlie-chat-msgs" id="charlieMsgs"></div>
+        <div class="charlie-chat-input-row">
+          <textarea class="charlie-chat-input" id="charlieInput" placeholder="Tell Charlie what to do..." rows="1"></textarea>
+          <button class="charlie-send-btn" id="charlieSendBtn">Send →</button>
+        </div>
       </div>
 
       <!-- CARDS -->
@@ -1167,6 +1321,173 @@
       document.getElementById('intakeSubmit').textContent = 'Send to Charlie →';
       document.getElementById('intakeSubmit').disabled = false;
     });
+
+    // ── CHARLIE AI CHAT ──────────────────────────────────────────
+    const CHARLIE_KEY_STORAGE = 'abc_claude_key';
+    const WEBHOOKS = {
+      gratitude: 'https://hooks.zapier.com/hooks/catch/26833980/upydiqn/',
+      reminder:  'https://hooks.zapier.com/hooks/catch/26833980/upyajt6/',
+      welcome:   'https://hooks.zapier.com/hooks/catch/26833980/upyfofm/',
+      intake:    'https://script.google.com/macros/s/AKfycbyVLiLMCW_oOewJQlv9EyRN2wUW_1BYvyYIjxyVTcZFg3Ni1iMhgh2SJcTreD6vF0Zp/exec'
+    };
+    const CHARLIE_SYSTEM = `You are Charlie — the AI assistant for the AutoBuildCharlie business dashboard. You help business owners trigger their automations using natural language.
+
+Available automations:
+1. "gratitude" — sends a payment thank-you email. Required: client_name, amount, client_email.
+2. "reminder" — sends an overdue payment reminder email. Required: client_name, amount, client_email.
+3. "welcome" — sends a new client welcome email. Required: client_name, client_email.
+4. "intake" — logs a new client to Google Sheets and sends a follow-up email. Required: client_name, service, amount, client_email.
+
+When the user asks you to trigger an automation and you have ALL required fields, respond with ONLY a JSON object (no extra text):
+{"action": "fire", "agent": "gratitude", "data": {"client_name": "John Smith", "amount": "150", "client_email": "john@email.com"}}
+
+If any required fields are missing, ask for them in a short, friendly message.
+If the user is just chatting or asking a question (not triggering anything), reply in plain conversational text — short and helpful.
+Never include JSON and text in the same response. It's one or the other.`;
+
+    let charlieHistory = [];
+    let charlieKey = localStorage.getItem(CHARLIE_KEY_STORAGE) || '';
+
+    function charlieAddMsg(text, from, isAction) {
+      const msgs = document.getElementById('charlieMsgs');
+      const d = document.createElement('div');
+      d.className = `charlie-msg from-${from}${isAction ? ' action-fired' : ''}`;
+      d.textContent = text;
+      msgs.appendChild(d);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function charlieShowTyping() {
+      const msgs = document.getElementById('charlieMsgs');
+      const d = document.createElement('div');
+      d.className = 'charlie-typing';
+      d.id = 'charlieTyping';
+      d.innerHTML = '<span></span><span></span><span></span>';
+      msgs.appendChild(d);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function charlieHideTyping() {
+      const t = document.getElementById('charlieTyping');
+      if (t) t.remove();
+    }
+
+    async function charlieFireWebhook(agent, data) {
+      const url = WEBHOOKS[agent];
+      const payload = agent === 'intake'
+        ? { clientName: data.client_name, service: data.service, amount: data.amount, email: data.client_email }
+        : { clientName: data.client_name, amount: data.amount, email: data.client_email };
+      await fetch(url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    }
+
+    async function charlieSend(userText) {
+      if (!userText.trim()) return;
+      const btn = document.getElementById('charlieSendBtn');
+      const input = document.getElementById('charlieInput');
+      btn.disabled = true;
+      input.disabled = true;
+
+      charlieAddMsg(userText, 'user', false);
+      charlieHistory.push({ role: 'user', content: userText });
+      charlieShowTyping();
+
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': charlieKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 512,
+            system: CHARLIE_SYSTEM,
+            messages: charlieHistory
+          })
+        });
+
+        const json = await res.json();
+        charlieHideTyping();
+
+        if (!res.ok) {
+          charlieAddMsg('Something went wrong: ' + (json.error?.message || 'Unknown error'), 'charlie', false);
+          btn.disabled = false; input.disabled = false;
+          return;
+        }
+
+        const reply = json.content[0].text.trim();
+        charlieHistory.push({ role: 'assistant', content: reply });
+
+        // Check if it's an action JSON
+        try {
+          const parsed = JSON.parse(reply);
+          if (parsed.action === 'fire' && parsed.agent && parsed.data) {
+            const agentNames = { gratitude: 'Gratitude', reminder: 'Reminder', welcome: 'Welcome', intake: 'Client Intake' };
+            charlieAddMsg(`Firing ${agentNames[parsed.agent] || parsed.agent} Agent for ${parsed.data.client_name}...`, 'charlie', false);
+            await charlieFireWebhook(parsed.agent, parsed.data);
+            charlieAddMsg(`✓ Done! ${agentNames[parsed.agent]} Agent fired for ${parsed.data.client_name}. Check Gmail Drafts in ~30 seconds.`, 'charlie', true);
+          } else {
+            charlieAddMsg(reply, 'charlie', false);
+          }
+        } catch {
+          charlieAddMsg(reply, 'charlie', false);
+        }
+      } catch (err) {
+        charlieHideTyping();
+        charlieAddMsg('Connection error. Check your API key or internet connection.', 'charlie', false);
+      }
+
+      btn.disabled = false;
+      input.disabled = false;
+      input.focus();
+    }
+
+    function initCharlieChat() {
+      if (!charlieKey) {
+        document.getElementById('charlieKeySetup').style.display = 'flex';
+        charlieAddMsg("Hi! I'm Charlie. Paste your Claude API key above to get started.", 'charlie', false);
+      } else {
+        charlieAddMsg("Hey! I'm Charlie. Tell me what to do — e.g. \"Send a thank you to Sarah at sarah@email.com for $200\".", 'charlie', false);
+      }
+
+      document.getElementById('charlieKeySave').addEventListener('click', () => {
+        const key = document.getElementById('charlieKeyInput').value.trim();
+        if (!key.startsWith('sk-ant-')) {
+          alert('That doesn\'t look like a valid Claude API key. It should start with sk-ant-');
+          return;
+        }
+        charlieKey = key;
+        localStorage.setItem(CHARLIE_KEY_STORAGE, key);
+        document.getElementById('charlieKeySetup').style.display = 'none';
+        document.getElementById('charlieMsgs').innerHTML = '';
+        charlieHistory = [];
+        charlieAddMsg("Key saved! Hey, I'm Charlie. Tell me what to do — e.g. \"Send a reminder to John at john@email.com for $150\".", 'charlie', false);
+      });
+
+      document.getElementById('charlieSendBtn').addEventListener('click', () => {
+        const val = document.getElementById('charlieInput').value.trim();
+        document.getElementById('charlieInput').value = '';
+        charlieSend(val);
+      });
+
+      document.getElementById('charlieInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          const val = document.getElementById('charlieInput').value.trim();
+          document.getElementById('charlieInput').value = '';
+          charlieSend(val);
+        }
+      });
+    }
+
+    // Init chat after dashboard loads
+    const _origShowDash = showDashboard;
+    showDashboard = function(company, field, meta) {
+      _origShowDash(company, field, meta);
+      initCharlieChat();
+    };
   </script>
 
 </body>
