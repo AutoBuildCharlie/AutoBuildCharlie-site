@@ -1112,7 +1112,8 @@
       gratitude: 'https://hooks.zapier.com/hooks/catch/26833980/upydiqn/',
       reminder:  'https://hooks.zapier.com/hooks/catch/26833980/upyajt6/',
       welcome:   'https://hooks.zapier.com/hooks/catch/26833980/upyfofm/',
-      intake:    'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec'
+      intake:    'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec',
+      invoice:   'https://hooks.zapier.com/hooks/catch/26833980/up1tr5g'
     };
     const CHARLIE_SYSTEM = `You are Charlie — the AI assistant for the AutoBuildCharlie business dashboard. You help business owners trigger automations and manage their client records using natural language.
 
@@ -1121,6 +1122,7 @@ AUTOMATIONS (fire these via webhook):
 2. "reminder" — sends an overdue payment reminder email. Required: client_name, amount, client_email.
 3. "welcome" — sends a new client welcome email. Required: client_name, client_email.
 4. "intake" — adds a new client to Google Sheets and sends a follow-up email. Required: client_name, service, amount, client_email.
+5. "invoice" — creates an invoice in FreshBooks. Required: client_name, client_email, service, amount.
 
 CLIENT RECORD MANAGEMENT (Google Sheets):
 5. "edit_client" — update an existing client's info in the sheet. Required: client_name. Optional: email, service, amount (only include fields being changed).
@@ -1170,9 +1172,14 @@ Never include JSON and text in the same response. It's one or the other.`;
 
     async function charlieFireWebhook(agent, data) {
       const url = WEBHOOKS[agent];
-      const payload = agent === 'intake'
-        ? { clientName: data.client_name, service: data.service, amount: data.amount, email: data.client_email }
-        : { clientName: data.client_name, amount: data.amount, email: data.client_email };
+      let payload;
+      if (agent === 'intake') {
+        payload = { clientName: data.client_name, service: data.service, amount: data.amount, email: data.client_email };
+      } else if (agent === 'invoice') {
+        payload = { clientName: data.client_name, email: data.client_email, service: data.service, amount: data.amount };
+      } else {
+        payload = { clientName: data.client_name, amount: data.amount, email: data.client_email };
+      }
       await fetch(url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     }
 
