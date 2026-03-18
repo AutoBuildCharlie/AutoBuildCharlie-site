@@ -78,6 +78,18 @@
 
     #loadingMsg { color: var(--text-muted); font-size: 0.9rem; padding: 1rem 0; }
     #noKeyMsg { display: none; background: rgba(255,159,10,0.1); border: 1px solid rgba(255,159,10,0.3); border-radius: 10px; padding: 1rem; font-size: 0.83rem; color: #ff9f0a; margin-bottom: 1.5rem; }
+
+    /* PLAN SELECTOR */
+    .plan-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .plan-row label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+    .plan-select { background: #1a1a1a; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.85rem; padding: 0.5rem 0.85rem; outline: none; cursor: pointer; transition: border-color 0.2s; }
+    .plan-select:focus { border-color: rgba(191,90,242,0.5); }
+    .plan-badge { font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 6px; letter-spacing: 0.04em; }
+    .plan-badge.founders { background: rgba(0,212,255,0.15); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+    .plan-badge.starter  { background: rgba(191,90,242,0.12); color: var(--accent); border: 1px solid rgba(191,90,242,0.3); }
+    .plan-badge.growth   { background: rgba(48,209,88,0.12); color: #30d158; border: 1px solid rgba(48,209,88,0.3); }
+    .plan-badge.dfy      { background: rgba(255,159,10,0.12); color: #ff9f0a; border: 1px solid rgba(255,159,10,0.3); }
+    .plan-save-msg { font-size: 0.75rem; color: #30d158; display: none; }
   </style>
 </head>
 <body>
@@ -194,7 +206,18 @@
         card.className = 'user-card';
 
         const allOn = AUTOMATIONS.every(a => autoStates[a.key] === true);
+        const currentPlan = meta.plan || '';
+        const planBadgeClass = { 'Founders': 'founders', 'Starter': 'starter', 'Growth': 'growth', 'Done For You': 'dfy' }[currentPlan] || '';
+        const PLANS = ['', 'Founders', 'Starter', 'Growth', 'Done For You'];
         const togglesHTML = `
+          <div class="plan-row">
+            <label>Current Plan</label>
+            <select class="plan-select">
+              ${PLANS.map(p => `<option value="${p}" ${p === currentPlan ? 'selected' : ''}>${p || '— Not set —'}</option>`).join('')}
+            </select>
+            ${planBadgeClass ? `<span class="plan-badge ${planBadgeClass}">${currentPlan}</span>` : ''}
+            <span class="plan-save-msg">✓ Saved</span>
+          </div>
           <div class="toggle-all-row">
             <span style="font-size:0.78rem;color:var(--text-muted);">${liveCount} of ${AUTOMATIONS.length} active</span>
             <button class="toggle-all-btn" data-all="${allOn}">${allOn ? 'Turn All Off' : 'Turn All On'}</button>
@@ -222,6 +245,7 @@
               <div class="user-name">
                 <span class="status-dot ${dotClass}"></span>
                 ${name}
+                ${planBadgeClass ? `<span class="plan-badge ${planBadgeClass}">${currentPlan}</span>` : ''}
               </div>
               <div class="user-email">${user.email}</div>
               <div class="user-joined">Joined ${joined}</div>
@@ -254,6 +278,36 @@
             alert('Save failed — check your connection.');
           }
         }
+
+        // Plan selector
+        const planSelect = card.querySelector('.plan-select');
+        const planSaveMsg = card.querySelector('.plan-save-msg');
+        const planBadgeEl = card.querySelector('.auto-panel .plan-badge');
+        planSelect.addEventListener('change', async () => {
+          const newPlan = planSelect.value;
+          meta.plan = newPlan;
+          // Update header badge
+          const headerBadge = card.querySelector('.user-name .plan-badge');
+          const badgeClass = { 'Founders': 'founders', 'Starter': 'starter', 'Growth': 'growth', 'Done For You': 'dfy' }[newPlan] || '';
+          if (headerBadge) headerBadge.remove();
+          if (badgeClass) {
+            const b = document.createElement('span');
+            b.className = `plan-badge ${badgeClass}`;
+            b.textContent = newPlan;
+            card.querySelector('.user-name').appendChild(b);
+          }
+          try {
+            await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${user.id}`, {
+              method: 'PUT',
+              headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_metadata: { ...meta } })
+            });
+            planSaveMsg.style.display = 'inline';
+            setTimeout(() => { planSaveMsg.style.display = 'none'; }, 2000);
+          } catch (err) {
+            alert('Save failed — check your connection.');
+          }
+        });
 
         function refreshSummary() {
           const n = AUTOMATIONS.filter(a => autoStates[a.key] === true).length;
