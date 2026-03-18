@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — AutoBuildCharlie</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #bf5af2;
+      --bg: #080808;
+      --bg-card: #111;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --border: rgba(255,255,255,0.08);
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; padding: 2rem; }
+    h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.25rem; }
+    .subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; }
+
+    /* PASSWORD GATE */
+    #passwordGate { max-width: 380px; margin: 10vh auto; background: #111; border: 1px solid var(--border); border-radius: 16px; padding: 2rem; text-align: center; }
+    #passwordGate h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+    #passwordGate p { font-size: 0.83rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .gate-input { width: 100%; background: #1a1a1a; border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text); font-size: 0.95rem; margin-bottom: 1rem; outline: none; }
+    .gate-input:focus { border-color: rgba(191,90,242,0.5); }
+    .gate-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.75rem; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
+    .gate-btn:hover { opacity: 0.9; }
+    #gateError { font-size: 0.8rem; color: #ff453a; margin-top: 0.5rem; display: none; }
+
+    /* ADMIN PANEL */
+    #adminPanel { display: none; max-width: 800px; margin: 0 auto; }
+    .key-setup { background: #111; border: 1px solid rgba(191,90,242,0.3); border-radius: 12px; padding: 1.25rem; margin-bottom: 2rem; }
+    .key-setup p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+    .key-row { display: flex; gap: 0.75rem; }
+    .key-input { flex: 1; background: #1a1a1a; border: 1px solid var(--border); border-radius: 8px; padding: 0.65rem 1rem; color: var(--text); font-size: 0.85rem; outline: none; font-family: monospace; }
+    .key-input:focus { border-color: rgba(191,90,242,0.5); }
+    .key-save { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.65rem 1.25rem; font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+
+    .user-card { background: #111; border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .user-email { font-size: 0.78rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-joined { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
+    .toggle-btn { border: none; border-radius: 8px; padding: 0.55rem 1.1rem; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; }
+    .toggle-btn:hover { opacity: 0.85; }
+    .toggle-btn.live { background: rgba(48,209,88,0.15); color: #30d158; border: 1px solid rgba(48,209,88,0.3); }
+    .toggle-btn.pending { background: rgba(255,159,10,0.12); color: #ff9f0a; border: 1px solid rgba(255,159,10,0.25); }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 0.5rem; }
+    .status-dot.live { background: #30d158; box-shadow: 0 0 6px #30d158; }
+    .status-dot.pending { background: #ff9f0a; box-shadow: 0 0 6px #ff9f0a; }
+    #loadingMsg { color: var(--text-muted); font-size: 0.9rem; padding: 1rem 0; }
+    #noKeyMsg { display: none; background: rgba(255,159,10,0.1); border: 1px solid rgba(255,159,10,0.3); border-radius: 10px; padding: 1rem; font-size: 0.83rem; color: #ff9f0a; margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+
+  <!-- PASSWORD GATE -->
+  <div id="passwordGate">
+    <div style="font-size:2rem;margin-bottom:0.75rem;">🔐</div>
+    <h2>AutoBuildCharlie Admin</h2>
+    <p>Enter your admin password to continue.</p>
+    <input class="gate-input" type="password" id="adminPassword" placeholder="Admin password" />
+    <button class="gate-btn" id="unlockBtn">Unlock →</button>
+    <div id="gateError">Incorrect password. Try again.</div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel">
+    <h1>⚡ Admin Panel</h1>
+    <p class="subtitle">Manage your clients and toggle their live automations.</p>
+
+    <div class="key-setup" id="keySetup">
+      <p>Paste your Supabase <strong>service role key</strong> to load users. Find it in Supabase → Project Settings → API → service_role key.</p>
+      <div class="key-row">
+        <input class="key-input" type="password" id="serviceKeyInput" placeholder="eyJ..." />
+        <button class="key-save" id="saveServiceKey">Save & Load</button>
+      </div>
+    </div>
+
+    <div id="noKeyMsg">⚠️ No service key saved. Paste it above to load your users.</div>
+    <div id="loadingMsg" style="display:none;">Loading users...</div>
+    <div id="userList"></div>
+  </div>
+
+  <script>
+    const ADMIN_PASSWORD = 'abc-admin-2026';
+    const SUPABASE_URL = 'https://sqizjjclcxfbxwyajskk.supabase.co';
+    const SERVICE_KEY_STORAGE = 'abc_service_key';
+
+    // PASSWORD GATE
+    document.getElementById('unlockBtn').addEventListener('click', checkPassword);
+    document.getElementById('adminPassword').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
+
+    function checkPassword() {
+      const val = document.getElementById('adminPassword').value;
+      if (val === ADMIN_PASSWORD) {
+        document.getElementById('passwordGate').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        initAdmin();
+      } else {
+        document.getElementById('gateError').style.display = 'block';
+      }
+    }
+
+    function initAdmin() {
+      const savedKey = localStorage.getItem(SERVICE_KEY_STORAGE);
+      if (savedKey) {
+        document.getElementById('keySetup').style.display = 'none';
+        loadUsers(savedKey);
+      } else {
+        document.getElementById('noKeyMsg').style.display = 'block';
+      }
+
+      document.getElementById('saveServiceKey').addEventListener('click', () => {
+        const key = document.getElementById('serviceKeyInput').value.trim();
+        if (!key) return;
+        localStorage.setItem(SERVICE_KEY_STORAGE, key);
+        document.getElementById('keySetup').style.display = 'none';
+        document.getElementById('noKeyMsg').style.display = 'none';
+        loadUsers(key);
+      });
+    }
+
+    async function loadUsers(serviceKey) {
+      document.getElementById('loadingMsg').style.display = 'block';
+      document.getElementById('userList').innerHTML = '';
+      try {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?per_page=100`, {
+          headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` }
+        });
+        const data = await res.json();
+        document.getElementById('loadingMsg').style.display = 'none';
+        if (!data.users) { document.getElementById('userList').innerHTML = '<p style="color:#ff453a;font-size:0.85rem;">Failed to load users. Check your service key.</p>'; return; }
+        renderUsers(data.users, serviceKey);
+      } catch (err) {
+        document.getElementById('loadingMsg').style.display = 'none';
+        document.getElementById('userList').innerHTML = '<p style="color:#ff453a;font-size:0.85rem;">Error loading users: ' + err.message + '</p>';
+      }
+    }
+
+    function renderUsers(users, serviceKey) {
+      const list = document.getElementById('userList');
+      if (users.length === 0) { list.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No users found.</p>'; return; }
+
+      users.forEach(user => {
+        const meta = user.user_metadata || {};
+        const isLive = meta.automations_live === true;
+        const name = meta.company_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Unknown';
+        const joined = new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+        const card = document.createElement('div');
+        card.className = 'user-card';
+        card.id = `user-${user.id}`;
+        card.innerHTML = `
+          <div class="user-info">
+            <div class="user-name">
+              <span class="status-dot ${isLive ? 'live' : 'pending'}"></span>
+              ${name}
+            </div>
+            <div class="user-email">${user.email}</div>
+            <div class="user-joined">Joined ${joined}</div>
+          </div>
+          <button class="toggle-btn ${isLive ? 'live' : 'pending'}" data-id="${user.id}" data-live="${isLive}">
+            ${isLive ? '✓ Automations Live' : '⏳ Pending — Go Live'}
+          </button>
+        `;
+        list.appendChild(card);
+
+        card.querySelector('.toggle-btn').addEventListener('click', async (e) => {
+          const btn = e.currentTarget;
+          const userId = btn.dataset.id;
+          const currentlyLive = btn.dataset.live === 'true';
+          const newState = !currentlyLive;
+          btn.textContent = 'Saving...';
+          btn.disabled = true;
+
+          try {
+            await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
+              method: 'PUT',
+              headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_metadata: { ...meta, automations_live: newState } })
+            });
+            btn.dataset.live = String(newState);
+            btn.className = `toggle-btn ${newState ? 'live' : 'pending'}`;
+            btn.textContent = newState ? '✓ Automations Live' : '⏳ Pending — Go Live';
+            const dot = card.querySelector('.status-dot');
+            dot.className = `status-dot ${newState ? 'live' : 'pending'}`;
+          } catch (err) {
+            btn.textContent = 'Error — try again';
+          }
+          btn.disabled = false;
+        });
+      });
+    }
+  </script>
+</body>
+</html>
