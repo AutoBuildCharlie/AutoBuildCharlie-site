@@ -713,6 +713,20 @@
         <div class="encouragement" id="encouragementMsg"></div>
       </div>
 
+      <!-- CHARLIE AI CHAT -->
+      <div class="section-title">🤖 Charlie AI — Talk to Your Automations</div>
+      <div class="charlie-chat-wrap">
+        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.55;">Type a command and Charlie will fire the right automation for you. <span style="color:rgba(191,90,242,0.8);">e.g. "Send a reminder to John at john@email.com for $150"</span></p>
+        <div id="charlieKeySetup" class="charlie-key-setup" style="display:none;">
+          <input class="charlie-key-input" id="charlieKeyInput" type="password" placeholder="Paste your Claude API key (sk-ant-...)"/>
+          <button class="charlie-key-save" id="charlieKeySave">Save Key</button>
+        </div>
+        <div class="charlie-chat-msgs" id="charlieMsgs"></div>
+        <div class="charlie-chat-input-row">
+          <textarea class="charlie-chat-input" id="charlieInput" placeholder="Tell Charlie what to do..." rows="1"></textarea>
+          <button class="charlie-send-btn" id="charlieSendBtn">Send →</button>
+        </div>
+      </div>
 
       <!-- ONBOARDING SUMMARY -->
       <div class="section-title">&#128203; Your Onboarding Answers</div>
@@ -820,21 +834,6 @@
         </div>
       </div>
 
-
-      <!-- CHARLIE AI CHAT -->
-      <div class="section-title">🤖 Charlie AI — Talk to Your Automations</div>
-      <div class="charlie-chat-wrap">
-        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.55;">Type a command and Charlie will fire the right automation for you. <span style="color:rgba(191,90,242,0.8);">e.g. "Send a reminder to John at john@email.com for $150"</span></p>
-        <div id="charlieKeySetup" class="charlie-key-setup" style="display:none;">
-          <input class="charlie-key-input" id="charlieKeyInput" type="password" placeholder="Paste your Claude API key (sk-ant-...)"/>
-          <button class="charlie-key-save" id="charlieKeySave">Save Key</button>
-        </div>
-        <div class="charlie-chat-msgs" id="charlieMsgs"></div>
-        <div class="charlie-chat-input-row">
-          <textarea class="charlie-chat-input" id="charlieInput" placeholder="Tell Charlie what to do..." rows="1"></textarea>
-          <button class="charlie-send-btn" id="charlieSendBtn">Send →</button>
-        </div>
-      </div>
 
       <!-- CARDS -->
       <div class="section-title">&#9889; Your Charlie Tools</div>
