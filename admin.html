@@ -89,6 +89,7 @@
     .plan-badge.starter  { background: rgba(191,90,242,0.12); color: var(--accent); border: 1px solid rgba(191,90,242,0.3); }
     .plan-badge.growth   { background: rgba(48,209,88,0.12); color: #30d158; border: 1px solid rgba(48,209,88,0.3); }
     .plan-badge.dfy      { background: rgba(255,159,10,0.12); color: #ff9f0a; border: 1px solid rgba(255,159,10,0.3); }
+    .plan-badge.no-plan  { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--border); }
     .plan-save-msg { font-size: 0.75rem; color: #30d158; display: none; }
   </style>
 </head>
@@ -245,12 +246,12 @@
               <div class="user-name">
                 <span class="status-dot ${dotClass}"></span>
                 ${name}
-                ${planBadgeClass ? `<span class="plan-badge ${planBadgeClass}">${currentPlan}</span>` : ''}
               </div>
               <div class="user-email">${user.email}</div>
               <div class="user-joined">Joined ${joined}</div>
             </div>
-            <div style="display:flex;align-items:center;gap:0.75rem;">
+            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;justify-content:flex-end;">
+              <span class="plan-badge ${planBadgeClass || 'no-plan'}" id="planHeaderBadge-${user.id}">${currentPlan || 'No Plan'}</span>
               <span class="user-summary">${summaryText}</span>
               <span class="expand-icon">▼</span>
             </div>
@@ -287,14 +288,11 @@
           const newPlan = planSelect.value;
           meta.plan = newPlan;
           // Update header badge
-          const headerBadge = card.querySelector('.user-name .plan-badge');
-          const badgeClass = { 'Founders': 'founders', 'Starter': 'starter', 'Growth': 'growth', 'Done For You': 'dfy' }[newPlan] || '';
-          if (headerBadge) headerBadge.remove();
-          if (badgeClass) {
-            const b = document.createElement('span');
-            b.className = `plan-badge ${badgeClass}`;
-            b.textContent = newPlan;
-            card.querySelector('.user-name').appendChild(b);
+          const badgeClass = { 'Founders': 'founders', 'Starter': 'starter', 'Growth': 'growth', 'Done For You': 'dfy' }[newPlan] || 'no-plan';
+          const headerBadge = document.getElementById(`planHeaderBadge-${user.id}`);
+          if (headerBadge) {
+            headerBadge.className = `plan-badge ${badgeClass}`;
+            headerBadge.textContent = newPlan || 'No Plan';
           }
           try {
             await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${user.id}`, {
