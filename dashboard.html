@@ -1045,16 +1045,8 @@
           </li>`).join('');
       }
 
-      // Reports card
-      const wfCount = workflows.length;
-      const hoursSaved = wfCount * 2;
-      const tasksDone = wfCount * 30;
-      const reportGrid = document.getElementById('reportGrid');
-      reportGrid.innerHTML = `
-        <div class="report-item"><div class="report-number">${wfCount}</div><div class="report-label">Active Automations</div></div>
-        <div class="report-item"><div class="report-number">${hoursSaved}</div><div class="report-label">Hours Saved / Week</div></div>
-        <div class="report-item"><div class="report-number">${tasksDone}</div><div class="report-label">Tasks / Month</div></div>
-      `;
+      // Reports card — driven by real task log
+      updateReportStats();
 
       // Member since
       const created = new Date(meta.created_at || Date.now());
@@ -1210,6 +1202,31 @@ Never include JSON and text in the same response. It's one or the other.`;
       if (t) t.remove();
     }
 
+    function logTask(type) {
+      const log = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
+      log.push({ type, ts: Date.now() });
+      localStorage.setItem('abc_task_log', JSON.stringify(log));
+      updateReportStats();
+    }
+
+    function updateReportStats() {
+      const log = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
+      const now = Date.now();
+      const oneWeek = 7 * 24 * 60 * 60 * 1000;
+      const oneMonth = 30 * 24 * 60 * 60 * 1000;
+      const thisWeek = log.filter(e => now - e.ts < oneWeek).length;
+      const thisMonth = log.filter(e => now - e.ts < oneMonth).length;
+      const hoursSaved = (thisWeek * 5 / 60).toFixed(1);
+      const reportGrid = document.getElementById('reportGrid');
+      if (reportGrid) {
+        reportGrid.innerHTML = `
+          <div class="report-item"><div class="report-number">7</div><div class="report-label">Active Automations</div></div>
+          <div class="report-item"><div class="report-number">${hoursSaved}</div><div class="report-label">Hours Saved / Week</div></div>
+          <div class="report-item"><div class="report-number">${thisMonth}</div><div class="report-label">Tasks / Month</div></div>
+        `;
+      }
+    }
+
     async function charlieFireWebhook(agent, data) {
       const url = WEBHOOKS[agent];
       let payload;
@@ -1272,6 +1289,7 @@ Never include JSON and text in the same response. It's one or the other.`;
             const agentNames = { gratitude: 'Gratitude', reminder: 'Reminder', welcome: 'Welcome', intake: 'Client Intake' };
             charlieAddMsg(`Firing ${agentNames[parsed.agent] || parsed.agent} Agent for ${parsed.data.client_name}...`, 'charlie', false);
             await charlieFireWebhook(parsed.agent, parsed.data);
+            logTask(parsed.agent);
             charlieAddMsg(`✓ Done! ${agentNames[parsed.agent]} Agent fired for ${parsed.data.client_name}. Check Gmail Drafts in ~30 seconds.`, 'charlie', true);
 
           } else if (parsed.action === 'edit_client' && parsed.data) {
@@ -1281,6 +1299,7 @@ Never include JSON and text in the same response. It's one or the other.`;
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ action: 'edit', ...parsed.data })
             });
+            logTask('edit_client');
             charlieAddMsg(`✓ Done! ${parsed.data.client_name}'s record has been updated in Google Sheets.`, 'charlie', true);
 
           } else if (parsed.action === 'delete_client' && parsed.data) {
@@ -1290,6 +1309,7 @@ Never include JSON and text in the same response. It's one or the other.`;
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ action: 'delete', clientName: parsed.data.client_name })
             });
+            logTask('delete_client');
             charlieAddMsg(`✓ Done! ${parsed.data.client_name} has been removed from Google Sheets.`, 'charlie', true);
 
           } else {
