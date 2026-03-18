@@ -754,6 +754,7 @@
       </div>
 
       <!-- ACTIVE AUTOMATIONS -->
+      <div id="liveAutomationsSection" style="display:none;">
       <div class="section-title">&#9889; My Live Automations</div>
 
       <!-- STAGE 1: ONBOARDING -->
@@ -833,7 +834,14 @@
           <div style="font-size:0.68rem;color:rgba(255,159,10,0.8);font-weight:600;">Charlie → Zapier → FreshBooks</div>
         </div>
       </div>
+      </div><!-- end liveAutomationsSection -->
 
+      <!-- AUTOMATIONS PENDING (shown when not yet live) -->
+      <div id="automationsPending" style="display:none;background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:2rem;margin-bottom:2.5rem;text-align:center;">
+        <div style="font-size:1.5rem;margin-bottom:0.75rem;">⚙️</div>
+        <div style="font-size:1rem;font-weight:700;color:#f0f0f0;margin-bottom:0.4rem;">Your automations are being set up</div>
+        <p style="font-size:0.83rem;color:#888;line-height:1.6;max-width:380px;margin:0 auto;">Our team is configuring everything for your business. You'll see your live automations here once they're ready — usually within 24–48 hours.</p>
+      </div>
 
       <!-- CARDS -->
       <div class="section-title">&#9889; Your Charlie Tools</div>
@@ -1043,6 +1051,15 @@
           <div class="checklist-icon done">✓</div>
           <span class="checklist-label done">${s.label}</span>
         </li>`).join('');
+
+      // Show automations only if Cal has marked them live for this user
+      if (meta.automations_live === true) {
+        document.getElementById('liveAutomationsSection').style.display = 'block';
+        document.getElementById('automationsPending').style.display = 'none';
+      } else {
+        document.getElementById('liveAutomationsSection').style.display = 'none';
+        document.getElementById('automationsPending').style.display = 'block';
+      }
 
       // Reports card — driven by real task log
       updateReportStats();
