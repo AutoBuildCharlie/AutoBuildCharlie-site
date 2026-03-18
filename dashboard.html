@@ -1049,23 +1049,25 @@
       // Workflows
       const workflows = meta.workflows || [];
 
-      // Checklist
+      // Checklist — based on real user state
+      const autoStatesEarly = meta.automations || {};
+      const anyLiveEarly = Object.values(autoStatesEarly).some(v => v === true);
       const checklistSteps = [
-        { label: 'Create your account', done: true },
-        { label: 'Complete your onboarding form', done: true },
-        { label: 'Automations reviewed & configured', done: true },
-        { label: 'First automation goes live', done: true }
+        { label: 'Create your account',              done: true },
+        { label: 'Complete your onboarding form',    done: !!meta.onboarding_complete },
+        { label: 'Automations reviewed & configured', done: !!meta.automations_configured },
+        { label: 'First automation goes live',       done: anyLiveEarly }
       ];
       const checklistEl = document.getElementById('checklistItems');
       checklistEl.innerHTML = checklistSteps.map(s => `
         <li class="checklist-item">
-          <div class="checklist-icon done">✓</div>
-          <span class="checklist-label done">${s.label}</span>
+          <div class="checklist-icon ${s.done ? 'done' : ''}">${s.done ? '✓' : ''}</div>
+          <span class="checklist-label ${s.done ? 'done' : ''}">${s.label}</span>
         </li>`).join('');
 
       // Show automations section based on per-automation toggles
-      const autoStates = meta.automations || {};
-      const anyLive = Object.values(autoStates).some(v => v === true);
+      const autoStates = autoStatesEarly;
+      const anyLive = anyLiveEarly;
       activeAutoCount = Object.values(autoStates).filter(v => v === true).length;
       if (anyLive) {
         document.getElementById('liveAutomationsSection').style.display = 'block';
