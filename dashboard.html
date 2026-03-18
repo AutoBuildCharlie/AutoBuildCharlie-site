@@ -1296,7 +1296,7 @@
       document.getElementById('intakeSubmit').disabled = true;
       status.style.display = 'none';
 
-      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyVLiLMCW_oOewJQlv9EyRN2wUW_1BYvyYIjxyVTcZFg3Ni1iMhgh2SJcTreD6vF0Zp/exec';
+      const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec';
 
       try {
         await fetch(SCRIPT_URL, {
@@ -1328,21 +1328,33 @@
       gratitude: 'https://hooks.zapier.com/hooks/catch/26833980/upydiqn/',
       reminder:  'https://hooks.zapier.com/hooks/catch/26833980/upyajt6/',
       welcome:   'https://hooks.zapier.com/hooks/catch/26833980/upyfofm/',
-      intake:    'https://script.google.com/macros/s/AKfycbyVLiLMCW_oOewJQlv9EyRN2wUW_1BYvyYIjxyVTcZFg3Ni1iMhgh2SJcTreD6vF0Zp/exec'
+      intake:    'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec'
     };
-    const CHARLIE_SYSTEM = `You are Charlie — the AI assistant for the AutoBuildCharlie business dashboard. You help business owners trigger their automations using natural language.
+    const CHARLIE_SYSTEM = `You are Charlie — the AI assistant for the AutoBuildCharlie business dashboard. You help business owners trigger automations and manage their client records using natural language.
 
-Available automations:
+AUTOMATIONS (fire these via webhook):
 1. "gratitude" — sends a payment thank-you email. Required: client_name, amount, client_email.
 2. "reminder" — sends an overdue payment reminder email. Required: client_name, amount, client_email.
 3. "welcome" — sends a new client welcome email. Required: client_name, client_email.
-4. "intake" — logs a new client to Google Sheets and sends a follow-up email. Required: client_name, service, amount, client_email.
+4. "intake" — adds a new client to Google Sheets and sends a follow-up email. Required: client_name, service, amount, client_email.
 
-When the user asks you to trigger an automation and you have ALL required fields, respond with ONLY a JSON object (no extra text):
+CLIENT RECORD MANAGEMENT (Google Sheets):
+5. "edit_client" — update an existing client's info in the sheet. Required: client_name. Optional: email, service, amount (only include fields being changed).
+6. "delete_client" — remove a client from the sheet. Required: client_name.
+
+When the user asks you to trigger an automation or manage a client record and you have ALL required fields, respond with ONLY a JSON object (no extra text):
+
+Fire an automation:
 {"action": "fire", "agent": "gratitude", "data": {"client_name": "John Smith", "amount": "150", "client_email": "john@email.com"}}
 
+Edit a client:
+{"action": "edit_client", "data": {"client_name": "John Smith", "email": "newemail@email.com", "amount": "200"}}
+
+Delete a client:
+{"action": "delete_client", "data": {"client_name": "John Smith"}}
+
 If any required fields are missing, ask for them in a short, friendly message.
-If the user is just chatting or asking a question (not triggering anything), reply in plain conversational text — short and helpful.
+If the user is just chatting or asking a question, reply in plain conversational text — short and helpful.
 Never include JSON and text in the same response. It's one or the other.`;
 
     let charlieHistory = [];
@@ -1423,11 +1435,32 @@ Never include JSON and text in the same response. It's one or the other.`;
         // Check if it's an action JSON
         try {
           const parsed = JSON.parse(reply);
+          const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec';
+
           if (parsed.action === 'fire' && parsed.agent && parsed.data) {
             const agentNames = { gratitude: 'Gratitude', reminder: 'Reminder', welcome: 'Welcome', intake: 'Client Intake' };
             charlieAddMsg(`Firing ${agentNames[parsed.agent] || parsed.agent} Agent for ${parsed.data.client_name}...`, 'charlie', false);
             await charlieFireWebhook(parsed.agent, parsed.data);
             charlieAddMsg(`✓ Done! ${agentNames[parsed.agent]} Agent fired for ${parsed.data.client_name}. Check Gmail Drafts in ~30 seconds.`, 'charlie', true);
+
+          } else if (parsed.action === 'edit_client' && parsed.data) {
+            charlieAddMsg(`Updating ${parsed.data.client_name} in your sheet...`, 'charlie', false);
+            await fetch(SHEET_URL, {
+              method: 'POST', mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'edit', ...parsed.data })
+            });
+            charlieAddMsg(`✓ Done! ${parsed.data.client_name}'s record has been updated in Google Sheets.`, 'charlie', true);
+
+          } else if (parsed.action === 'delete_client' && parsed.data) {
+            charlieAddMsg(`Removing ${parsed.data.client_name} from your sheet...`, 'charlie', false);
+            await fetch(SHEET_URL, {
+              method: 'POST', mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'delete', clientName: parsed.data.client_name })
+            });
+            charlieAddMsg(`✓ Done! ${parsed.data.client_name} has been removed from Google Sheets.`, 'charlie', true);
+
           } else {
             charlieAddMsg(reply, 'charlie', false);
           }
