@@ -54,15 +54,19 @@
     .status-dot.partial { background: #00d4ff; box-shadow: 0 0 6px #00d4ff; }
     .status-dot.none { background: #ff9f0a; box-shadow: 0 0 6px #ff9f0a; }
 
-    /* AUTOMATION TOGGLES */
+    /* AUTOMATION PANEL */
     .auto-panel { display: none; border-top: 1px solid var(--border); padding: 1.25rem 1.5rem; }
     .auto-panel.open { display: block; }
-    .auto-stage-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.6rem; margin-top: 1rem; }
-    .auto-stage-label:first-child { margin-top: 0; }
-    .auto-row { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    .auto-row:last-child { border-bottom: none; }
-    .auto-label { font-size: 0.85rem; font-weight: 600; }
-    .auto-type { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.1rem; }
+    .toggle-all-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+    .toggle-all-btn { background: rgba(191,90,242,0.12); color: var(--accent); border: 1px solid rgba(191,90,242,0.3); border-radius: 8px; padding: 0.45rem 1rem; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+    .toggle-all-btn:hover { background: rgba(191,90,242,0.2); }
+    .auto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.75rem; }
+    .auto-card { background: #1a1a1a; border: 1px solid var(--border); border-radius: 10px; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; transition: border-color 0.2s; }
+    .auto-card.is-live { border-color: rgba(48,209,88,0.35); }
+    .auto-card-top { display: flex; align-items: center; justify-content: space-between; }
+    .auto-card-stage { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+    .auto-card-name { font-size: 0.82rem; font-weight: 700; line-height: 1.3; }
+    .auto-card-type { font-size: 0.68rem; color: var(--text-muted); }
 
     /* PILL TOGGLE */
     .pill-toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
@@ -189,26 +193,28 @@
         const card = document.createElement('div');
         card.className = 'user-card';
 
-        // Group automations by stage
-        const stages = [...new Set(AUTOMATIONS.map(a => a.stage))];
-        const togglesHTML = stages.map(stage => {
-          const items = AUTOMATIONS.filter(a => a.stage === stage);
-          return `
-            <div class="auto-stage-label">${stage}</div>
-            ${items.map(a => `
-              <div class="auto-row">
-                <div>
-                  <div class="auto-label">${a.label}</div>
-                  <div class="auto-type">${a.type}</div>
+        const allOn = AUTOMATIONS.every(a => autoStates[a.key] === true);
+        const togglesHTML = `
+          <div class="toggle-all-row">
+            <span style="font-size:0.78rem;color:var(--text-muted);">${liveCount} of ${AUTOMATIONS.length} active</span>
+            <button class="toggle-all-btn" data-all="${allOn}">${allOn ? 'Turn All Off' : 'Turn All On'}</button>
+          </div>
+          <div class="auto-grid">
+            ${AUTOMATIONS.map(a => `
+              <div class="auto-card ${autoStates[a.key] ? 'is-live' : ''}" data-card-key="${a.key}">
+                <div class="auto-card-top">
+                  <span class="auto-card-stage">${a.stage}</span>
+                  <label class="pill-toggle">
+                    <input type="checkbox" data-key="${a.key}" ${autoStates[a.key] ? 'checked' : ''} />
+                    <span class="pill-slider"></span>
+                  </label>
                 </div>
-                <label class="pill-toggle">
-                  <input type="checkbox" data-key="${a.key}" ${autoStates[a.key] ? 'checked' : ''} />
-                  <span class="pill-slider"></span>
-                </label>
+                <div class="auto-card-name">${a.label}</div>
+                <div class="auto-card-type">${a.type}</div>
               </div>
             `).join('')}
-          `;
-        }).join('');
+          </div>
+        `;
 
         card.innerHTML = `
           <div class="user-header">
@@ -237,27 +243,51 @@
           icon.classList.toggle('open');
         });
 
-        // Individual toggle save
+        async function saveAutoStates() {
+          try {
+            await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${user.id}`, {
+              method: 'PUT',
+              headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_metadata: { ...meta, automations: autoStates } })
+            });
+          } catch (err) {
+            alert('Save failed — check your connection.');
+          }
+        }
+
+        function refreshSummary() {
+          const n = AUTOMATIONS.filter(a => autoStates[a.key] === true).length;
+          const dc = n === AUTOMATIONS.length ? 'all-live' : n > 0 ? 'partial' : 'none';
+          card.querySelector('.status-dot').className = `status-dot ${dc}`;
+          card.querySelector('.user-summary').textContent = n === 0 ? 'None live' : `${n} of ${AUTOMATIONS.length} live`;
+          const allBtn = card.querySelector('.toggle-all-btn');
+          const allNowOn = AUTOMATIONS.every(a => autoStates[a.key] === true);
+          allBtn.dataset.all = String(allNowOn);
+          allBtn.textContent = allNowOn ? 'Turn All Off' : 'Turn All On';
+          card.querySelector('.auto-panel .toggle-all-row span').textContent = `${n} of ${AUTOMATIONS.length} active`;
+        }
+
+        // Individual toggle
         card.querySelectorAll('.pill-toggle input').forEach(input => {
           input.addEventListener('change', async () => {
             const key = input.dataset.key;
             autoStates[key] = input.checked;
-            const newLiveCount = AUTOMATIONS.filter(a => autoStates[a.key] === true).length;
-            const newDotClass = newLiveCount === AUTOMATIONS.length ? 'all-live' : newLiveCount > 0 ? 'partial' : 'none';
-            card.querySelector('.status-dot').className = `status-dot ${newDotClass}`;
-            card.querySelector('.user-summary').textContent = newLiveCount === 0 ? 'None live' : `${newLiveCount} of ${AUTOMATIONS.length} live`;
-            try {
-              await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${user.id}`, {
-                method: 'PUT',
-                headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_metadata: { ...meta, automations: autoStates } })
-              });
-            } catch (err) {
-              input.checked = !input.checked;
-              autoStates[key] = input.checked;
-              alert('Save failed — check your connection.');
-            }
+            const autoCard = card.querySelector(`[data-card-key="${key}"]`);
+            if (autoCard) autoCard.classList.toggle('is-live', input.checked);
+            refreshSummary();
+            await saveAutoStates();
           });
+        });
+
+        // Toggle all
+        card.querySelector('.toggle-all-btn').addEventListener('click', async () => {
+          const btn = card.querySelector('.toggle-all-btn');
+          const turnOn = btn.dataset.all !== 'true';
+          AUTOMATIONS.forEach(a => { autoStates[a.key] = turnOn; });
+          card.querySelectorAll('.pill-toggle input').forEach(input => { input.checked = turnOn; });
+          card.querySelectorAll('.auto-card').forEach(ac => { ac.classList.toggle('is-live', turnOn); });
+          refreshSummary();
+          await saveAutoStates();
         });
       });
     }
