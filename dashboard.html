@@ -1203,12 +1203,23 @@ Never include JSON and text in the same response. It's one or the other.`;
       const oneMonth = 30 * 24 * 60 * 60 * 1000;
       const thisWeek = log.filter(e => now - e.ts < oneWeek).length;
       const thisMonth = log.filter(e => now - e.ts < oneMonth).length;
-      const hoursSaved = (thisWeek * 5 / 60).toFixed(1);
+      const totalMins = thisWeek * 5;
+      let timeSaved, timeLabel;
+      if (totalMins < 60) {
+        timeSaved = totalMins;
+        timeLabel = 'Mins Saved / Week';
+      } else if (totalMins < 480) {
+        timeSaved = (totalMins / 60).toFixed(1);
+        timeLabel = 'Hrs Saved / Week';
+      } else {
+        timeSaved = (totalMins / 60 / 8).toFixed(1);
+        timeLabel = 'Days Saved / Week';
+      }
       const reportGrid = document.getElementById('reportGrid');
       if (reportGrid) {
         reportGrid.innerHTML = `
           <div class="report-item"><div class="report-number">7</div><div class="report-label">Active Automations</div></div>
-          <div class="report-item"><div class="report-number">${hoursSaved}</div><div class="report-label">Hours Saved / Week</div></div>
+          <div class="report-item"><div class="report-number">${timeSaved}</div><div class="report-label">${timeLabel}</div></div>
           <div class="report-item"><div class="report-number">${thisMonth}</div><div class="report-label">Tasks / Month</div></div>
         `;
       }
