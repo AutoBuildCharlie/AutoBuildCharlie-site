@@ -1288,7 +1288,11 @@ Never include JSON and text in the same response. It's one or the other.`;
         charlieHideTyping();
 
         if (!res.ok) {
-          charlieAddMsg('Something went wrong: ' + (json.error?.message || 'Unknown error'), 'charlie', false);
+          const errMsg = json.error?.message || '';
+          const friendlyMsg = errMsg.includes('x-api-key') || errMsg.includes('api_key') || errMsg.includes('auth')
+            ? "Charlie needs your API key to continue — paste it in the box above."
+            : 'Something went wrong: ' + (errMsg || 'Unknown error');
+          charlieAddMsg(friendlyMsg, 'charlie', false);
           btn.disabled = false; input.disabled = false;
           return;
         }
