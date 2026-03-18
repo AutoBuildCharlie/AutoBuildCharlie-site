@@ -79,6 +79,13 @@
     #loadingMsg { color: var(--text-muted); font-size: 0.9rem; padding: 1rem 0; }
     #noKeyMsg { display: none; background: rgba(255,159,10,0.1); border: 1px solid rgba(255,159,10,0.3); border-radius: 10px; padding: 1rem; font-size: 0.83rem; color: #ff9f0a; margin-bottom: 1.5rem; }
 
+    /* ADD AUTOMATION */
+    .add-auto-row { margin-top: 1rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .add-auto-btn { background: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.3); border-radius: 8px; padding: 0.45rem 1rem; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+    .add-auto-btn:hover { background: rgba(48,209,88,0.2); }
+    .add-auto-select { background: #1a1a1a; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.82rem; padding: 0.45rem 0.75rem; outline: none; display: none; }
+    .no-autos-msg { font-size: 0.8rem; color: var(--text-muted); font-style: italic; }
+
     /* PLAN SELECTOR */
     .plan-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
     .plan-row label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
@@ -210,6 +217,7 @@
         const currentPlan = meta.plan || '';
         const planBadgeClass = { 'Founders': 'founders', 'Starter': 'starter', 'Growth': 'growth', 'Done For You': 'dfy' }[currentPlan] || '';
         const PLANS = ['', 'Founders', 'Starter', 'Growth', 'Done For You'];
+        const activeAutos = AUTOMATIONS.filter(a => autoStates[a.key] === true);
         const togglesHTML = `
           <div class="plan-row">
             <label>Current Plan</label>
@@ -219,17 +227,13 @@
             ${planBadgeClass ? `<span class="plan-badge ${planBadgeClass}">${currentPlan}</span>` : ''}
             <span class="plan-save-msg">✓ Saved</span>
           </div>
-          <div class="toggle-all-row">
-            <span style="font-size:0.78rem;color:var(--text-muted);">${liveCount} of ${AUTOMATIONS.length} active</span>
-            <button class="toggle-all-btn" data-all="${allOn}">${allOn ? 'Turn All Off' : 'Turn All On'}</button>
-          </div>
           <div class="auto-grid">
-            ${AUTOMATIONS.map(a => `
-              <div class="auto-card ${autoStates[a.key] ? 'is-live' : ''}" data-card-key="${a.key}">
+            ${activeAutos.length === 0 ? '<span class="no-autos-msg">No automations added yet.</span>' : activeAutos.map(a => `
+              <div class="auto-card is-live" data-card-key="${a.key}">
                 <div class="auto-card-top">
                   <span class="auto-card-stage">${a.stage}</span>
                   <label class="pill-toggle">
-                    <input type="checkbox" data-key="${a.key}" ${autoStates[a.key] ? 'checked' : ''} />
+                    <input type="checkbox" data-key="${a.key}" checked />
                     <span class="pill-slider"></span>
                   </label>
                 </div>
@@ -237,6 +241,13 @@
                 <div class="auto-card-type">${a.type}</div>
               </div>
             `).join('')}
+          </div>
+          <div class="add-auto-row">
+            <button class="add-auto-btn">+ Add Automation</button>
+            <select class="add-auto-select">
+              <option value="">— Pick one —</option>
+              ${AUTOMATIONS.filter(a => !autoStates[a.key]).map(a => `<option value="${a.key}">${a.label}</option>`).join('')}
+            </select>
           </div>
         `;
 
@@ -312,32 +323,66 @@
           const dc = n === AUTOMATIONS.length ? 'all-live' : n > 0 ? 'partial' : 'none';
           card.querySelector('.status-dot').className = `status-dot ${dc}`;
           card.querySelector('.user-summary').textContent = n === 0 ? 'None live' : `${n} of ${AUTOMATIONS.length} live`;
-          const allBtn = card.querySelector('.toggle-all-btn');
-          const allNowOn = AUTOMATIONS.every(a => autoStates[a.key] === true);
-          allBtn.dataset.all = String(allNowOn);
-          allBtn.textContent = allNowOn ? 'Turn All Off' : 'Turn All On';
-          card.querySelector('.auto-panel .toggle-all-row span').textContent = `${n} of ${AUTOMATIONS.length} active`;
         }
 
-        // Individual toggle
+        function rebuildGrid() {
+          const grid = card.querySelector('.auto-grid');
+          const addSelect = card.querySelector('.add-auto-select');
+          const active = AUTOMATIONS.filter(a => autoStates[a.key] === true);
+          const inactive = AUTOMATIONS.filter(a => !autoStates[a.key]);
+
+          grid.innerHTML = active.length === 0
+            ? '<span class="no-autos-msg">No automations added yet.</span>'
+            : active.map(a => `
+                <div class="auto-card is-live" data-card-key="${a.key}">
+                  <div class="auto-card-top">
+                    <span class="auto-card-stage">${a.stage}</span>
+                    <label class="pill-toggle">
+                      <input type="checkbox" data-key="${a.key}" checked />
+                      <span class="pill-slider"></span>
+                    </label>
+                  </div>
+                  <div class="auto-card-name">${a.label}</div>
+                  <div class="auto-card-type">${a.type}</div>
+                </div>`).join('');
+
+          // Refresh toggle listeners
+          grid.querySelectorAll('.pill-toggle input').forEach(input => {
+            input.addEventListener('change', async () => {
+              autoStates[input.dataset.key] = false;
+              rebuildGrid();
+              refreshSummary();
+              await saveAutoStates();
+            });
+          });
+
+          // Refresh add select options
+          addSelect.innerHTML = `<option value="">— Pick one —</option>` +
+            inactive.map(a => `<option value="${a.key}">${a.label}</option>`).join('');
+        }
+
+        // Wire up initial toggles
         card.querySelectorAll('.pill-toggle input').forEach(input => {
           input.addEventListener('change', async () => {
-            const key = input.dataset.key;
-            autoStates[key] = input.checked;
-            const autoCard = card.querySelector(`[data-card-key="${key}"]`);
-            if (autoCard) autoCard.classList.toggle('is-live', input.checked);
+            autoStates[input.dataset.key] = false;
+            rebuildGrid();
             refreshSummary();
             await saveAutoStates();
           });
         });
 
-        // Toggle all
-        card.querySelector('.toggle-all-btn').addEventListener('click', async () => {
-          const btn = card.querySelector('.toggle-all-btn');
-          const turnOn = btn.dataset.all !== 'true';
-          AUTOMATIONS.forEach(a => { autoStates[a.key] = turnOn; });
-          card.querySelectorAll('.pill-toggle input').forEach(input => { input.checked = turnOn; });
-          card.querySelectorAll('.auto-card').forEach(ac => { ac.classList.toggle('is-live', turnOn); });
+        // Add automation button
+        const addBtn = card.querySelector('.add-auto-btn');
+        const addSelect = card.querySelector('.add-auto-select');
+        addBtn.addEventListener('click', () => {
+          addSelect.style.display = addSelect.style.display === 'inline-block' ? 'none' : 'inline-block';
+        });
+        addSelect.addEventListener('change', async () => {
+          const key = addSelect.value;
+          if (!key) return;
+          autoStates[key] = true;
+          addSelect.style.display = 'none';
+          rebuildGrid();
           refreshSummary();
           await saveAutoStates();
         });
