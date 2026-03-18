@@ -294,6 +294,29 @@
     }
     .skip-link:hover { opacity: 1; }
 
+    /* PLAN CARDS */
+    .plan-cards { display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 0.5rem; }
+    .plan-card {
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 1.1rem 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .plan-card:hover { border-color: rgba(191,90,242,0.4); background: rgba(191,90,242,0.05); }
+    .plan-card.selected { border-color: var(--accent); background: rgba(191,90,242,0.1); }
+    .plan-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); flex-shrink: 0; margin-top: 0.2rem; transition: border-color 0.2s, background 0.2s; display: flex; align-items: center; justify-content: center; }
+    .plan-card.selected .plan-radio { border-color: var(--accent); background: var(--accent); }
+    .plan-radio-dot { width: 7px; height: 7px; border-radius: 50%; background: #fff; display: none; }
+    .plan-card.selected .plan-radio-dot { display: block; }
+    .plan-card-body { flex: 1; }
+    .plan-card-name { font-size: 0.98rem; font-weight: 800; margin-bottom: 0.2rem; }
+    .plan-card-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+    .plan-card-price { font-size: 0.78rem; font-weight: 700; color: var(--accent); margin-top: 0.35rem; }
+
     @media (max-width: 480px) {
       .card { padding: 2rem 1.5rem; border-radius: 18px; }
     }
@@ -308,11 +331,11 @@
 
   <div class="progress-wrap">
     <div class="progress-labels">
-      <span id="progressLabel">Step 1 of 3</span>
-      <span id="progressPct">33%</span>
+      <span id="progressLabel">Step 1 of 4</span>
+      <span id="progressPct">25%</span>
     </div>
     <div class="progress-bar">
-      <div class="progress-fill" id="progressFill" style="width: 33%"></div>
+      <div class="progress-fill" id="progressFill" style="width: 25%"></div>
     </div>
   </div>
 
@@ -364,6 +387,42 @@
       <textarea id="goal" placeholder="Or describe it in your own words... e.g. I spend 2 hours a day on follow-up emails and I just want that to be automatic."></textarea>
       <div class="btn-row">
         <button class="btn-back" onclick="goBack(3)">&#8592; Back</button>
+        <button class="btn-next" onclick="goNext(3)">Next &rarr;</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 — PLAN -->
+    <div class="step" id="step4">
+      <div class="step-tag">&#128181; Choose Your Plan</div>
+      <div class="step-title">Which plan fits you best?</div>
+      <p class="step-sub">Pick the one that matches where you're at. You can always upgrade later.</p>
+
+      <div class="plan-cards">
+        <div class="plan-card" data-plan="Starter" onclick="selectPlan(this)">
+          <div class="plan-radio"><div class="plan-radio-dot"></div></div>
+          <div class="plan-card-body">
+            <div class="plan-card-name">Starter</div>
+            <div class="plan-card-desc">2 automations built for your business. Perfect if you're just getting started and want to see what Charlie can do.</div>
+          </div>
+        </div>
+        <div class="plan-card" data-plan="Growth" onclick="selectPlan(this)">
+          <div class="plan-radio"><div class="plan-radio-dot"></div></div>
+          <div class="plan-card-body">
+            <div class="plan-card-name">Growth</div>
+            <div class="plan-card-desc">Up to 15 automations running for your business. Great for owners who are ready to hand off more of the back-end.</div>
+          </div>
+        </div>
+        <div class="plan-card" data-plan="Done For You" onclick="selectPlan(this)">
+          <div class="plan-radio"><div class="plan-radio-dot"></div></div>
+          <div class="plan-card-body">
+            <div class="plan-card-name">Done For You</div>
+            <div class="plan-card-desc">Unlimited automations, fully managed by our team. You focus on your clients — we handle everything else.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-back" onclick="goBack(4)">&#8592; Back</button>
         <button class="btn-next" id="submitBtn" onclick="submitOnboarding()">Send to Charlie &rarr;</button>
       </div>
     </div>
@@ -410,14 +469,21 @@
       }
     };
 
-    const steps = { 1: 33, 2: 66, 3: 100 };
+    const steps = { 1: 25, 2: 50, 3: 75, 4: 100 };
+    let selectedPlan = '';
+
+    window.selectPlan = function(card) {
+      document.querySelectorAll('.plan-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedPlan = card.dataset.plan;
+    };
 
     window.goNext = function(current) {
       document.getElementById('step' + current).classList.remove('active');
       document.getElementById('step' + (current + 1)).classList.add('active');
       const pct = steps[current + 1] || 100;
       document.getElementById('progressFill').style.width = pct + '%';
-      document.getElementById('progressLabel').textContent = 'Step ' + (current + 1) + ' of 3';
+      document.getElementById('progressLabel').textContent = 'Step ' + (current + 1) + ' of 4';
       document.getElementById('progressPct').textContent = pct + '%';
     };
 
@@ -426,7 +492,7 @@
       document.getElementById('step' + (current - 1)).classList.add('active');
       const pct = steps[current - 1];
       document.getElementById('progressFill').style.width = pct + '%';
-      document.getElementById('progressLabel').textContent = 'Step ' + (current - 1) + ' of 3';
+      document.getElementById('progressLabel').textContent = 'Step ' + (current - 1) + ' of 4';
       document.getElementById('progressPct').textContent = pct + '%';
     };
 
@@ -443,13 +509,21 @@
       const apps = document.getElementById('apps').value.trim();
       const goal = document.getElementById('goal').value.trim();
 
+      if (!selectedPlan) {
+        alert('Please choose a plan to continue.');
+        btn.textContent = 'Send to Charlie →';
+        btn.disabled = false;
+        return;
+      }
+
       // Save to Supabase user metadata
       await supabase.auth.updateUser({
         data: {
           onboarding_tasks: tasks,
           onboarding_apps: apps,
           onboarding_goal: goal,
-          onboarding_complete: true
+          onboarding_complete: true,
+          plan: selectedPlan
         }
       });
 
@@ -463,12 +537,13 @@
           name: user?.user_metadata?.full_name || '',
           daily_tasks: tasks,
           apps_tools: apps,
-          goals: goal
+          goals: goal,
+          plan: selectedPlan
         })
       }).catch(() => {}); // fire and forget
 
       // Show final screen
-      document.getElementById('step3').classList.remove('active');
+      document.getElementById('step4').classList.remove('active');
       document.getElementById('stepFinal').classList.add('active');
       document.getElementById('progressFill').style.width = '100%';
       document.querySelector('.progress-wrap').style.display = 'none';
