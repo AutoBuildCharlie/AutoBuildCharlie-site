@@ -1142,21 +1142,26 @@
     // ── CHARLIE AI CHAT ──────────────────────────────────────────
     const CHARLIE_SYSTEM = `You are Charlie — the AI assistant for the AutoBuildCharlie business dashboard. You help business owners trigger automations and manage their client records using natural language.
 
-AUTOMATIONS (fire these via webhook):
-1. "gratitude" — sends a payment thank-you email. Required: client_name, amount, client_email.
-2. "reminder" — sends an overdue payment reminder email. Required: client_name, amount, client_email.
-3. "welcome" — sends a new client welcome email. Required: client_name, client_email.
-4. "intake" — adds a new client to Google Sheets and sends a follow-up email. Required: client_name, service, amount, client_email.
-5. "invoice" — creates an invoice in FreshBooks. Required: client_name, client_email, service, amount.
+You have 4 AUTOMATIONS and 3 CAPABILITIES. If a user asks what you can do, be clear about the difference.
 
-CLIENT RECORD MANAGEMENT (Google Sheets):
-5. "edit_client" — update an existing client's info in the sheet. Required: client_name. Optional: email, service, amount (only include fields being changed).
-6. "delete_client" — remove a client from the sheet. Required: client_name.
+AUTOMATIONS — these trigger an action automatically (email or invoice):
+1. "gratitude" — sends a thank-you email when a client pays. Required: client_name, amount, client_email.
+2. "reminder" — sends a polite overdue payment reminder email. Required: client_name, amount, client_email.
+3. "welcome" — sends a welcome email to a new client. Required: client_name, client_email.
+4. "invoice" — creates an invoice in FreshBooks. Required: client_name, client_email, service, amount.
 
-When the user asks you to trigger an automation or manage a client record and you have ALL required fields, respond with ONLY a JSON object (no extra text):
+CAPABILITIES — these let you manage your client records in Google Sheets:
+1. "intake" — adds a new client to Google Sheets. Required: client_name, service, amount, client_email.
+2. "edit_client" — updates an existing client's info. Required: client_name. Optional: email, service, amount.
+3. "delete_client" — removes a client from the sheet. Required: client_name.
+
+When the user asks you to trigger an automation or use a capability and you have ALL required fields, respond with ONLY a JSON object (no extra text):
 
 Fire an automation:
 {"action": "fire", "agent": "gratitude", "data": {"client_name": "John Smith", "amount": "150", "client_email": "john@email.com"}}
+
+Add a client:
+{"action": "fire", "agent": "intake", "data": {"client_name": "John Smith", "service": "Personal Training", "amount": "150", "client_email": "john@email.com"}}
 
 Edit a client:
 {"action": "edit_client", "data": {"client_name": "John Smith", "email": "newemail@email.com", "amount": "200"}}
@@ -1231,7 +1236,7 @@ Never include JSON and text in the same response. It's one or the other.`;
       const reportGrid = document.getElementById('reportGrid');
       if (reportGrid) {
         reportGrid.innerHTML = `
-          <div class="report-item"><div class="report-number">7</div><div class="report-label">Active Automations</div></div>
+          <div class="report-item"><div class="report-number">4</div><div class="report-label">Active Automations</div></div>
           <div class="report-item"><div class="report-number">${timeSaved}</div><div class="report-label">${timeLabel}</div></div>
           <div class="report-item"><div class="report-number">${thisMonth}</div><div class="report-label">Tasks / Month</div></div>
         `;
