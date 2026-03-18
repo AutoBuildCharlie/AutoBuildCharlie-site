@@ -9,7 +9,6 @@
     :root {
       --accent: #bf5af2;
       --bg: #080808;
-      --bg-card: #111;
       --text: #f0f0f0;
       --text-muted: #888;
       --border: rgba(255,255,255,0.08);
@@ -29,7 +28,7 @@
     #gateError { font-size: 0.8rem; color: #ff453a; margin-top: 0.5rem; display: none; }
 
     /* ADMIN PANEL */
-    #adminPanel { display: none; max-width: 800px; margin: 0 auto; }
+    #adminPanel { display: none; max-width: 860px; margin: 0 auto; }
     .key-setup { background: #111; border: 1px solid rgba(191,90,242,0.3); border-radius: 12px; padding: 1.25rem; margin-bottom: 2rem; }
     .key-setup p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem; }
     .key-row { display: flex; gap: 0.75rem; }
@@ -37,18 +36,42 @@
     .key-input:focus { border-color: rgba(191,90,242,0.5); }
     .key-save { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.65rem 1.25rem; font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
 
-    .user-card { background: #111; border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+    /* USER CARD */
+    .user-card { background: #111; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 1rem; overflow: hidden; }
+    .user-header { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.5rem; cursor: pointer; gap: 1rem; flex-wrap: wrap; }
+    .user-header:hover { background: rgba(255,255,255,0.02); }
     .user-info { flex: 1; min-width: 0; }
-    .user-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; }
-    .user-email { font-size: 0.78rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .user-joined { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.2rem; }
-    .toggle-btn { border: none; border-radius: 8px; padding: 0.55rem 1.1rem; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: opacity 0.15s; }
-    .toggle-btn:hover { opacity: 0.85; }
-    .toggle-btn.live { background: rgba(48,209,88,0.15); color: #30d158; border: 1px solid rgba(48,209,88,0.3); }
-    .toggle-btn.pending { background: rgba(255,159,10,0.12); color: #ff9f0a; border: 1px solid rgba(255,159,10,0.25); }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 0.5rem; }
-    .status-dot.live { background: #30d158; box-shadow: 0 0 6px #30d158; }
-    .status-dot.pending { background: #ff9f0a; box-shadow: 0 0 6px #ff9f0a; }
+    .user-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.5rem; }
+    .user-email { font-size: 0.78rem; color: var(--text-muted); }
+    .user-joined { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .user-summary { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+    .expand-icon { font-size: 0.75rem; color: var(--text-muted); transition: transform 0.2s; }
+    .expand-icon.open { transform: rotate(180deg); }
+
+    /* STATUS DOT */
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+    .status-dot.all-live { background: #30d158; box-shadow: 0 0 6px #30d158; }
+    .status-dot.partial { background: #00d4ff; box-shadow: 0 0 6px #00d4ff; }
+    .status-dot.none { background: #ff9f0a; box-shadow: 0 0 6px #ff9f0a; }
+
+    /* AUTOMATION TOGGLES */
+    .auto-panel { display: none; border-top: 1px solid var(--border); padding: 1.25rem 1.5rem; }
+    .auto-panel.open { display: block; }
+    .auto-stage-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.6rem; margin-top: 1rem; }
+    .auto-stage-label:first-child { margin-top: 0; }
+    .auto-row { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .auto-row:last-child { border-bottom: none; }
+    .auto-label { font-size: 0.85rem; font-weight: 600; }
+    .auto-type { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+    /* PILL TOGGLE */
+    .pill-toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .pill-toggle input { opacity: 0; width: 0; height: 0; }
+    .pill-slider { position: absolute; inset: 0; background: #333; border-radius: 24px; cursor: pointer; transition: background 0.2s; }
+    .pill-slider:before { content: ''; position: absolute; height: 18px; width: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+    .pill-toggle input:checked + .pill-slider { background: #30d158; }
+    .pill-toggle input:checked + .pill-slider:before { transform: translateX(20px); }
+
     #loadingMsg { color: var(--text-muted); font-size: 0.9rem; padding: 1rem 0; }
     #noKeyMsg { display: none; background: rgba(255,159,10,0.1); border: 1px solid rgba(255,159,10,0.3); border-radius: 10px; padding: 1rem; font-size: 0.83rem; color: #ff9f0a; margin-bottom: 1.5rem; }
   </style>
@@ -68,10 +91,10 @@
   <!-- ADMIN PANEL -->
   <div id="adminPanel">
     <h1>⚡ Admin Panel</h1>
-    <p class="subtitle">Manage your clients and toggle their live automations.</p>
+    <p class="subtitle">Toggle individual automations live for each client.</p>
 
     <div class="key-setup" id="keySetup">
-      <p>Paste your Supabase <strong>service role key</strong> to load users. Find it in Supabase → Project Settings → API → service_role key.</p>
+      <p>Paste your Supabase <strong>service role key</strong> to load users. Find it in Supabase → Project Settings → API Keys → service_role.</p>
       <div class="key-row">
         <input class="key-input" type="password" id="serviceKeyInput" placeholder="eyJ..." />
         <button class="key-save" id="saveServiceKey">Save & Load</button>
@@ -87,6 +110,18 @@
     const ADMIN_PASSWORD = 'abc-admin-2026';
     const SUPABASE_URL = 'https://sqizjjclcxfbxwyajskk.supabase.co';
     const SERVICE_KEY_STORAGE = 'abc_service_key';
+
+    // ── MASTER LIST OF AUTOMATIONS ─────────────────────────────────
+    // To add a new automation, just add an entry here.
+    // It will automatically appear as a toggle for every user.
+    const AUTOMATIONS = [
+      { key: 'welcome',      label: 'Send Welcome Email',    stage: 'Onboarding', type: 'Automation' },
+      { key: 'intake',       label: 'Add New Client',        stage: 'Onboarding', type: 'Capability' },
+      { key: 'edit_client',  label: 'Edit or Remove Client', stage: 'Onboarding', type: 'Capability' },
+      { key: 'reminder',     label: 'Send Payment Reminder', stage: 'Follow-Up',  type: 'Automation' },
+      { key: 'gratitude',    label: 'Send Thank You',        stage: 'Follow-Up',  type: 'Automation' },
+      { key: 'invoice',      label: 'Create Invoice',        stage: 'Billing',    type: 'Automation' },
+    ];
 
     // PASSWORD GATE
     document.getElementById('unlockBtn').addEventListener('click', checkPassword);
@@ -111,7 +146,6 @@
       } else {
         document.getElementById('noKeyMsg').style.display = 'block';
       }
-
       document.getElementById('saveServiceKey').addEventListener('click', () => {
         const key = document.getElementById('serviceKeyInput').value.trim();
         if (!key) return;
@@ -135,61 +169,95 @@
         renderUsers(data.users, serviceKey);
       } catch (err) {
         document.getElementById('loadingMsg').style.display = 'none';
-        document.getElementById('userList').innerHTML = '<p style="color:#ff453a;font-size:0.85rem;">Error loading users: ' + err.message + '</p>';
+        document.getElementById('userList').innerHTML = '<p style="color:#ff453a;font-size:0.85rem;">Error: ' + err.message + '</p>';
       }
     }
 
     function renderUsers(users, serviceKey) {
       const list = document.getElementById('userList');
-      if (users.length === 0) { list.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No users found.</p>'; return; }
+      if (!users.length) { list.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No users found.</p>'; return; }
 
       users.forEach(user => {
         const meta = user.user_metadata || {};
-        const isLive = meta.automations_live === true;
-        const name = meta.company_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Unknown';
+        const autoStates = meta.automations || {};
+        const name = meta.company_name || meta.full_name || user.email?.split('@')[0] || 'Unknown';
         const joined = new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const liveCount = AUTOMATIONS.filter(a => autoStates[a.key] === true).length;
+        const dotClass = liveCount === AUTOMATIONS.length ? 'all-live' : liveCount > 0 ? 'partial' : 'none';
+        const summaryText = liveCount === 0 ? 'None live' : `${liveCount} of ${AUTOMATIONS.length} live`;
 
         const card = document.createElement('div');
         card.className = 'user-card';
-        card.id = `user-${user.id}`;
+
+        // Group automations by stage
+        const stages = [...new Set(AUTOMATIONS.map(a => a.stage))];
+        const togglesHTML = stages.map(stage => {
+          const items = AUTOMATIONS.filter(a => a.stage === stage);
+          return `
+            <div class="auto-stage-label">${stage}</div>
+            ${items.map(a => `
+              <div class="auto-row">
+                <div>
+                  <div class="auto-label">${a.label}</div>
+                  <div class="auto-type">${a.type}</div>
+                </div>
+                <label class="pill-toggle">
+                  <input type="checkbox" data-key="${a.key}" ${autoStates[a.key] ? 'checked' : ''} />
+                  <span class="pill-slider"></span>
+                </label>
+              </div>
+            `).join('')}
+          `;
+        }).join('');
+
         card.innerHTML = `
-          <div class="user-info">
-            <div class="user-name">
-              <span class="status-dot ${isLive ? 'live' : 'pending'}"></span>
-              ${name}
+          <div class="user-header">
+            <div class="user-info">
+              <div class="user-name">
+                <span class="status-dot ${dotClass}"></span>
+                ${name}
+              </div>
+              <div class="user-email">${user.email}</div>
+              <div class="user-joined">Joined ${joined}</div>
             </div>
-            <div class="user-email">${user.email}</div>
-            <div class="user-joined">Joined ${joined}</div>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              <span class="user-summary">${summaryText}</span>
+              <span class="expand-icon">▼</span>
+            </div>
           </div>
-          <button class="toggle-btn ${isLive ? 'live' : 'pending'}" data-id="${user.id}" data-live="${isLive}">
-            ${isLive ? '✓ Automations Live' : '⏳ Pending — Go Live'}
-          </button>
+          <div class="auto-panel">${togglesHTML}</div>
         `;
         list.appendChild(card);
 
-        card.querySelector('.toggle-btn').addEventListener('click', async (e) => {
-          const btn = e.currentTarget;
-          const userId = btn.dataset.id;
-          const currentlyLive = btn.dataset.live === 'true';
-          const newState = !currentlyLive;
-          btn.textContent = 'Saving...';
-          btn.disabled = true;
+        // Expand/collapse
+        card.querySelector('.user-header').addEventListener('click', () => {
+          const panel = card.querySelector('.auto-panel');
+          const icon = card.querySelector('.expand-icon');
+          panel.classList.toggle('open');
+          icon.classList.toggle('open');
+        });
 
-          try {
-            await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${userId}`, {
-              method: 'PUT',
-              headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ user_metadata: { ...meta, automations_live: newState } })
-            });
-            btn.dataset.live = String(newState);
-            btn.className = `toggle-btn ${newState ? 'live' : 'pending'}`;
-            btn.textContent = newState ? '✓ Automations Live' : '⏳ Pending — Go Live';
-            const dot = card.querySelector('.status-dot');
-            dot.className = `status-dot ${newState ? 'live' : 'pending'}`;
-          } catch (err) {
-            btn.textContent = 'Error — try again';
-          }
-          btn.disabled = false;
+        // Individual toggle save
+        card.querySelectorAll('.pill-toggle input').forEach(input => {
+          input.addEventListener('change', async () => {
+            const key = input.dataset.key;
+            autoStates[key] = input.checked;
+            const newLiveCount = AUTOMATIONS.filter(a => autoStates[a.key] === true).length;
+            const newDotClass = newLiveCount === AUTOMATIONS.length ? 'all-live' : newLiveCount > 0 ? 'partial' : 'none';
+            card.querySelector('.status-dot').className = `status-dot ${newDotClass}`;
+            card.querySelector('.user-summary').textContent = newLiveCount === 0 ? 'None live' : `${newLiveCount} of ${AUTOMATIONS.length} live`;
+            try {
+              await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${user.id}`, {
+                method: 'PUT',
+                headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_metadata: { ...meta, automations: autoStates } })
+              });
+            } catch (err) {
+              input.checked = !input.checked;
+              autoStates[key] = input.checked;
+              alert('Save failed — check your connection.');
+            }
+          });
         });
       });
     }
