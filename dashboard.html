@@ -1168,11 +1168,21 @@ If any required fields are missing, ask for them in a short, friendly message.
 If the user is just chatting or asking a question, reply in plain conversational text — short and helpful.
 Never include JSON and text in the same response. It's one or the other.`;
 
+    function charlieRender(text) {
+      return text
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/s, '<ul style="margin:0.4rem 0 0.4rem 1rem;padding:0;list-style:disc;">$1</ul>')
+        .replace(/\n/g, '<br>');
+    }
+
     function charlieAddMsg(text, from, isAction) {
       const msgs = document.getElementById('charlieMsgs');
       const d = document.createElement('div');
       d.className = `charlie-msg from-${from}${isAction ? ' action-fired' : ''}`;
-      d.textContent = text;
+      d.innerHTML = charlieRender(text);
       msgs.appendChild(d);
       msgs.scrollTop = msgs.scrollHeight;
     }
