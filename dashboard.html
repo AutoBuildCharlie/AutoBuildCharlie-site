@@ -1072,19 +1072,10 @@
       if (anyLive) {
         document.getElementById('liveAutomationsSection').style.display = 'block';
         document.getElementById('automationsPending').style.display = 'none';
-        // Update each card's status indicator
+        // Hide cards that aren't turned on for this user
         document.querySelectorAll('[data-auto]').forEach(card => {
           const key = card.dataset.auto;
-          const isLive = autoStates[key] === true;
-          const dot = card.querySelector('.auto-dot');
-          const label = card.querySelector('.auto-status');
-          if (!isLive) {
-            dot.style.background = '#555';
-            dot.style.boxShadow = 'none';
-            label.textContent = 'Coming Soon';
-            label.style.color = '#555';
-            card.style.opacity = '0.5';
-          }
+          card.style.display = autoStates[key] === true ? '' : 'none';
         });
       } else {
         document.getElementById('liveAutomationsSection').style.display = 'none';
