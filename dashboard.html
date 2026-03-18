@@ -919,6 +919,7 @@
     };
     let charlieHistory = [];
     let charlieKey = localStorage.getItem(CHARLIE_KEY_STORAGE) || '';
+    let activeAutoCount = 0;
 
     // Register listener FIRST so we catch the SIGNED_IN event from Google OAuth redirect
     supabase.auth.onAuthStateChange((event, session) => {
@@ -1055,6 +1056,7 @@
       // Show automations section based on per-automation toggles
       const autoStates = meta.automations || {};
       const anyLive = Object.values(autoStates).some(v => v === true);
+      activeAutoCount = Object.values(autoStates).filter(v => v === true).length;
       if (anyLive) {
         document.getElementById('liveAutomationsSection').style.display = 'block';
         document.getElementById('automationsPending').style.display = 'none';
@@ -1269,7 +1271,7 @@ Never include JSON and text in the same response. It's one or the other.`;
       const reportGrid = document.getElementById('reportGrid');
       if (reportGrid) {
         reportGrid.innerHTML = `
-          <div class="report-item"><div class="report-number">4</div><div class="report-label">Active Automations</div></div>
+          <div class="report-item"><div class="report-number">${activeAutoCount}</div><div class="report-label">Active Automations</div></div>
           <div class="report-item"><div class="report-number">${timeSaved}</div><div class="report-label">${timeLabel}</div></div>
           <div class="report-item"><div class="report-number">${thisMonth}</div><div class="report-label">Tasks / Month</div></div>
         `;
