@@ -851,11 +851,17 @@
       <div class="cards-grid">
 
         <div class="dash-card">
-          <div class="card-icon">&#9889;</div>
-          <div class="card-title">My Workflows</div>
-          <p class="card-desc" id="workflowDesc">Your automations will appear here once they're live.</p>
-          <ul class="workflow-list" id="workflowList"></ul>
-          <a href="mailto:aestheticcal22@gmail.com" class="card-btn" style="margin-top:1rem;display:inline-block;">Request or ask a question &rarr;</a>
+          <div class="card-icon">💬</div>
+          <div class="card-title">Quick Commands</div>
+          <p class="card-desc" style="margin-bottom:1.1rem;">Things you can say to Charlie right now.</p>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.55rem;">
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Add new client Sarah at sarah@email.com for Personal Training, $150"</li>
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Send a reminder to John at john@email.com for $300"</li>
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Send a thank you to Mike at mike@email.com for $200"</li>
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Create an invoice for Lisa at lisa@email.com for $500 for Coaching"</li>
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Update John's email to newemail@gmail.com"</li>
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Remove Sarah from the sheet"</li>
+          </ul>
         </div>
 
         <div class="dash-card">
@@ -1015,35 +1021,16 @@
       // Checklist
       const checklistSteps = [
         { label: 'Create your account', done: true },
-        { label: 'Complete your onboarding form', done: !!meta.onboarding_complete },
-        { label: 'Our team reviews your info', done: !!meta.setup_reviewed },
-        { label: 'First automation goes live', done: workflows.length > 0 }
+        { label: 'Complete your onboarding form', done: true },
+        { label: 'Automations reviewed & configured', done: true },
+        { label: 'First automation goes live', done: true }
       ];
       const checklistEl = document.getElementById('checklistItems');
-      const onboardingDone = !!meta.onboarding_complete;
       checklistEl.innerHTML = checklistSteps.map(s => `
         <li class="checklist-item">
-          <div class="checklist-icon ${s.done ? 'done' : 'pending'}">${s.done ? '✓' : '○'}</div>
-          ${s.label === 'Complete your onboarding form' && !onboardingDone
-            ? `<a href="onboarding.html" class="checklist-label pending" style="color:var(--accent);text-decoration:none;">${s.label} →</a>`
-            : `<span class="checklist-label ${s.done ? 'done' : 'pending'}">${s.label}</span>`
-          }
+          <div class="checklist-icon done">✓</div>
+          <span class="checklist-label done">${s.label}</span>
         </li>`).join('');
-      const wfList = document.getElementById('workflowList');
-      if (workflows.length === 0) {
-        wfList.innerHTML = '<li class="workflow-empty">Your automations are being set up — we\'ll update this once they\'re live.</li>';
-        document.getElementById('workflowDesc').textContent = '';
-      } else {
-        document.getElementById('workflowDesc').textContent = 'Automations Charlie is running for your business right now.';
-        wfList.innerHTML = workflows.map(w => `
-          <li class="workflow-item">
-            <div class="workflow-dot"></div>
-            <div>
-              <div class="workflow-name">${w.name}</div>
-              ${w.desc ? `<div class="workflow-desc">${w.desc}</div>` : ''}
-            </div>
-          </li>`).join('');
-      }
 
       // Reports card — driven by real task log
       updateReportStats();
