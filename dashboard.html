@@ -900,6 +900,18 @@
       "One less task to think about today."
     ];
 
+    // ── CHARLIE VARIABLES (declared early so initCharlieChat can access them) ──
+    const CHARLIE_KEY_STORAGE = 'abc_claude_key';
+    const WEBHOOKS = {
+      gratitude: 'https://hooks.zapier.com/hooks/catch/26833980/upydiqn/',
+      reminder:  'https://hooks.zapier.com/hooks/catch/26833980/upyajt6/',
+      welcome:   'https://hooks.zapier.com/hooks/catch/26833980/upyfofm/',
+      intake:    'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec',
+      invoice:   'https://hooks.zapier.com/hooks/catch/26833980/up1tr5g'
+    };
+    let charlieHistory = [];
+    let charlieKey = localStorage.getItem(CHARLIE_KEY_STORAGE) || '';
+
     // Register listener FIRST so we catch the SIGNED_IN event from Google OAuth redirect
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT') {
@@ -1128,14 +1140,6 @@
 
 
     // ── CHARLIE AI CHAT ──────────────────────────────────────────
-    const CHARLIE_KEY_STORAGE = 'abc_claude_key';
-    const WEBHOOKS = {
-      gratitude: 'https://hooks.zapier.com/hooks/catch/26833980/upydiqn/',
-      reminder:  'https://hooks.zapier.com/hooks/catch/26833980/upyajt6/',
-      welcome:   'https://hooks.zapier.com/hooks/catch/26833980/upyfofm/',
-      intake:    'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec',
-      invoice:   'https://hooks.zapier.com/hooks/catch/26833980/up1tr5g'
-    };
     const CHARLIE_SYSTEM = `You are Charlie — the AI assistant for the AutoBuildCharlie business dashboard. You help business owners trigger automations and manage their client records using natural language.
 
 AUTOMATIONS (fire these via webhook):
@@ -1163,9 +1167,6 @@ Delete a client:
 If any required fields are missing, ask for them in a short, friendly message.
 If the user is just chatting or asking a question, reply in plain conversational text — short and helpful.
 Never include JSON and text in the same response. It's one or the other.`;
-
-    let charlieHistory = [];
-    let charlieKey = localStorage.getItem(CHARLIE_KEY_STORAGE) || '';
 
     function charlieAddMsg(text, from, isAction) {
       const msgs = document.getElementById('charlieMsgs');
