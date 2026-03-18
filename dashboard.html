@@ -1041,6 +1041,8 @@
 
       document.getElementById('authLoading').style.display = 'none';
       document.getElementById('dashContent').style.display = 'block';
+
+      initCharlieChat();
     } // end initDashboard
 
     document.getElementById('editTasksBtn').addEventListener('click', () => {
@@ -1364,13 +1366,7 @@ Never include JSON and text in the same response. It's one or the other.`;
       });
     }
 
-    // Init chat after dashboard loads
-    const _origShowDash = showDashboard;
-    showDashboard = function(company, field, meta) {
-      _origShowDash(company, field, meta);
-      initCharlieChat();
-    };
-  </script>
+</script>
 
 </body>
 </html>
