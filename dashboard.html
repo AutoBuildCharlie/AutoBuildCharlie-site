@@ -1020,20 +1020,30 @@
           upgradeText: null,
           upgradeBtn: null,
           upgradeLink: null
+        },
+        'Founders': {
+          features: '7 automations — any features or workflows you want, built for you',
+          upgradeText: null,
+          upgradeBtn: null,
+          upgradeLink: null
         }
       };
       const planData = planInfo[plan];
       if (planData) {
         const banner = document.getElementById('planBanner');
         banner.style.display = 'flex';
-        document.getElementById('planBannerName').textContent = `${plan} Plan`;
+        document.getElementById('planBannerName').innerHTML = plan === 'Founders'
+          ? `Founders Plan <span style="font-size:0.7rem;background:rgba(0,212,255,0.15);color:var(--accent-cyan);border:1px solid rgba(0,212,255,0.3);border-radius:6px;padding:0.2rem 0.5rem;vertical-align:middle;font-weight:700;letter-spacing:0.05em;">EARLY ACCESS</span>`
+          : `${plan} Plan`;
         document.getElementById('planBannerFeatures').textContent = planData.features;
         document.getElementById('planBannerCta').innerHTML = planData.upgradeBtn
           ? `<div style="text-align:right;">
                <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;">${planData.upgradeText}</div>
                <a href="${planData.upgradeLink}" target="_blank" style="display:inline-block;background:var(--accent);color:#fff;padding:0.55rem 1.1rem;border-radius:8px;font-size:0.85rem;font-weight:700;text-decoration:none;">${planData.upgradeBtn}</a>
              </div>`
-          : `<div style="font-size:0.82rem;color:var(--accent);font-weight:700;">✓ You're on our top-tier plan.</div>`;
+          : plan === 'Founders'
+            ? `<div style="font-size:0.82rem;color:var(--accent-cyan);font-weight:700;">🙏 Thank you for being a Founder — we're building this with you.</div>`
+            : `<div style="font-size:0.82rem;color:var(--accent);font-weight:700;">✓ You're on our top-tier plan.</div>`;
       }
 
       // Workflows
