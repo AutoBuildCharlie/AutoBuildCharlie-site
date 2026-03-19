@@ -251,6 +251,18 @@
           </div>
         `;
 
+        const obTasks = meta.onboarding_tasks || '';
+        const obApps  = meta.onboarding_apps  || '';
+        const obGoal  = meta.onboarding_goal  || '';
+        const onboardingHTML = (obTasks || obApps || obGoal) ? `
+          <div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:1.25rem;padding-top:1.25rem;">
+            <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;">Onboarding Answers</div>
+            ${obTasks ? `<div style="margin-bottom:0.6rem;"><div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.2rem;">Daily Tasks</div><div style="font-size:0.82rem;line-height:1.5;">${obTasks}</div></div>` : ''}
+            ${obApps  ? `<div style="margin-bottom:0.6rem;"><div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.2rem;">Apps & Tools</div><div style="font-size:0.82rem;line-height:1.5;">${obApps}</div></div>` : ''}
+            ${obGoal  ? `<div style="margin-bottom:0.6rem;"><div style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.2rem;">Goal</div><div style="font-size:0.82rem;line-height:1.5;">${obGoal}</div></div>` : ''}
+          </div>` : `
+          <div style="border-top:1px solid rgba(255,255,255,0.06);margin-top:1.25rem;padding-top:1.25rem;font-size:0.82rem;color:var(--text-muted);">No onboarding answers yet.</div>`;
+
         card.innerHTML = `
           <div class="user-header">
             <div class="user-info">
@@ -267,7 +279,7 @@
               <span class="expand-icon">▼</span>
             </div>
           </div>
-          <div class="auto-panel">${togglesHTML}</div>
+          <div class="auto-panel">${togglesHTML}${onboardingHTML}</div>
         `;
         list.appendChild(card);
 
