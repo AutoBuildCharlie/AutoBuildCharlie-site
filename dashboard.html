@@ -1369,11 +1369,38 @@ Never include JSON and text in the same response. It's one or the other.`;
       } else if (agent === 'invoice') {
         payload = { clientName: data.client_name, email: data.client_email, service: data.service, amount: data.amount };
       } else if (agent === 'freshbooks-expense') {
+        const FB_CATEGORIES = {
+          'accident insurance': 503741, 'accounting': 503747, 'advertising': 503717,
+          'airfare': 503791, 'bank fees': 503697, 'business insurance': 503695,
+          'car & truck expenses': 503719, 'commissions': 503713, 'contractors': 503731,
+          'cost of billed expenses': 503803, 'cost of goods sold': 503801,
+          'cost of shipping & handling': 503805, 'depreciation': 503709,
+          'education and training': 503733, 'employee benefits': 503735,
+          'entertainment': 503753, 'equipment': 503781, 'gas': 503723,
+          'gas & electrical': 503797, 'hardware': 503761, 'health insurance': 503737,
+          'hotel/lodging/accommodation': 503789, 'interest - mortgage': 503699,
+          'interest - other': 503701, 'legal fees': 503745, 'life insurance': 503739,
+          'machinery': 503779, 'meals & entertainment': 503749, 'mileage': 503721,
+          'office expenses & postage': 503755, 'office space': 503783,
+          'office supplies': 503757, 'online services': 503715, 'other expenses': 503691,
+          'packaging': 503767, 'personal': 503773, 'phone': 503799, 'postage': 503765,
+          'printing': 503771, 'professional services': 503743,
+          'reference materials': 503693, 'rent or lease': 503775, 'repairs': 503725,
+          'repairs & maintenance': 503703, 'restaurants/dining': 503751,
+          'shipping & couriers': 503763, 'software': 503759, 'stationery': 503769,
+          'subscriptions/dues/memberships': 503711, 'supplies': 503785,
+          'taxes & licenses': 503705, 'taxi & parking': 503793, 'travel': 503787,
+          'uncategorized expenses': 503807, 'utilities': 503795,
+          'vehicle insurance': 503727, 'vehicle licensing': 503729, 'vehicles': 503777,
+          'wages': 503707
+        };
+        const cats = Array.isArray(data.categories) ? data.categories : [data.categories || ''];
+        const categoryId = FB_CATEGORIES[cats[0].toLowerCase()] || 503807;
         const formData = new URLSearchParams();
         formData.append('action', data.action || '');
         formData.append('description', data.description || '');
         formData.append('amount', data.amount || '');
-        formData.append('categories', Array.isArray(data.categories) ? data.categories.join(',') : (data.categories || ''));
+        formData.append('categoryid', categoryId);
         formData.append('date', data.date || '');
         await fetch(url, { method: 'POST', mode: 'no-cors', body: formData });
         return;
