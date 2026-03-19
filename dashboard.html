@@ -1382,26 +1382,7 @@ Never include JSON and text in the same response. It's one or the other.`;
     }
 
     function initCharlieChat() {
-      if (!charlieKey) {
-        document.getElementById('charlieKeySetup').style.display = 'flex';
-        charlieAddMsg("Hi! I'm Charlie. Paste your Claude API key above to get started.", 'charlie', false);
-      } else {
-        charlieAddMsg("Hey! I'm Charlie. Tell me what to do — e.g. \"Send a thank you to Sarah at sarah@email.com for $200\".", 'charlie', false);
-      }
-
-      document.getElementById('charlieKeySave').addEventListener('click', () => {
-        const key = document.getElementById('charlieKeyInput').value.trim();
-        if (!key.startsWith('sk-ant-')) {
-          alert('That doesn\'t look like a valid Claude API key. It should start with sk-ant-');
-          return;
-        }
-        charlieKey = key;
-        localStorage.setItem(CHARLIE_KEY_STORAGE, key);
-        document.getElementById('charlieKeySetup').style.display = 'none';
-        document.getElementById('charlieMsgs').innerHTML = '';
-        charlieHistory = [];
-        charlieAddMsg("Key saved! Hey, I'm Charlie. Tell me what to do — e.g. \"Send a reminder to John at john@email.com for $150\".", 'charlie', false);
-      });
+      charlieAddMsg("Hey! I'm Charlie. Tell me what to do — e.g. \"Send a thank you to Sarah at sarah@email.com for $200\".", 'charlie', false);
 
       document.getElementById('charlieSendBtn').addEventListener('click', () => {
         const val = document.getElementById('charlieInput').value.trim();
