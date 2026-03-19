@@ -1104,49 +1104,52 @@
       const userPlan  = meta.plan || '';
       const userName  = meta.full_name ? meta.full_name.split(' ')[0] : 'the user';
 
-      window.CHARLIE_SYSTEM_DYNAMIC = `You are Charlie — the AI assistant for the AutoBuildCharlie business dashboard. You help business owners trigger automations, manage client records, and discover new automation ideas.
-
-USER CONTEXT:
-- Name: ${userName}
-- Plan: ${userPlan || 'unknown'}
-- Daily tasks they described: ${userTasks || 'not provided'}
-- Apps & tools they use: ${userApps || 'not provided'}
-- Goal they want help with: ${userGoal || 'not provided'}
-
-YOUR AUTOMATIONS (only these are live and usable — do not mention or offer any others):
+      // Store context chunks for lazy loading — injected per-message based on keywords
+      window.CHARLIE_CTX_AUTOS = `YOUR ACTIVE AUTOMATIONS (only these — never mention others):
 ${activeAutoList}
 
-HOW EACH AUTOMATION WORKS (only relevant if the user has it active above):
-- "gratitude" — sends a thank-you email when a client pays. Required: client_name, amount, client_email.
-- "reminder" — sends a polite overdue payment reminder email. Required: client_name, amount, client_email.
-- "welcome" — sends a welcome email to a new client. Required: client_name, client_email.
-- "invoice" — creates an invoice in FreshBooks. Required: client_name, client_email, service, amount.
+HOW THEY WORK:
+- "gratitude" — thank-you email after payment. Required: client_name, amount, client_email.
+- "reminder" — overdue payment reminder. Required: client_name, amount, client_email.
+- "welcome" — welcome email for new client. Required: client_name, client_email.
+- "invoice" — FreshBooks invoice. Required: client_name, client_email, service, amount.
 
-IMPORTANT: If the user asks what you can do, ONLY mention the automations listed under YOUR AUTOMATIONS above. Never say they have access to all 4. If they ask for something not in their active list, tell them it's not set up yet and they can ask the AutoBuildCharlie team to build it.
+If asked what you can do: only list the ACTIVE automations above. If they ask for one not listed, say it's not set up yet and they can ask the AutoBuildCharlie team.
+To fire (respond with ONLY JSON, no text): {"action":"fire","agent":"gratitude","data":{"client_name":"John Smith","amount":"150","client_email":"john@email.com"}}
+If required fields are missing, ask for them in a short friendly message.`;
 
-CAPABILITIES — manage client records in Google Sheets:
-1. "intake" — adds a new client. Required: client_name, service, amount, client_email.
-2. "edit_client" — updates a client's info. Required: client_name. Optional: email, service, amount.
-3. "delete_client" — removes a client. Required: client_name.
+      window.CHARLIE_CTX_CLIENTS = `CLIENT MANAGEMENT (Google Sheets):
+- intake — add a client. Required: client_name, service, amount, client_email.
+- edit_client — update a client. Required: client_name. Optional: email, service, amount.
+- delete_client — remove a client. Required: client_name.
 
-When triggering an automation or capability with ALL required fields, respond with ONLY a JSON object:
-Fire an automation: {"action": "fire", "agent": "gratitude", "data": {"client_name": "John Smith", "amount": "150", "client_email": "john@email.com"}}
-Add a client: {"action": "fire", "agent": "intake", "data": {"client_name": "John Smith", "service": "Personal Training", "amount": "150", "client_email": "john@email.com"}}
-Edit a client: {"action": "edit_client", "data": {"client_name": "John Smith", "email": "newemail@email.com"}}
-Delete a client: {"action": "delete_client", "data": {"client_name": "John Smith"}}
+Respond with ONLY JSON (no text):
+Add: {"action":"fire","agent":"intake","data":{"client_name":"John Smith","service":"Personal Training","amount":"150","client_email":"john@email.com"}}
+Edit: {"action":"edit_client","data":{"client_name":"John Smith","email":"new@email.com"}}
+Delete: {"action":"delete_client","data":{"client_name":"John Smith"}}`;
 
-If any required fields are missing, ask for them in a short, friendly message.
+      window.CHARLIE_CTX_USER = `USER CONTEXT (for personalized suggestions):
+- Name: ${userName}
+- Tasks: ${userTasks || 'not provided'}
+- Apps: ${userApps || 'not provided'}
+- Goal: ${userGoal || 'not provided'}`;
 
-SUGGESTIONS — if the user asks for automation ideas (for their own business or any other):
-- If they ask about their own business, use their daily tasks, apps, and goal to make it specific
-- If they ask about any other business type (e.g. "what could a barber shop automate?"), suggest ideas for that business even if it's unrelated to their own
-- Group suggestions by level: Simple (quick wins, easy to set up), Medium (saves significant time), Big (transforms how the business runs)
-- NEVER suggest automations they already have active (listed above) when talking about their own business
-- Keep suggestions practical and specific to the business type being discussed
-- End with a question like "Want me to flag any of these to the AutoBuildCharlie team to build for you?"
+      window.CHARLIE_CTX_SUGGEST = `SUGGESTIONS — when asked for automation ideas:
+- For their business: use USER CONTEXT to make ideas specific. Never suggest automations they already have active.
+- For other business types: give ideas for that business even if unrelated to theirs.
+- Group by: Simple (quick wins), Medium (saves time), Big (transforms the business).
+- End with: "Want me to flag any of these to the AutoBuildCharlie team to build for you?"`;
 
-If the user is just chatting or asking a question, reply in plain conversational text — short and helpful.
-Never include JSON and text in the same response. It's one or the other.`;
+      // Keep full prompt as fallback for non-JS paths
+      window.CHARLIE_SYSTEM_DYNAMIC = `You are Charlie — the AI assistant for the AutoBuildCharlie dashboard. You help business owners trigger automations, manage client records, and discover automation ideas. Keep replies short and friendly. Never include JSON and text in the same response.
+
+${window.CHARLIE_CTX_USER}
+
+${window.CHARLIE_CTX_AUTOS}
+
+${window.CHARLIE_CTX_CLIENTS}
+
+${window.CHARLIE_CTX_SUGGEST}`;
 
       initCharlieChat();
     } // end initDashboard
@@ -1350,6 +1353,22 @@ Never include JSON and text in the same response. It's one or the other.`;
       await fetch(url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     }
 
+    function charlieGetSystem(msg) {
+      const m = msg.toLowerCase();
+      const wantsAuto    = /send|email|remind|thank|welcom|invoice|paid|pay|fire|trigger|automat|what.*do|what.*can|what.*you|help|agent/.test(m);
+      const wantsClient  = /\bclient\b|intake|add.*client|new.*client|edit.*client|delete.*client|remove.*client|update.*client/.test(m);
+      const wantsSuggest = /suggest|idea|recommend|what.*should|could.*automat|barber|trainer|restaurant|salon|gym|shop|clinic/.test(m);
+
+      const BASE = `You are Charlie — the AI assistant for the AutoBuildCharlie dashboard. You help business owners trigger automations, manage client records, and discover automation ideas. Keep replies short and friendly. Never include JSON and text in the same response — it's one or the other.`;
+
+      let sys = BASE;
+      if (wantsAuto)    sys += '\n\n' + (window.CHARLIE_CTX_AUTOS   || '');
+      if (wantsClient)  sys += '\n\n' + (window.CHARLIE_CTX_CLIENTS  || '');
+      if (wantsSuggest) sys += '\n\n' + (window.CHARLIE_CTX_SUGGEST  || '') + '\n\n' + (window.CHARLIE_CTX_USER || '');
+
+      return sys;
+    }
+
     async function charlieSend(userText) {
       if (!userText.trim()) return;
       const btn = document.getElementById('charlieSendBtn');
@@ -1370,7 +1389,7 @@ Never include JSON and text in the same response. It's one or the other.`;
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 512,
-            system: window.CHARLIE_SYSTEM_DYNAMIC || CHARLIE_SYSTEM,
+            system: charlieGetSystem(userText),
             messages: charlieHistory
           })
         });
