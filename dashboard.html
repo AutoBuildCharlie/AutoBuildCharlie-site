@@ -1355,9 +1355,9 @@ Never include JSON and text in the same response. It's one or the other.`;
 
     function charlieGetSystem(msg) {
       const m = msg.toLowerCase();
-      const wantsAuto    = /send|email|remind|thank|welcom|invoice|paid|pay|fire|trigger|automat|what.*do|what.*can|what.*you|help|agent/.test(m);
-      const wantsClient  = /\bclient\b|intake|add.*client|new.*client|edit.*client|delete.*client|remove.*client|update.*client/.test(m);
-      const wantsSuggest = /suggest|idea|recommend|what.*should|could.*automat|barber|trainer|restaurant|salon|gym|shop|clinic/.test(m);
+      const wantsAuto    = /send|shoot|drop|fire|hit|trigger|automat|email|message|notify|reach out|follow.?up|remind|chase|nudge|thank|appreciat|welcom|onboard|invoice|bill|charge|paid|pay|settl|cleared|what.*do|what.*can|what.*you|help|agent/.test(m);
+      const wantsClient  = /\bclient\b|intake|onboard|sign.*up|add.*(?:client|person|someone|contact)|new.*(?:client|person|contact)|edit|update|change|delete|remove|get rid/.test(m);
+      const wantsSuggest = /suggest|idea|recommend|what.*should|could.*automat|help.*business|improve|optim|save.*time|barber|trainer|restaurant|salon|gym|shop|clinic|dentist|plumber|coach|freelanc|studio/.test(m);
 
       const BASE = `You are Charlie — the AI assistant for the AutoBuildCharlie dashboard. You help business owners trigger automations, manage client records, and discover automation ideas. Keep replies short and friendly. Never include JSON and text in the same response — it's one or the other.`;
 
