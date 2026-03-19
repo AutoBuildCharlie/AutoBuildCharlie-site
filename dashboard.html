@@ -1400,7 +1400,7 @@ Never include JSON and text in the same response. It's one or the other.`;
         formData.append('action', data.action || '');
         formData.append('description', data.description || '');
         formData.append('amount', data.amount || '');
-        formData.append('categoryid', categoryId);
+        formData.append('categories', categoryId);
         formData.append('date', data.date || '');
         await fetch(url, { method: 'POST', mode: 'no-cors', body: formData });
         return;
