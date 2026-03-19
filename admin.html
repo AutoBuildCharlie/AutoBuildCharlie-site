@@ -83,6 +83,8 @@
     .add-auto-row { margin-top: 1rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
     .add-auto-btn { background: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.3); border-radius: 8px; padding: 0.45rem 1rem; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
     .add-auto-btn:hover { background: rgba(48,209,88,0.2); }
+    .delete-user-btn { background: none; border: none; cursor: pointer; font-size: 1rem; opacity: 0.4; padding: 0.2rem 0.4rem; border-radius: 6px; transition: opacity 0.2s; }
+    .delete-user-btn:hover { opacity: 1; background: rgba(255,69,58,0.15); }
     .add-auto-select { background: #1a1a1a; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.82rem; padding: 0.45rem 0.75rem; outline: none; display: none; }
     .no-autos-msg { font-size: 0.8rem; color: var(--text-muted); font-style: italic; }
 
@@ -277,12 +279,28 @@
             <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;justify-content:flex-end;">
               <span class="plan-badge ${planBadgeClass || 'no-plan'}" id="planHeaderBadge-${user.id}">${currentPlan || 'No Plan'}</span>
               <span class="user-summary">${summaryText}</span>
+              <button class="delete-user-btn" title="Delete user">🗑</button>
               <span class="expand-icon">▼</span>
             </div>
           </div>
           <div class="auto-panel">${togglesHTML}${onboardingHTML}</div>
         `;
         list.appendChild(card);
+
+        // Delete user
+        card.querySelector('.delete-user-btn').addEventListener('click', async (e) => {
+          e.stopPropagation();
+          if (!confirm(`Delete ${name} (${user.email})? This cannot be undone.`)) return;
+          try {
+            await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${user.id}`, {
+              method: 'DELETE',
+              headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` }
+            });
+            card.remove();
+          } catch (err) {
+            alert('Delete failed — check your connection.');
+          }
+        });
 
         // Expand/collapse
         card.querySelector('.user-header').addEventListener('click', () => {
