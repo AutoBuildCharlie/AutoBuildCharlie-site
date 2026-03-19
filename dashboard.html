@@ -837,6 +837,15 @@
           <p style="font-size:0.78rem;color:#888;line-height:1.5;margin-bottom:0.85rem;">Tell Charlie a client's name, service, and amount — a FreshBooks invoice is created and ready to send.</p>
           <div style="font-size:0.68rem;color:rgba(255,159,10,0.8);font-weight:600;">Charlie → Zapier → FreshBooks</div>
         </div>
+        <div data-auto="quickbooks-expense" style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(52,199,89,0.2);border-radius:14px;padding:1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
+            <span class="auto-dot" style="width:7px;height:7px;border-radius:50%;background:#34c759;box-shadow:0 0 6px #34c759;display:inline-block;"></span>
+            <span class="auto-status" style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#34c759;">Live</span>
+          </div>
+          <div style="font-size:0.95rem;font-weight:800;color:#f0f0f0;margin-bottom:0.35rem;">QuickBooks Expenses</div>
+          <p style="font-size:0.78rem;color:#888;line-height:1.5;margin-bottom:0.85rem;">Add, edit, or delete expenses in QuickBooks. Just tell Charlie what the expense was, the amount, and the category.</p>
+          <div style="font-size:0.68rem;color:rgba(52,199,89,0.8);font-weight:600;">Charlie → Make.com → QuickBooks</div>
+        </div>
       </div>
       </div><!-- end liveAutomationsSection -->
 
@@ -919,7 +928,8 @@
       reminder:  'https://hooks.zapier.com/hooks/catch/26833980/upyajt6/',
       welcome:   'https://hooks.zapier.com/hooks/catch/26833980/upyfofm/',
       intake:    'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec',
-      invoice:   'https://hooks.zapier.com/hooks/catch/26833980/up1tr5g'
+      invoice:   'https://hooks.zapier.com/hooks/catch/26833980/up1tr5g',
+      'quickbooks-expense': 'PASTE_WEBHOOK_URL_HERE'
     };
     let charlieHistory = [];
     const CHARLIE_WORKER_URL = 'https://charlie-proxy.aestheticcal22.workers.dev';
@@ -1117,9 +1127,14 @@ HOW THEY WORK:
 - "reminder" — overdue payment reminder. Required: client_name, amount, client_email.
 - "welcome" — welcome email for new client. Required: client_name, client_email.
 - "invoice" — FreshBooks invoice. Required: client_name, client_email, service, amount.
+- "quickbooks-expense" — add, edit, or delete a QuickBooks expense. Required: action (add/edit/delete), description, amount, categories (one or more), date. If any field is missing, ask for it.
 
 If asked what you can do: only list the ACTIVE automations above. If they ask for one not listed, say it's not set up yet and they can ask the AutoBuildCharlie team.
 To fire (respond with ONLY JSON, no text): {"action":"fire","agent":"gratitude","data":{"client_name":"John Smith","amount":"150","client_email":"john@email.com"}}
+QuickBooks expense examples:
+- Add: {"action":"fire","agent":"quickbooks-expense","data":{"action":"add","description":"Canva","amount":"50","categories":["Software","Marketing"],"date":"2026-03-19"}}
+- Edit: {"action":"fire","agent":"quickbooks-expense","data":{"action":"edit","description":"Canva","amount":"75","categories":["Software"],"date":"2026-03-19"}}
+- Delete: {"action":"fire","agent":"quickbooks-expense","data":{"action":"delete","description":"Canva","date":"2026-03-19"}}
 If required fields are missing, ask for them in a short friendly message.`;
 
       window.CHARLIE_CTX_CLIENTS = `CLIENT MANAGEMENT (Google Sheets):
@@ -1359,7 +1374,7 @@ Never include JSON and text in the same response. It's one or the other.`;
 
     function charlieGetSystem(msg) {
       const m = msg.toLowerCase();
-      const wantsAuto    = /send|shoot|drop|fire|hit|trigger|automat|email|message|notify|reach out|follow.?up|remind|chase|nudge|thank|appreciat|welcom|onboard|invoice|bill|charge|paid|pay|settl|cleared|what.*do|what.*can|what.*you|help|agent/.test(m);
+      const wantsAuto    = /send|shoot|drop|fire|hit|trigger|automat|email|message|notify|reach out|follow.?up|remind|chase|nudge|thank|appreciat|welcom|onboard|invoice|bill|charge|paid|pay|settl|cleared|what.*do|what.*can|what.*you|help|agent|expense|quickbooks|log.*expense|add.*expense|edit.*expense|delete.*expense|remove.*expense|categor|record.*expense/.test(m);
       const wantsClient  = /\bclient\b|intake|onboard|sign.*up|add.*(?:client|person|someone|contact)|new.*(?:client|person|contact)|edit|update|change|delete|remove|get rid/.test(m);
       const wantsSuggest = /suggest|idea|recommend|what.*should|could.*automat|help.*business|improve|optim|save.*time|barber|trainer|restaurant|salon|gym|shop|clinic|dentist|plumber|coach|freelanc|studio/.test(m);
 
