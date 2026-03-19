@@ -1296,7 +1296,9 @@ Never include JSON and text in the same response. It's one or the other.`;
         .replace(/\*(.+?)\*/g, '<em>$1</em>')
         .replace(/^- (.+)$/gm, '<li>$1</li>')
         .replace(/(<li>.*<\/li>)/s, '<ul style="margin:0.4rem 0 0.4rem 1rem;padding:0;list-style:disc;">$1</ul>')
-        .replace(/\n/g, '<br>');
+        .replace(/\n/g, '<br>')
+        .replace(/<\/li><br>/g, '</li>')
+        .replace(/<br><li>/g, '<li>');
     }
 
     function charlieAddMsg(text, from, isAction) {
