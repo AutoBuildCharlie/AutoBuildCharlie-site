@@ -1367,7 +1367,14 @@ Never include JSON and text in the same response. It's one or the other.`;
       } else if (agent === 'invoice') {
         payload = { clientName: data.client_name, email: data.client_email, service: data.service, amount: data.amount };
       } else if (agent === 'freshbooks-expense') {
-        payload = { action: data.action, description: data.description, amount: data.amount, categories: data.categories, date: data.date };
+        const formData = new URLSearchParams();
+        formData.append('action', data.action || '');
+        formData.append('description', data.description || '');
+        formData.append('amount', data.amount || '');
+        formData.append('categories', Array.isArray(data.categories) ? data.categories.join(',') : (data.categories || ''));
+        formData.append('date', data.date || '');
+        await fetch(url, { method: 'POST', mode: 'no-cors', body: formData });
+        return;
       } else {
         payload = { clientName: data.client_name, amount: data.amount, email: data.client_email };
       }
