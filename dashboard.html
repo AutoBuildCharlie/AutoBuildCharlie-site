@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — AutoBuildCharlie</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --accent: #bf5af2;
+      --accent-cyan: #00d4ff;
+      --bg: #080808;
+      --bg-card: #111;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --border: rgba(255,255,255,0.08);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+    .bg-orb-1 { width: 500px; height: 500px; background: rgba(191,90,242,0.10); top: -100px; left: -100px; }
+    .bg-orb-2 { width: 400px; height: 400px; background: rgba(0,212,255,0.07); bottom: -80px; right: -80px; }
+
+    nav {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--accent); }
+
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .user-email { font-size: 0.85rem; color: var(--text-muted); }
+
+    .logout-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid rgba(191,90,242,0.3);
+      background: transparent;
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .logout-btn:hover { background: rgba(191,90,242,0.1); border-color: rgba(191,90,242,0.6); }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    /* COMPANY HEADER */
+    .company-header {
+      margin-bottom: 2rem;
+      padding: 2rem 2.5rem;
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid rgba(191,90,242,0.2);
+      border-radius: 20px;
+      box-shadow: 0 0 40px rgba(191,90,242,0.08);
+    }
+
+    .company-name {
+      font-size: 2.6rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+      margin-bottom: 0.4rem;
+    }
+
+    .company-field {
+      font-size: 1rem;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    /* ENCOURAGEMENT */
+    .encouragement {
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      background: rgba(0,212,255,0.05);
+      border: 1px solid rgba(0,212,255,0.15);
+      border-radius: 12px;
+      font-size: 0.9rem;
+      color: rgba(0,212,255,0.9);
+      line-height: 1.6;
+      font-style: italic;
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, var(--accent), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ONBOARDING SUMMARY */
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      align-items: stretch;
+    }
+
+    .summary-card {
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .summary-card-text { flex: 1; }
+
+    .summary-card-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .summary-card-text {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .summary-card-empty {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.2);
+      font-style: italic;
+    }
+
+    .imagination-btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.6rem 1.1rem;
+      border-radius: 100px;
+      border: 1px solid rgba(191,90,242,0.4);
+      background: rgba(191,90,242,0.08);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .imagination-btn:hover {
+      background: rgba(191,90,242,0.18);
+      box-shadow: 0 0 16px rgba(191,90,242,0.25);
+    }
+
+    .goal-edit-area {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .goal-edit-area textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(191,90,242,0.4);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.875rem;
+      font-family: inherit;
+      padding: 0.75rem 1rem;
+      outline: none;
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.6;
+    }
+    .suggestion-chip {
+      padding: 0.4rem 0.85rem;
+      border-radius: 100px;
+      border: 1px solid rgba(0,212,255,0.3);
+      background: rgba(0,212,255,0.06);
+      color: rgba(0,212,255,0.9);
+      font-size: 0.76rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .suggestion-chip:hover {
+      background: rgba(0,212,255,0.15);
+      border-color: rgba(0,212,255,0.6);
+    }
+
+    .goal-save-btn {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #bf5af2 0%, #9b35d4 100%);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    /* CARDS GRID */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .dash-card {
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.75rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .dash-card:hover { border-color: rgba(191,90,242,0.3); box-shadow: 0 0 24px rgba(191,90,242,0.08); }
+
+    .card-icon { font-size: 1.75rem; margin-bottom: 0.9rem; }
+    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .card-desc { font-size: 0.83rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 1.25rem; }
+
+    .card-btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      background: rgba(191,90,242,0.12);
+      border: 1px solid rgba(191,90,242,0.3);
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .card-btn:hover { background: rgba(191,90,242,0.22); }
+
+    .badge-soon {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 100px;
+      padding: 0.2rem 0.6rem;
+      margin-left: 0.5rem;
+      vertical-align: middle;
+    }
+
+    .plan-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(191,90,242,0.12);
+      border: 1px solid rgba(191,90,242,0.3);
+      border-radius: 100px;
+      padding: 0.25rem 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .workflow-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.6rem; }
+
+    .workflow-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.85rem 1rem;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+    }
+
+    .workflow-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      margin-top: 0.4rem;
+      flex-shrink: 0;
+      box-shadow: 0 0 6px rgba(34,197,94,0.6);
+    }
+
+    .workflow-name { font-size: 0.875rem; font-weight: 600; margin-bottom: 0.15rem; }
+    .workflow-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+
+    .workflow-empty {
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.25);
+      font-style: italic;
+      padding: 0.5rem 0;
+    }
+
+    .report-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .report-item {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .report-number {
+      font-size: 1.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .report-label { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.25rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .checklist-item:last-child { border-bottom: none; }
+
+    .checklist-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+    }
+    .checklist-icon.done { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .checklist-icon.pending { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+
+    .checklist-label { flex: 1; }
+    .checklist-label.done { color: var(--text); }
+    .checklist-label.pending { color: var(--text-muted); }
+
+    #authLoading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 60vh;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    #dashContent { display: none; }
+
+    /* MODAL */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.visible { display: flex; }
+
+    .modal {
+      background: linear-gradient(160deg, #1a1a1a 0%, #111 100%);
+      border: 1px solid rgba(191,90,242,0.3);
+      border-radius: 20px;
+      padding: 2.5rem;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 0 60px rgba(191,90,242,0.2);
+      animation: fadeUp 0.3s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+      background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.75) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .modal-sub {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+
+    .modal-field { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+
+    .modal-field label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .modal-field input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.92rem;
+      font-family: inherit;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .modal-field input:focus {
+      border-color: rgba(191,90,242,0.6);
+      box-shadow: 0 0 0 3px rgba(191,90,242,0.1);
+    }
+
+    .modal-field input::placeholder { color: rgba(255,255,255,0.2); }
+
+    .modal-btn {
+      width: 100%;
+      padding: 0.85rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #bf5af2 0%, #9b35d4 100%);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      box-shadow: 0 0 20px rgba(191,90,242,0.35);
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+    .modal-btn:hover { box-shadow: 0 0 30px rgba(191,90,242,0.6); transform: translateY(-1px); }
+
+    @media (max-width: 600px) {
+      main { padding: 2rem 1rem; }
+      .company-name { font-size: 1.8rem; }
+      .modal { margin: 1rem; }
+    }
+
+    /* CHARLIE AI CHAT */
+    .charlie-chat-wrap {
+      background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
+      border: 1px solid rgba(191,90,242,0.25);
+      border-radius: 20px;
+      padding: 1.75rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 0 40px rgba(191,90,242,0.08);
+    }
+    .charlie-chat-msgs {
+      min-height: 180px;
+      max-height: 340px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-right: 0.25rem;
+    }
+    .charlie-chat-msgs::-webkit-scrollbar { width: 4px; }
+    .charlie-chat-msgs::-webkit-scrollbar-track { background: transparent; }
+    .charlie-chat-msgs::-webkit-scrollbar-thumb { background: rgba(191,90,242,0.3); border-radius: 4px; }
+    .charlie-msg {
+      max-width: 80%;
+      padding: 0.7rem 1rem;
+      border-radius: 14px;
+      font-size: 0.875rem;
+      line-height: 1.55;
+    }
+    .charlie-msg.from-charlie {
+      align-self: flex-start;
+      background: rgba(191,90,242,0.1);
+      border: 1px solid rgba(191,90,242,0.2);
+      color: var(--text);
+    }
+    .charlie-msg.from-charlie.action-fired {
+      background: rgba(34,197,94,0.08);
+      border-color: rgba(34,197,94,0.25);
+      color: #22c55e;
+    }
+    .charlie-msg.from-user {
+      align-self: flex-end;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: var(--text);
+    }
+    .charlie-chat-input-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+    .charlie-chat-input {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(191,90,242,0.3);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      padding: 0.75rem 1rem;
+      outline: none;
+      resize: none;
+      min-height: 46px;
+      max-height: 120px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      line-height: 1.5;
+    }
+    .charlie-chat-input:focus {
+      border-color: rgba(191,90,242,0.6);
+      box-shadow: 0 0 0 3px rgba(191,90,242,0.1);
+    }
+    .charlie-chat-input::placeholder { color: rgba(255,255,255,0.2); }
+    .charlie-send-btn {
+      padding: 0.75rem 1.25rem;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, #bf5af2 0%, #9b35d4 100%);
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 0 16px rgba(191,90,242,0.3);
+      transition: box-shadow 0.2s, transform 0.15s;
+    }
+    .charlie-send-btn:hover { box-shadow: 0 0 24px rgba(191,90,242,0.5); transform: translateY(-1px); }
+    .charlie-send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .charlie-key-setup {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+    .charlie-key-input {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(191,90,242,0.3);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 0.85rem;
+      font-family: inherit;
+      padding: 0.65rem 1rem;
+      outline: none;
+    }
+    .charlie-key-input:focus { border-color: rgba(191,90,242,0.6); }
+    .charlie-key-save {
+      padding: 0.65rem 1.1rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #bf5af2 0%, #9b35d4 100%);
+      color: #fff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .charlie-typing {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0.6rem 1rem;
+      background: rgba(191,90,242,0.08);
+      border: 1px solid rgba(191,90,242,0.15);
+      border-radius: 14px;
+      align-self: flex-start;
+    }
+    .charlie-typing span {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(191,90,242,0.7);
+      animation: typingDot 1.2s infinite ease-in-out;
+    }
+    .charlie-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .charlie-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingDot {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-5px); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <!-- COMPANY INFO MODAL -->
+  <div class="modal-overlay" id="companyModal">
+    <div class="modal">
+      <div class="modal-title">One quick thing &#128075;</div>
+      <p class="modal-sub">Tell us about your business so Charlie can personalize your dashboard.</p>
+      <div class="modal-field">
+        <label>Company / Business Name</label>
+        <input type="text" id="companyInput" placeholder="e.g. Bright Media Co." />
+      </div>
+      <div class="modal-field">
+        <label>Field / Industry</label>
+        <input type="text" id="fieldInput" placeholder="e.g. Marketing, Real Estate, E-commerce..." />
+      </div>
+      <button class="modal-btn" id="saveCompanyBtn">Save & Continue &rarr;</button>
+    </div>
+  </div>
+
+  <nav>
+    <a href="index.html" class="nav-logo">AutoBuild<span>Charlie</span></a>
+    <div class="nav-right">
+      <span class="user-email" id="userEmail"></span>
+      <button class="logout-btn" id="logoutBtn">Log out</button>
+    </div>
+  </nav>
+
+  <main>
+    <div id="authLoading">Checking your session...</div>
+
+    <div id="dashContent">
+
+      <!-- COMPANY HEADER -->
+      <div class="company-header">
+        <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.4rem;" id="greetingLine"></div>
+        <div class="company-name" id="companyName"></div>
+        <div class="company-field" id="companyField"></div>
+        <div id="planBadge"></div>
+        <div class="encouragement" id="encouragementMsg"></div>
+      </div>
+
+      <!-- CHARLIE AI CHAT -->
+      <div class="section-title">🤖 Charlie AI — Talk to Your Automations</div>
+      <div class="charlie-chat-wrap">
+        <p style="font-size:0.83rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.55;">Type a command and Charlie will fire the right automation for you. <span style="color:rgba(191,90,242,0.8);">e.g. "Send a reminder to John at john@email.com for $150"</span></p>
+        <div id="charlieKeySetup" class="charlie-key-setup" style="display:none;">
+          <input class="charlie-key-input" id="charlieKeyInput" type="password" placeholder="Paste your Claude API key (sk-ant-...)"/>
+          <button class="charlie-key-save" id="charlieKeySave">Save Key</button>
+        </div>
+        <div class="charlie-chat-msgs" id="charlieMsgs"></div>
+        <div class="charlie-chat-input-row">
+          <textarea class="charlie-chat-input" id="charlieInput" placeholder="Tell Charlie what to do..." rows="1"></textarea>
+          <button class="charlie-send-btn" id="charlieSendBtn">Send →</button>
+        </div>
+      </div>
+
+      <!-- ONBOARDING SUMMARY -->
+      <div class="section-title">&#128203; Your Onboarding Answers</div>
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-card-label">&#9201; Daily Tasks</div>
+          <div class="summary-card-text" id="summaryTasks"></div>
+          <button class="imagination-btn" id="editTasksBtn">&#128161; Maybe you have more than you thought?</button>
+          <div class="goal-edit-area" id="tasksEditArea">
+            <textarea id="tasksEditInput" placeholder="Add more tasks Charlie can help automate..."></textarea>
+            <button class="goal-save-btn" id="tasksSaveBtn">Save Tasks</button>
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-label">&#127919; Goals</div>
+          <div class="summary-card-text" id="summaryGoals"></div>
+          <button class="imagination-btn" id="editGoalBtn">&#10024; Your only limit is your imagination</button>
+          <div class="goal-edit-area" id="goalEditArea">
+            <div class="suggestions-label" id="suggestionsLabel" style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.6rem;font-weight:600;">&#9889; Suggested for your business — tap to add:</div>
+            <div class="chips" id="suggestionChips" style="display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:0.75rem;"></div>
+            <textarea id="goalEditInput" placeholder="Or describe it in your own words..."></textarea>
+            <button class="goal-save-btn" id="goalSaveBtn">Save Goal</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVE AUTOMATIONS -->
+      <div id="liveAutomationsSection" style="display:none;">
+      <div class="section-title">&#9889; My Live Automations</div>
+
+      <!-- STAGE 1: ONBOARDING -->
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.85rem;">
+        <span style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#00d4ff;">① Onboarding</span>
+        <div style="flex:1;height:1px;background:rgba(0,212,255,0.15);"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-bottom:1.75rem;">
+        <div data-auto="intake" style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(0,212,255,0.2);border-radius:14px;padding:1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
+            <span class="auto-dot" style="width:7px;height:7px;border-radius:50%;background:#00d4ff;box-shadow:0 0 6px #00d4ff;display:inline-block;"></span>
+            <span class="auto-status" style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#00d4ff;">Live</span>
+          </div>
+          <div style="font-size:0.95rem;font-weight:800;color:#f0f0f0;margin-bottom:0.35rem;">Add New Client</div>
+          <p style="font-size:0.78rem;color:#888;line-height:1.5;margin-bottom:0.85rem;">Tell Charlie a new client's name, email, service, and amount — they're added to your sheet instantly.</p>
+          <div style="font-size:0.68rem;color:rgba(0,212,255,0.8);font-weight:600;">Charlie → Google Sheets</div>
+        </div>
+        <div data-auto="welcome" style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(0,212,255,0.2);border-radius:14px;padding:1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
+            <span class="auto-dot" style="width:7px;height:7px;border-radius:50%;background:#00d4ff;box-shadow:0 0 6px #00d4ff;display:inline-block;"></span>
+            <span class="auto-status" style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#00d4ff;">Live</span>
+          </div>
+          <div style="font-size:0.95rem;font-weight:800;color:#f0f0f0;margin-bottom:0.35rem;">Send Welcome Email</div>
+          <p style="font-size:0.78rem;color:#888;line-height:1.5;margin-bottom:0.85rem;">New client added → welcome email sent automatically via Gmail. First impression handled.</p>
+          <div style="font-size:0.68rem;color:rgba(0,212,255,0.8);font-weight:600;">Charlie → Zapier → Gmail</div>
+        </div>
+        <div data-auto="edit_client" style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(0,212,255,0.2);border-radius:14px;padding:1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
+            <span class="auto-dot" style="width:7px;height:7px;border-radius:50%;background:#00d4ff;box-shadow:0 0 6px #00d4ff;display:inline-block;"></span>
+            <span class="auto-status" style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#00d4ff;">Live</span>
+          </div>
+          <div style="font-size:0.95rem;font-weight:800;color:#f0f0f0;margin-bottom:0.35rem;">Edit or Remove Client</div>
+          <p style="font-size:0.78rem;color:#888;line-height:1.5;margin-bottom:0.85rem;">Update a client's details or remove them from the sheet — just tell Charlie who and what to change.</p>
+          <div style="font-size:0.68rem;color:rgba(0,212,255,0.8);font-weight:600;">Charlie → Google Sheets</div>
+        </div>
+      </div>
+
+      <!-- STAGE 2: FOLLOW-UP -->
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.85rem;">
+        <span style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#bf5af2;">② Follow-Up</span>
+        <div style="flex:1;height:1px;background:rgba(191,90,242,0.15);"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-bottom:1.75rem;">
+        <div data-auto="reminder" style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(191,90,242,0.2);border-radius:14px;padding:1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
+            <span class="auto-dot" style="width:7px;height:7px;border-radius:50%;background:#bf5af2;box-shadow:0 0 6px #bf5af2;display:inline-block;"></span>
+            <span class="auto-status" style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#bf5af2;">Live</span>
+          </div>
+          <div style="font-size:0.95rem;font-weight:800;color:#f0f0f0;margin-bottom:0.35rem;">Send Payment Reminder</div>
+          <p style="font-size:0.78rem;color:#888;line-height:1.5;margin-bottom:0.85rem;">Overdue invoice? Tell Charlie to send a polite reminder email — no awkward conversation needed.</p>
+          <div style="font-size:0.68rem;color:rgba(191,90,242,0.8);font-weight:600;">Charlie → Zapier → Gmail</div>
+        </div>
+        <div data-auto="gratitude" style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(191,90,242,0.2);border-radius:14px;padding:1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
+            <span class="auto-dot" style="width:7px;height:7px;border-radius:50%;background:#bf5af2;box-shadow:0 0 6px #bf5af2;display:inline-block;"></span>
+            <span class="auto-status" style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#bf5af2;">Live</span>
+          </div>
+          <div style="font-size:0.95rem;font-weight:800;color:#f0f0f0;margin-bottom:0.35rem;">Send Thank You</div>
+          <p style="font-size:0.78rem;color:#888;line-height:1.5;margin-bottom:0.85rem;">Payment received → thank you email sent automatically. Clients feel appreciated without you lifting a finger.</p>
+          <div style="font-size:0.68rem;color:rgba(191,90,242,0.8);font-weight:600;">Charlie → Zapier → Gmail</div>
+        </div>
+      </div>
+
+      <!-- STAGE 3: BILLING -->
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.85rem;">
+        <span style="font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#ff9f0a;">③ Billing</span>
+        <div style="flex:1;height:1px;background:rgba(255,159,10,0.15);"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem;margin-bottom:2.5rem;">
+        <div data-auto="invoice" style="background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(255,159,10,0.2);border-radius:14px;padding:1.25rem;">
+          <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
+            <span class="auto-dot" style="width:7px;height:7px;border-radius:50%;background:#ff9f0a;box-shadow:0 0 6px #ff9f0a;display:inline-block;"></span>
+            <span class="auto-status" style="font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#ff9f0a;">Live</span>
+          </div>
+          <div style="font-size:0.95rem;font-weight:800;color:#f0f0f0;margin-bottom:0.35rem;">Create Invoice</div>
+          <p style="font-size:0.78rem;color:#888;line-height:1.5;margin-bottom:0.85rem;">Tell Charlie a client's name, service, and amount — a FreshBooks invoice is created and ready to send.</p>
+          <div style="font-size:0.68rem;color:rgba(255,159,10,0.8);font-weight:600;">Charlie → Zapier → FreshBooks</div>
+        </div>
+      </div>
+      </div><!-- end liveAutomationsSection -->
+
+      <!-- AUTOMATIONS PENDING (shown when not yet live) -->
+      <div id="automationsPending" style="display:none;background:linear-gradient(160deg,#161616 0%,#0f0f0f 100%);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:2rem;margin-bottom:2.5rem;text-align:center;">
+        <div style="font-size:1.5rem;margin-bottom:0.75rem;">⚙️</div>
+        <div style="font-size:1rem;font-weight:700;color:#f0f0f0;margin-bottom:0.4rem;">Your automations are being set up</div>
+        <p style="font-size:0.83rem;color:#888;line-height:1.6;max-width:380px;margin:0 auto;">Our team is configuring everything for your business. You'll see your live automations here once they're ready — usually within 24–48 hours.</p>
+      </div>
+
+      <!-- CARDS -->
+      <div class="section-title">&#9889; Your Charlie Tools</div>
+      <div class="cards-grid">
+
+        <div class="dash-card">
+          <div class="card-icon">💬</div>
+          <div class="card-title">Quick Commands</div>
+          <p class="card-desc" style="margin-bottom:1.1rem;">Things you can say to Charlie right now.</p>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.55rem;">
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Add new client Sarah at sarah@email.com for Personal Training, $150"</li>
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Send a reminder to John at john@email.com for $300"</li>
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Send a thank you to Mike at mike@email.com for $200"</li>
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Create an invoice for Lisa at lisa@email.com for $500 for Coaching"</li>
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Update John's email to newemail@gmail.com"</li>
+            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Remove Sarah from the sheet"</li>
+          </ul>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-icon">&#128203;</div>
+          <div class="card-title">Getting Started</div>
+          <p class="card-desc" style="margin-bottom:1.25rem;">Your setup progress with AutoBuildCharlie.</p>
+          <ul id="checklistItems" style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;"></ul>
+        </div>
+
+        <div class="dash-card">
+          <div class="card-icon">&#128202;</div>
+          <div class="card-title">Usage & Reports</div>
+          <p class="card-desc">A snapshot of what Charlie has been doing for your business.</p>
+          <div class="report-grid" id="reportGrid"></div>
+          <p style="font-size:0.75rem;color:var(--text-muted);line-height:1.5;" id="memberSince"></p>
+        </div>
+
+      </div>
+
+      <!-- PLAN BANNER -->
+      <div id="planBanner" style="display:none;background:linear-gradient(135deg,rgba(191,90,242,0.12),rgba(0,212,255,0.07));border:1px solid rgba(191,90,242,0.25);border-radius:14px;padding:1.25rem 1.5rem;margin-top:1rem;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.3rem;">Current Plan</div>
+          <div id="planBannerName" style="font-size:1.2rem;font-weight:800;color:var(--accent);margin-bottom:0.25rem;"></div>
+          <div id="planBannerFeatures" style="font-size:0.82rem;color:var(--text-muted);"></div>
+        </div>
+        <div id="planBannerCta"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+
+    const supabase = createClient(
+      'https://sqizjjclcxfbxwyajskk.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNxaXpqamNsY3hmYnh3eWFqc2trIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNDQ5NDgsImV4cCI6MjA4ODkyMDk0OH0.Y5PFJarJyEXE6uU5A1pUTTxp0pnb6z6ZISi7l3yPVkg'
+    );
+
+    const encouragements = [
+      "Charlie is handling the busywork. You focus on your clients.",
+      "Every automation running means one less thing on your plate.",
+      "Your business is working even when you're not.",
+      "Less admin. More time doing what you're good at.",
+      "Charlie's got the follow-ups covered. Go do your thing.",
+      "One less task to think about today."
+    ];
+
+    // ── CHARLIE VARIABLES (declared early so initCharlieChat can access them) ──
+    const CHARLIE_KEY_STORAGE = 'abc_claude_key';
+    const WEBHOOKS = {
+      gratitude: 'https://hooks.zapier.com/hooks/catch/26833980/upydiqn/',
+      reminder:  'https://hooks.zapier.com/hooks/catch/26833980/upyajt6/',
+      welcome:   'https://hooks.zapier.com/hooks/catch/26833980/upyfofm/',
+      intake:    'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec',
+      invoice:   'https://hooks.zapier.com/hooks/catch/26833980/up1tr5g'
+    };
+    let charlieHistory = [];
+    let charlieKey = localStorage.getItem(CHARLIE_KEY_STORAGE) || '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';
+    let activeAutoCount = 0;
+
+    // Register listener FIRST so we catch the SIGNED_IN event from Google OAuth redirect
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        window.location.href = 'login.html';
+      } else if (session && !window._dashboardLoaded) {
+        initDashboard(session);
+      }
+    });
+
+    // Also check for an already-active session (email/password logins)
+    const { data: { session: initialSession } } = await supabase.auth.getSession();
+    if (initialSession) {
+      initDashboard(initialSession);
+    } else {
+      // If nothing loads within 4 seconds, send to login
+      setTimeout(() => {
+        if (!window._dashboardLoaded) {
+          window.location.href = 'login.html';
+        }
+      }, 4000);
+    }
+
+    function initDashboard(session) {
+      if (window._dashboardLoaded) return;
+      window._dashboardLoaded = true;
+      const email = session.user.email || '';
+      document.getElementById('userEmail').textContent = email;
+
+      const meta = session.user.user_metadata || {};
+      meta.created_at = session.user.created_at;
+
+      // Random encouragement
+      const msg = encouragements[Math.floor(Math.random() * encouragements.length)];
+      document.getElementById('encouragementMsg').textContent = '"' + msg + '"';
+
+      // Company name & field
+      const company = meta.company_name || '';
+      const field = meta.field_of_work || '';
+
+      if (!company || !field) {
+        document.getElementById('companyModal').classList.add('visible');
+      } else {
+        showDashboard(company, field, meta);
+      }
+
+      // Save company info
+      document.getElementById('saveCompanyBtn').addEventListener('click', async () => {
+        const companyVal = document.getElementById('companyInput').value.trim();
+        const fieldVal = document.getElementById('fieldInput').value.trim();
+        if (!companyVal || !fieldVal) return;
+
+        await supabase.auth.updateUser({
+          data: { company_name: companyVal, field_of_work: fieldVal }
+        });
+
+        document.getElementById('companyModal').classList.remove('visible');
+        showDashboard(companyVal, fieldVal, meta);
+      });
+    }
+
+    function showDashboard(company, field, meta) {
+      document.getElementById('companyName').textContent = company;
+      document.getElementById('companyField').textContent = field;
+
+      const name = meta.full_name ? meta.full_name.split(' ')[0] : null;
+      const hour = new Date().getHours();
+      const timeGreet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+      document.getElementById('greetingLine').textContent = name ? timeGreet + ', ' + name + ' 👋' : timeGreet + ' 👋';
+
+      const tasks = meta.onboarding_tasks || '';
+      const goals = meta.onboarding_goal || '';
+
+      document.getElementById('summaryTasks').textContent = tasks || '';
+      document.getElementById('summaryGoals').textContent = goals || '';
+
+      if (!tasks) document.getElementById('summaryTasks').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
+      if (!goals) document.getElementById('summaryGoals').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
+
+      const plan = meta.plan || '';
+
+      // Plan banner
+      const planInfo = {
+        'Starter': {
+          features: 'Welcome email · Appointment reminder · Payment reminder · Thank you email · + 2 of your choice',
+          upgradeText: '🚀 Want more automations? Upgrade to Growth — get up to 15 built for you.',
+          upgradeBtn: 'Upgrade to Growth →',
+          upgradeLink: 'https://buy.stripe.com/4gM28l1gd5jkcjIdA98Vi01'
+        },
+        'Growth': {
+          features: 'Up to 15 automations running for your business',
+          upgradeText: '🔥 Ready to go all in? Done For You gives you unlimited automations — fully managed.',
+          upgradeBtn: 'Upgrade to Done For You →',
+          upgradeLink: 'https://buy.stripe.com/14AeV7cYVcLMdnM8fP8Vi02'
+        },
+        'Done For You': {
+          features: 'Unlimited automations — fully managed by our team',
+          upgradeText: null,
+          upgradeBtn: null,
+          upgradeLink: null
+        },
+        'Founders': {
+          features: '7 automations — any features or workflows you want, built for you',
+          upgradeText: null,
+          upgradeBtn: null,
+          upgradeLink: null
+        }
+      };
+      const planData = planInfo[plan];
+      if (planData) {
+        const banner = document.getElementById('planBanner');
+        banner.style.display = 'flex';
+        document.getElementById('planBannerName').innerHTML = plan === 'Founders'
+          ? `Founders Plan <span style="font-size:0.7rem;background:rgba(0,212,255,0.15);color:var(--accent-cyan);border:1px solid rgba(0,212,255,0.3);border-radius:6px;padding:0.2rem 0.5rem;vertical-align:middle;font-weight:700;letter-spacing:0.05em;">EARLY ACCESS</span>`
+          : `${plan} Plan`;
+        document.getElementById('planBannerFeatures').textContent = planData.features;
+        document.getElementById('planBannerCta').innerHTML = planData.upgradeBtn
+          ? `<div style="text-align:right;">
+               <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem;">${planData.upgradeText}</div>
+               <a href="${planData.upgradeLink}" target="_blank" style="display:inline-block;background:var(--accent);color:#fff;padding:0.55rem 1.1rem;border-radius:8px;font-size:0.85rem;font-weight:700;text-decoration:none;">${planData.upgradeBtn}</a>
+             </div>`
+          : plan === 'Founders'
+            ? `<div style="font-size:0.82rem;color:var(--accent-cyan);font-weight:700;">🙏 Thank you for being a Founder — we're building this with you.</div>`
+            : `<div style="font-size:0.82rem;color:var(--accent);font-weight:700;">✓ You're on our top-tier plan.</div>`;
+      }
+
+      // Workflows
+      const workflows = meta.workflows || [];
+
+      // Checklist — based on real user state
+      const autoStatesEarly = meta.automations || {};
+      const anyLiveEarly = Object.values(autoStatesEarly).some(v => v === true);
+      const checklistSteps = [
+        { label: 'Create your account',              done: true },
+        { label: 'Complete your onboarding form',    done: !!meta.onboarding_complete },
+        { label: 'Automations reviewed & configured', done: !!meta.automations_configured },
+        { label: 'First automation goes live',       done: anyLiveEarly }
+      ];
+      const checklistEl = document.getElementById('checklistItems');
+      checklistEl.innerHTML = checklistSteps.map(s => `
+        <li class="checklist-item">
+          <div class="checklist-icon ${s.done ? 'done' : ''}">${s.done ? '✓' : ''}</div>
+          <span class="checklist-label ${s.done ? 'done' : ''}">${s.label}</span>
+        </li>`).join('');
+
+      // Show automations section based on per-automation toggles
+      const autoStates = autoStatesEarly;
+      const anyLive = anyLiveEarly;
+      activeAutoCount = Object.values(autoStates).filter(v => v === true).length;
+      if (anyLive) {
+        document.getElementById('liveAutomationsSection').style.display = 'block';
+        document.getElementById('automationsPending').style.display = 'none';
+        // Hide cards that aren't turned on for this user
+        document.querySelectorAll('[data-auto]').forEach(card => {
+          const key = card.dataset.auto;
+          card.style.display = autoStates[key] === true ? '' : 'none';
+        });
+      } else {
+        document.getElementById('liveAutomationsSection').style.display = 'none';
+        document.getElementById('automationsPending').style.display = 'block';
+      }
+
+      // Reports card — driven by real task log
+      updateReportStats();
+
+      // Member since
+      const created = new Date(meta.created_at || Date.now());
+      document.getElementById('memberSince').textContent = `Member since ${created.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`;
+
+      document.getElementById('authLoading').style.display = 'none';
+      document.getElementById('dashContent').style.display = 'block';
+
+      initCharlieChat();
+    } // end initDashboard
+
+    document.getElementById('editTasksBtn').addEventListener('click', () => {
+      const area = document.getElementById('tasksEditArea');
+      const input = document.getElementById('tasksEditInput');
+      input.value = document.getElementById('summaryTasks').textContent;
+      area.style.display = area.style.display === 'block' ? 'none' : 'block';
+      if (area.style.display === 'block') input.focus();
+    });
+
+    document.getElementById('tasksSaveBtn').addEventListener('click', async () => {
+      const newTasks = document.getElementById('tasksEditInput').value.trim();
+      if (!newTasks) return;
+      await supabase.auth.updateUser({ data: { onboarding_tasks: newTasks } });
+      document.getElementById('summaryTasks').textContent = newTasks;
+      document.getElementById('tasksEditArea').style.display = 'none';
+    });
+
+    const fieldSuggestions = {
+      marketing:    ['Auto-send personalized email campaigns based on customer behavior', 'Automatically repurpose blog posts into social media content', 'Track competitor mentions and get daily alerts', 'Auto-schedule a month of social posts in one click', 'Send a weekly performance report to yourself automatically', 'Alert you when a campaign hits a spending threshold'],
+      'real estate':['Auto-send follow-up emails to leads after property viewings', 'Generate and send listing reports to clients weekly', 'Alert you instantly when a new lead fills out a contact form', 'Auto-schedule showings from your website inquiry form', 'Send a market update digest to your client list monthly', 'Notify you when a property you track has a price change'],
+      ecommerce:    ['Auto-send abandoned cart recovery emails', 'Notify you on your phone when a new order comes in', 'Auto-request a review from customers 3 days after delivery', 'Auto-update inventory spreadsheet when a product sells out', 'Send a weekly sales summary to your email every Monday', 'Alert you when a product drops below a stock threshold'],
+      retail:       ['Auto-send restock alerts to customers for sold-out items', 'Generate a daily sales summary and email it to yourself', 'Auto-reply to common customer questions about hours and returns', 'Send a loyalty reward email after a customer\'s 5th purchase', 'Alert staff when inventory hits a reorder point', 'Auto-post new arrivals to your social media'],
+      restaurant:   ['Auto-send reservation confirmations and reminders via text', 'Collect customer feedback automatically after each visit', 'Post your daily specials to Instagram and Facebook automatically', 'Alert you when a negative review is posted online', 'Send a weekly revenue summary to yourself every Monday', 'Auto-reply to DMs asking about your hours or menu'],
+      fitness:      ['Auto-send class reminders to members 24 hours before', 'Follow up with inactive members after 2 weeks of no visits', 'Auto-collect testimonials from clients after milestones', 'Send a monthly progress summary email to each member', 'Alert you when a membership is about to expire', 'Auto-post workout tips to your social media weekly'],
+      healthcare:   ['Auto-send appointment reminders via email or text', 'Follow up with patients after visits with care instructions', 'Auto-collect patient intake forms before appointments', 'Send a monthly newsletter to your patient list', 'Alert staff when a patient hasn\'t rebooked after 6 months', 'Auto-confirm appointments when a patient replies'],
+      coaching:     ['Auto-send session prep materials before each coaching call', 'Follow up with clients after sessions with action items', 'Auto-schedule discovery calls from your website', 'Send a weekly check-in email to active clients', 'Alert you when a client hasn\'t logged progress in 2 weeks', 'Auto-send an invoice after each completed session'],
+      finance:      ['Auto-send monthly financial summaries to clients', 'Alert clients when account thresholds are reached', 'Auto-generate invoices when a project milestone is hit', 'Send a tax deadline reminder to your client list', 'Auto-log new client info into your tracking spreadsheet', 'Alert you when a client document hasn\'t been signed in 3 days'],
+      construction: ['Auto-send project status updates to clients weekly', 'Generate and send quotes automatically from a form', 'Alert your team when materials need to be reordered', 'Send a daily job site summary to your email', 'Auto-log new leads into your project tracker', 'Notify clients when their project phase is complete'],
+      photography:  ['Auto-send gallery delivery emails when photos are ready', 'Follow up with leads who inquired but never booked', 'Auto-post behind-the-scenes content to social media', 'Send a booking confirmation and prep guide automatically', 'Alert you when an inquiry hasn\'t been responded to in 24 hours', 'Auto-send a review request one week after delivery'],
+      legal:        ['Auto-send document signing reminders to clients', 'Follow up with leads after initial consultations', 'Auto-schedule intake calls from your website contact form', 'Send a weekly case status update to active clients', 'Alert you when a deadline is approaching on a case', 'Auto-log new client inquiries into your CRM'],
+      education:    ['Auto-send course reminders and progress nudges to students', 'Generate certificates automatically when a course is completed', 'Follow up with leads who downloaded a free resource', 'Send a weekly digest of new content to your subscribers', 'Alert you when a student hasn\'t logged in for 7 days', 'Auto-enroll new students into an onboarding email sequence'],
+      logistics:    ['Auto-send shipment tracking updates to customers', 'Alert your team when a delivery is delayed', 'Auto-generate daily route summary reports', 'Notify customers when their order is out for delivery', 'Alert managers when a driver hasn\'t checked in on time', 'Auto-log completed deliveries into your tracking sheet'],
+      default:      ['Auto-send follow-up emails to new leads within minutes', 'Get a phone notification every time a new client signs up', 'Auto-generate and send weekly business summary reports to yourself', 'Auto-log every new inquiry into a tracking spreadsheet', 'Send a check-in email to clients who haven\'t heard from you in 30 days', 'Auto-post content to your social media on a schedule']
+    };
+
+    function getSuggestions(field, existingGoals) {
+      const key = Object.keys(fieldSuggestions).find(k => field.toLowerCase().includes(k)) || 'default';
+      const all = fieldSuggestions[key];
+      return all.filter(s => !existingGoals.toLowerCase().includes(s.toLowerCase().slice(0, 20))).slice(0, 3);
+    }
+
+    document.getElementById('editGoalBtn').addEventListener('click', () => {
+      const area = document.getElementById('goalEditArea');
+      const input = document.getElementById('goalEditInput');
+      const isOpen = area.style.display === 'block';
+      area.style.display = isOpen ? 'none' : 'block';
+      if (!isOpen) {
+        input.value = document.getElementById('summaryGoals').textContent;
+        // Populate suggestion chips
+        const field = document.getElementById('companyField').textContent || '';
+        const existing = input.value;
+        const suggestions = getSuggestions(field, existing);
+        const chipsEl = document.getElementById('suggestionChips');
+        chipsEl.innerHTML = '';
+        suggestions.forEach(s => {
+          const btn = document.createElement('button');
+          btn.className = 'suggestion-chip';
+          btn.textContent = s;
+          btn.addEventListener('click', () => {
+            input.value = input.value ? input.value + '\n' + s : s;
+            btn.style.opacity = '0.4';
+            btn.disabled = true;
+          });
+          chipsEl.appendChild(btn);
+        });
+        input.focus();
+      }
+    });
+
+    document.getElementById('goalSaveBtn').addEventListener('click', async () => {
+      const newGoal = document.getElementById('goalEditInput').value.trim();
+      if (!newGoal) return;
+      await supabase.auth.updateUser({ data: { onboarding_goal: newGoal } });
+      document.getElementById('summaryGoals').textContent = newGoal;
+      document.getElementById('goalEditArea').style.display = 'none';
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await supabase.auth.signOut();
+      window.location.href = 'login.html';
+    });
+
+
+    // ── CHARLIE AI CHAT ──────────────────────────────────────────
+    const CHARLIE_SYSTEM = `You are Charlie — the AI assistant for the AutoBuildCharlie business dashboard. You help business owners trigger automations and manage their client records using natural language.
+
+You have 4 AUTOMATIONS and 3 CAPABILITIES. If a user asks what you can do, be clear about the difference.
+
+AUTOMATIONS — these trigger an action automatically (email or invoice):
+1. "gratitude" — sends a thank-you email when a client pays. Required: client_name, amount, client_email.
+2. "reminder" — sends a polite overdue payment reminder email. Required: client_name, amount, client_email.
+3. "welcome" — sends a welcome email to a new client. Required: client_name, client_email.
+4. "invoice" — creates an invoice in FreshBooks. Required: client_name, client_email, service, amount.
+
+CAPABILITIES — these let you manage your client records in Google Sheets:
+1. "intake" — adds a new client to Google Sheets. Required: client_name, service, amount, client_email.
+2. "edit_client" — updates an existing client's info. Required: client_name. Optional: email, service, amount.
+3. "delete_client" — removes a client from the sheet. Required: client_name.
+
+When the user asks you to trigger an automation or use a capability and you have ALL required fields, respond with ONLY a JSON object (no extra text):
+
+Fire an automation:
+{"action": "fire", "agent": "gratitude", "data": {"client_name": "John Smith", "amount": "150", "client_email": "john@email.com"}}
+
+Add a client:
+{"action": "fire", "agent": "intake", "data": {"client_name": "John Smith", "service": "Personal Training", "amount": "150", "client_email": "john@email.com"}}
+
+Edit a client:
+{"action": "edit_client", "data": {"client_name": "John Smith", "email": "newemail@email.com", "amount": "200"}}
+
+Delete a client:
+{"action": "delete_client", "data": {"client_name": "John Smith"}}
+
+If any required fields are missing, ask for them in a short, friendly message.
+If the user is just chatting or asking a question, reply in plain conversational text — short and helpful.
+Never include JSON and text in the same response. It's one or the other.`;
+
+    function charlieRender(text) {
+      return text
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/(<li>.*<\/li>)/s, '<ul style="margin:0.4rem 0 0.4rem 1rem;padding:0;list-style:disc;">$1</ul>')
+        .replace(/\n/g, '<br>');
+    }
+
+    function charlieAddMsg(text, from, isAction) {
+      const msgs = document.getElementById('charlieMsgs');
+      const d = document.createElement('div');
+      d.className = `charlie-msg from-${from}${isAction ? ' action-fired' : ''}`;
+      d.innerHTML = charlieRender(text);
+      msgs.appendChild(d);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function charlieShowTyping() {
+      const msgs = document.getElementById('charlieMsgs');
+      const d = document.createElement('div');
+      d.className = 'charlie-typing';
+      d.id = 'charlieTyping';
+      d.innerHTML = '<span></span><span></span><span></span>';
+      msgs.appendChild(d);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function charlieHideTyping() {
+      const t = document.getElementById('charlieTyping');
+      if (t) t.remove();
+    }
+
+    function logTask(type) {
+      const log = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
+      log.push({ type, ts: Date.now() });
+      localStorage.setItem('abc_task_log', JSON.stringify(log));
+      updateReportStats();
+    }
+
+    function updateReportStats() {
+      const log = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
+      const now = Date.now();
+      const oneWeek = 7 * 24 * 60 * 60 * 1000;
+      const oneMonth = 30 * 24 * 60 * 60 * 1000;
+      const thisWeek = log.filter(e => now - e.ts < oneWeek).length;
+      const thisMonth = log.filter(e => now - e.ts < oneMonth).length;
+      const totalMins = thisWeek * 5;
+      let timeSaved, timeLabel;
+      if (totalMins < 60) {
+        timeSaved = totalMins;
+        timeLabel = 'Mins Saved / Week';
+      } else if (totalMins < 480) {
+        timeSaved = (totalMins / 60).toFixed(1);
+        timeLabel = 'Hrs Saved / Week';
+      } else {
+        timeSaved = (totalMins / 60 / 8).toFixed(1);
+        timeLabel = 'Days Saved / Week';
+      }
+      const reportGrid = document.getElementById('reportGrid');
+      if (reportGrid) {
+        reportGrid.innerHTML = `
+          <div class="report-item"><div class="report-number">${activeAutoCount}</div><div class="report-label">Active Automations</div></div>
+          <div class="report-item"><div class="report-number">${timeSaved}</div><div class="report-label">${timeLabel}</div></div>
+          <div class="report-item"><div class="report-number">${thisMonth}</div><div class="report-label">Tasks / Month</div></div>
+        `;
+      }
+    }
+
+    async function charlieFireWebhook(agent, data) {
+      const url = WEBHOOKS[agent];
+      let payload;
+      if (agent === 'intake') {
+        payload = { clientName: data.client_name, service: data.service, amount: data.amount, email: data.client_email };
+      } else if (agent === 'invoice') {
+        payload = { clientName: data.client_name, email: data.client_email, service: data.service, amount: data.amount };
+      } else {
+        payload = { clientName: data.client_name, amount: data.amount, email: data.client_email };
+      }
+      await fetch(url, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    }
+
+    async function charlieSend(userText) {
+      if (!userText.trim()) return;
+      const btn = document.getElementById('charlieSendBtn');
+      const input = document.getElementById('charlieInput');
+      btn.disabled = true;
+      input.disabled = true;
+
+      charlieAddMsg(userText, 'user', false);
+      charlieHistory.push({ role: 'user', content: userText });
+      charlieShowTyping();
+
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': charlieKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 512,
+            system: CHARLIE_SYSTEM,
+            messages: charlieHistory
+          })
+        });
+
+        const json = await res.json();
+        charlieHideTyping();
+
+        if (!res.ok) {
+          const errMsg = json.error?.message || '';
+          const friendlyMsg = 'Charlie is unavailable right now. Please try again shortly.';
+          charlieAddMsg(friendlyMsg, 'charlie', false);
+          btn.disabled = false; input.disabled = false;
+          return;
+        }
+
+        const reply = json.content[0].text.trim();
+        charlieHistory.push({ role: 'assistant', content: reply });
+
+        // Check if it's an action JSON
+        try {
+          const parsed = JSON.parse(reply);
+          const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec';
+
+          if (parsed.action === 'fire' && parsed.agent && parsed.data) {
+            const agentNames = { gratitude: 'Gratitude', reminder: 'Reminder', welcome: 'Welcome', intake: 'Client Intake' };
+            charlieAddMsg(`Firing ${agentNames[parsed.agent] || parsed.agent} Agent for ${parsed.data.client_name}...`, 'charlie', false);
+            await charlieFireWebhook(parsed.agent, parsed.data);
+            logTask(parsed.agent);
+            charlieAddMsg(`✓ Done! ${agentNames[parsed.agent]} Agent fired for ${parsed.data.client_name}. Check Gmail Drafts in ~30 seconds.`, 'charlie', true);
+
+          } else if (parsed.action === 'edit_client' && parsed.data) {
+            charlieAddMsg(`Updating ${parsed.data.client_name} in your sheet...`, 'charlie', false);
+            await fetch(SHEET_URL, {
+              method: 'POST', mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'edit', ...parsed.data })
+            });
+            logTask('edit_client');
+            charlieAddMsg(`✓ Done! ${parsed.data.client_name}'s record has been updated in Google Sheets.`, 'charlie', true);
+
+          } else if (parsed.action === 'delete_client' && parsed.data) {
+            charlieAddMsg(`Removing ${parsed.data.client_name} from your sheet...`, 'charlie', false);
+            await fetch(SHEET_URL, {
+              method: 'POST', mode: 'no-cors',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'delete', clientName: parsed.data.client_name })
+            });
+            logTask('delete_client');
+            charlieAddMsg(`✓ Done! ${parsed.data.client_name} has been removed from Google Sheets.`, 'charlie', true);
+
+          } else {
+            charlieAddMsg(reply, 'charlie', false);
+          }
+        } catch {
+          charlieAddMsg(reply, 'charlie', false);
+        }
+      } catch (err) {
+        charlieHideTyping();
+        charlieAddMsg('Connection error. Please check your internet connection and try again.', 'charlie', false);
+      }
+
+      btn.disabled = false;
+      input.disabled = false;
+      input.focus();
+    }
+
+    function initCharlieChat() {
+      if (!charlieKey) {
+        document.getElementById('charlieKeySetup').style.display = 'flex';
+        charlieAddMsg("Hi! I'm Charlie. Paste your Claude API key above to get started.", 'charlie', false);
+      } else {
+        charlieAddMsg("Hey! I'm Charlie. Tell me what to do — e.g. \"Send a thank you to Sarah at sarah@email.com for $200\".", 'charlie', false);
+      }
+
+      document.getElementById('charlieKeySave').addEventListener('click', () => {
+        const key = document.getElementById('charlieKeyInput').value.trim();
+        if (!key.startsWith('sk-ant-')) {
+          alert('That doesn\'t look like a valid Claude API key. It should start with sk-ant-');
+          return;
+        }
+        charlieKey = key;
+        localStorage.setItem(CHARLIE_KEY_STORAGE, key);
+        document.getElementById('charlieKeySetup').style.display = 'none';
+        document.getElementById('charlieMsgs').innerHTML = '';
+        charlieHistory = [];
+        charlieAddMsg("Key saved! Hey, I'm Charlie. Tell me what to do — e.g. \"Send a reminder to John at john@email.com for $150\".", 'charlie', false);
+      });
+
+      document.getElementById('charlieSendBtn').addEventListener('click', () => {
+        const val = document.getElementById('charlieInput').value.trim();
+        document.getElementById('charlieInput').value = '';
+        charlieSend(val);
+      });
+
+      document.getElementById('charlieInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          const val = document.getElementById('charlieInput').value.trim();
+          document.getElementById('charlieInput').value = '';
+          charlieSend(val);
+        }
+      });
+    }
+
+</script>
+
+</body>
+</html>

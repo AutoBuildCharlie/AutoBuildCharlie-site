@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — AutoBuildCharlie</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent: #bf5af2;
+      --bg: #080808;
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --border: rgba(255,255,255,0.08);
+    }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; padding: 2rem; }
+    h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.25rem; }
+    .subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2rem; }
+
+    /* PASSWORD GATE */
+    #passwordGate { max-width: 380px; margin: 10vh auto; background: #111; border: 1px solid var(--border); border-radius: 16px; padding: 2rem; text-align: center; }
+    #passwordGate h2 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+    #passwordGate p { font-size: 0.83rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+    .gate-input { width: 100%; background: #1a1a1a; border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text); font-size: 0.95rem; margin-bottom: 1rem; outline: none; }
+    .gate-input:focus { border-color: rgba(191,90,242,0.5); }
+    .gate-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.75rem; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
+    .gate-btn:hover { opacity: 0.9; }
+    #gateError { font-size: 0.8rem; color: #ff453a; margin-top: 0.5rem; display: none; }
+
+    /* ADMIN PANEL */
+    #adminPanel { display: none; max-width: 860px; margin: 0 auto; }
+    .key-setup { background: #111; border: 1px solid rgba(191,90,242,0.3); border-radius: 12px; padding: 1.25rem; margin-bottom: 2rem; }
+    .key-setup p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+    .key-row { display: flex; gap: 0.75rem; }
+    .key-input { flex: 1; background: #1a1a1a; border: 1px solid var(--border); border-radius: 8px; padding: 0.65rem 1rem; color: var(--text); font-size: 0.85rem; outline: none; font-family: monospace; }
+    .key-input:focus { border-color: rgba(191,90,242,0.5); }
+    .key-save { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 0.65rem 1.25rem; font-size: 0.85rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+
+    /* USER CARD */
+    .user-card { background: #111; border: 1px solid var(--border); border-radius: 14px; margin-bottom: 1rem; overflow: hidden; }
+    .user-header { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.5rem; cursor: pointer; gap: 1rem; flex-wrap: wrap; }
+    .user-header:hover { background: rgba(255,255,255,0.02); }
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.5rem; }
+    .user-email { font-size: 0.78rem; color: var(--text-muted); }
+    .user-joined { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .user-summary { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+    .expand-icon { font-size: 0.75rem; color: var(--text-muted); transition: transform 0.2s; }
+    .expand-icon.open { transform: rotate(180deg); }
+
+    /* STATUS DOT */
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+    .status-dot.all-live { background: #30d158; box-shadow: 0 0 6px #30d158; }
+    .status-dot.partial { background: #00d4ff; box-shadow: 0 0 6px #00d4ff; }
+    .status-dot.none { background: #ff9f0a; box-shadow: 0 0 6px #ff9f0a; }
+
+    /* AUTOMATION PANEL */
+    .auto-panel { display: none; border-top: 1px solid var(--border); padding: 1.25rem 1.5rem; }
+    .auto-panel.open { display: block; }
+    .toggle-all-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+    .toggle-all-btn { background: rgba(191,90,242,0.12); color: var(--accent); border: 1px solid rgba(191,90,242,0.3); border-radius: 8px; padding: 0.45rem 1rem; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+    .toggle-all-btn:hover { background: rgba(191,90,242,0.2); }
+    .auto-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.75rem; }
+    .auto-card { background: #1a1a1a; border: 1px solid var(--border); border-radius: 10px; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; transition: border-color 0.2s; }
+    .auto-card.is-live { border-color: rgba(48,209,88,0.35); }
+    .auto-card-top { display: flex; align-items: center; justify-content: space-between; }
+    .auto-card-stage { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); }
+    .auto-card-name { font-size: 0.82rem; font-weight: 700; line-height: 1.3; }
+    .auto-card-type { font-size: 0.68rem; color: var(--text-muted); }
+
+    /* PILL TOGGLE */
+    .pill-toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .pill-toggle input { opacity: 0; width: 0; height: 0; }
+    .pill-slider { position: absolute; inset: 0; background: #333; border-radius: 24px; cursor: pointer; transition: background 0.2s; }
+    .pill-slider:before { content: ''; position: absolute; height: 18px; width: 18px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
+    .pill-toggle input:checked + .pill-slider { background: #30d158; }
+    .pill-toggle input:checked + .pill-slider:before { transform: translateX(20px); }
+
+    #loadingMsg { color: var(--text-muted); font-size: 0.9rem; padding: 1rem 0; }
+    #noKeyMsg { display: none; background: rgba(255,159,10,0.1); border: 1px solid rgba(255,159,10,0.3); border-radius: 10px; padding: 1rem; font-size: 0.83rem; color: #ff9f0a; margin-bottom: 1.5rem; }
+
+    /* ADD AUTOMATION */
+    .add-auto-row { margin-top: 1rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+    .add-auto-btn { background: rgba(48,209,88,0.1); color: #30d158; border: 1px solid rgba(48,209,88,0.3); border-radius: 8px; padding: 0.45rem 1rem; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
+    .add-auto-btn:hover { background: rgba(48,209,88,0.2); }
+    .add-auto-select { background: #1a1a1a; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.82rem; padding: 0.45rem 0.75rem; outline: none; display: none; }
+    .no-autos-msg { font-size: 0.8rem; color: var(--text-muted); font-style: italic; }
+
+    /* PLAN SELECTOR */
+    .plan-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .plan-row label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+    .plan-select { background: #1a1a1a; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 0.85rem; padding: 0.5rem 0.85rem; outline: none; cursor: pointer; transition: border-color 0.2s; }
+    .plan-select:focus { border-color: rgba(191,90,242,0.5); }
+    .plan-badge { font-size: 0.7rem; font-weight: 700; padding: 0.2rem 0.55rem; border-radius: 6px; letter-spacing: 0.04em; }
+    .plan-badge.founders { background: rgba(0,212,255,0.15); color: #00d4ff; border: 1px solid rgba(0,212,255,0.3); }
+    .plan-badge.starter  { background: rgba(191,90,242,0.12); color: var(--accent); border: 1px solid rgba(191,90,242,0.3); }
+    .plan-badge.growth   { background: rgba(48,209,88,0.12); color: #30d158; border: 1px solid rgba(48,209,88,0.3); }
+    .plan-badge.dfy      { background: rgba(255,159,10,0.12); color: #ff9f0a; border: 1px solid rgba(255,159,10,0.3); }
+    .plan-badge.no-plan  { background: rgba(255,255,255,0.05); color: var(--text-muted); border: 1px solid var(--border); }
+    .plan-save-msg { font-size: 0.75rem; color: #30d158; display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- PASSWORD GATE -->
+  <div id="passwordGate">
+    <div style="font-size:2rem;margin-bottom:0.75rem;">🔐</div>
+    <h2>AutoBuildCharlie Admin</h2>
+    <p>Enter your admin password to continue.</p>
+    <input class="gate-input" type="password" id="adminPassword" placeholder="Admin password" />
+    <button class="gate-btn" id="unlockBtn">Unlock →</button>
+    <div id="gateError">Incorrect password. Try again.</div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel">
+    <h1>⚡ Admin Panel</h1>
+    <p class="subtitle">Toggle individual automations live for each client.</p>
+
+    <div class="key-setup" id="keySetup">
+      <p>Paste your Supabase <strong>service role key</strong> to load users. Find it in Supabase → Project Settings → API Keys → service_role.</p>
+      <div class="key-row">
+        <input class="key-input" type="password" id="serviceKeyInput" placeholder="eyJ..." />
+        <button class="key-save" id="saveServiceKey">Save & Load</button>
+      </div>
+    </div>
+
+    <div id="noKeyMsg">⚠️ No service key saved. Paste it above to load your users.</div>
+    <div id="loadingMsg" style="display:none;">Loading users...</div>
+    <div id="userList"></div>
+  </div>
+
+  <script>
+    const ADMIN_PASSWORD = 'abc-admin-2026';
+    const SUPABASE_URL = 'https://sqizjjclcxfbxwyajskk.supabase.co';
+    const SERVICE_KEY_STORAGE = 'abc_service_key';
+
+    // ── MASTER LIST OF AUTOMATIONS ─────────────────────────────────
+    // To add a new automation, just add an entry here.
+    // It will automatically appear as a toggle for every user.
+    const AUTOMATIONS = [
+      { key: 'welcome',      label: 'Send Welcome Email',    stage: 'Onboarding', type: 'Automation' },
+      { key: 'intake',       label: 'Add New Client',        stage: 'Onboarding', type: 'Capability' },
+      { key: 'edit_client',  label: 'Edit or Remove Client', stage: 'Onboarding', type: 'Capability' },
+      { key: 'reminder',     label: 'Send Payment Reminder', stage: 'Follow-Up',  type: 'Automation' },
+      { key: 'gratitude',    label: 'Send Thank You',        stage: 'Follow-Up',  type: 'Automation' },
+      { key: 'invoice',      label: 'Create Invoice',        stage: 'Billing',    type: 'Automation' },
+    ];
+
+    // PASSWORD GATE
+    document.getElementById('unlockBtn').addEventListener('click', checkPassword);
+    document.getElementById('adminPassword').addEventListener('keydown', e => { if (e.key === 'Enter') checkPassword(); });
+
+    function checkPassword() {
+      const val = document.getElementById('adminPassword').value;
+      if (val === ADMIN_PASSWORD) {
+        document.getElementById('passwordGate').style.display = 'none';
+        document.getElementById('adminPanel').style.display = 'block';
+        initAdmin();
+      } else {
+        document.getElementById('gateError').style.display = 'block';
+      }
+    }
+
+    function initAdmin() {
+      const savedKey = localStorage.getItem(SERVICE_KEY_STORAGE);
+      if (savedKey) {
+        document.getElementById('keySetup').style.display = 'none';
+        loadUsers(savedKey);
+      } else {
+        document.getElementById('noKeyMsg').style.display = 'block';
+      }
+      document.getElementById('saveServiceKey').addEventListener('click', () => {
+        const key = document.getElementById('serviceKeyInput').value.trim();
+        if (!key) return;
+        localStorage.setItem(SERVICE_KEY_STORAGE, key);
+        document.getElementById('keySetup').style.display = 'none';
+        document.getElementById('noKeyMsg').style.display = 'none';
+        loadUsers(key);
+      });
+    }
+
+    async function loadUsers(serviceKey) {
+      document.getElementById('loadingMsg').style.display = 'block';
+      document.getElementById('userList').innerHTML = '';
+      try {
+        const res = await fetch(`${SUPABASE_URL}/auth/v1/admin/users?per_page=100`, {
+          headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` }
+        });
+        const data = await res.json();
+        document.getElementById('loadingMsg').style.display = 'none';
+        if (!data.users) { document.getElementById('userList').innerHTML = '<p style="color:#ff453a;font-size:0.85rem;">Failed to load users. Check your service key.</p>'; return; }
+        renderUsers(data.users, serviceKey);
+      } catch (err) {
+        document.getElementById('loadingMsg').style.display = 'none';
+        document.getElementById('userList').innerHTML = '<p style="color:#ff453a;font-size:0.85rem;">Error: ' + err.message + '</p>';
+      }
+    }
+
+    function renderUsers(users, serviceKey) {
+      const list = document.getElementById('userList');
+      if (!users.length) { list.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No users found.</p>'; return; }
+
+      users.forEach(user => {
+        const meta = user.user_metadata || {};
+        const autoStates = meta.automations || {};
+        const name = meta.company_name || meta.full_name || user.email?.split('@')[0] || 'Unknown';
+        const joined = new Date(user.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        const liveCount = AUTOMATIONS.filter(a => autoStates[a.key] === true).length;
+        const dotClass = liveCount === AUTOMATIONS.length ? 'all-live' : liveCount > 0 ? 'partial' : 'none';
+        const summaryText = liveCount === 0 ? 'None live' : `${liveCount} of ${AUTOMATIONS.length} live`;
+
+        const card = document.createElement('div');
+        card.className = 'user-card';
+
+        const allOn = AUTOMATIONS.every(a => autoStates[a.key] === true);
+        const currentPlan = meta.plan || '';
+        const planBadgeClass = { 'Founders': 'founders', 'Starter': 'starter', 'Growth': 'growth', 'Done For You': 'dfy' }[currentPlan] || '';
+        const PLANS = ['', 'Founders', 'Starter', 'Growth', 'Done For You'];
+        const activeAutos = AUTOMATIONS.filter(a => autoStates[a.key] === true);
+        const togglesHTML = `
+          <div class="plan-row">
+            <label>Current Plan</label>
+            <select class="plan-select">
+              ${PLANS.map(p => `<option value="${p}" ${p === currentPlan ? 'selected' : ''}>${p || '— Not set —'}</option>`).join('')}
+            </select>
+            ${planBadgeClass ? `<span class="plan-badge ${planBadgeClass}">${currentPlan}</span>` : ''}
+            <span class="plan-save-msg">✓ Saved</span>
+          </div>
+          <div class="auto-grid">
+            ${activeAutos.length === 0 ? '<span class="no-autos-msg">No automations added yet.</span>' : activeAutos.map(a => `
+              <div class="auto-card is-live" data-card-key="${a.key}">
+                <div class="auto-card-top">
+                  <span class="auto-card-stage">${a.stage}</span>
+                  <label class="pill-toggle">
+                    <input type="checkbox" data-key="${a.key}" checked />
+                    <span class="pill-slider"></span>
+                  </label>
+                </div>
+                <div class="auto-card-name">${a.label}</div>
+                <div class="auto-card-type">${a.type}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="add-auto-row">
+            <button class="add-auto-btn">+ Add Automation</button>
+            <select class="add-auto-select">
+              <option value="">— Pick one —</option>
+              ${AUTOMATIONS.filter(a => !autoStates[a.key]).map(a => `<option value="${a.key}">${a.label}</option>`).join('')}
+            </select>
+          </div>
+        `;
+
+        card.innerHTML = `
+          <div class="user-header">
+            <div class="user-info">
+              <div class="user-name">
+                <span class="status-dot ${dotClass}"></span>
+                ${name}
+              </div>
+              <div class="user-email">${user.email}</div>
+              <div class="user-joined">Joined ${joined}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;justify-content:flex-end;">
+              <span class="plan-badge ${planBadgeClass || 'no-plan'}" id="planHeaderBadge-${user.id}">${currentPlan || 'No Plan'}</span>
+              <span class="user-summary">${summaryText}</span>
+              <span class="expand-icon">▼</span>
+            </div>
+          </div>
+          <div class="auto-panel">${togglesHTML}</div>
+        `;
+        list.appendChild(card);
+
+        // Expand/collapse
+        card.querySelector('.user-header').addEventListener('click', () => {
+          const panel = card.querySelector('.auto-panel');
+          const icon = card.querySelector('.expand-icon');
+          panel.classList.toggle('open');
+          icon.classList.toggle('open');
+        });
+
+        async function saveAutoStates() {
+          try {
+            await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${user.id}`, {
+              method: 'PUT',
+              headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_metadata: { ...meta, automations: autoStates } })
+            });
+          } catch (err) {
+            alert('Save failed — check your connection.');
+          }
+        }
+
+        // Plan selector
+        const planSelect = card.querySelector('.plan-select');
+        const planSaveMsg = card.querySelector('.plan-save-msg');
+        const planBadgeEl = card.querySelector('.auto-panel .plan-badge');
+        planSelect.addEventListener('change', async () => {
+          const newPlan = planSelect.value;
+          meta.plan = newPlan;
+          // Update header badge
+          const badgeClass = { 'Founders': 'founders', 'Starter': 'starter', 'Growth': 'growth', 'Done For You': 'dfy' }[newPlan] || 'no-plan';
+          const headerBadge = document.getElementById(`planHeaderBadge-${user.id}`);
+          if (headerBadge) {
+            headerBadge.className = `plan-badge ${badgeClass}`;
+            headerBadge.textContent = newPlan || 'No Plan';
+          }
+          try {
+            await fetch(`${SUPABASE_URL}/auth/v1/admin/users/${user.id}`, {
+              method: 'PUT',
+              headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ user_metadata: { ...meta } })
+            });
+            planSaveMsg.style.display = 'inline';
+            setTimeout(() => { planSaveMsg.style.display = 'none'; }, 2000);
+          } catch (err) {
+            alert('Save failed — check your connection.');
+          }
+        });
+
+        function refreshSummary() {
+          const n = AUTOMATIONS.filter(a => autoStates[a.key] === true).length;
+          const dc = n === AUTOMATIONS.length ? 'all-live' : n > 0 ? 'partial' : 'none';
+          card.querySelector('.status-dot').className = `status-dot ${dc}`;
+          card.querySelector('.user-summary').textContent = n === 0 ? 'None live' : `${n} of ${AUTOMATIONS.length} live`;
+        }
+
+        function rebuildGrid() {
+          const grid = card.querySelector('.auto-grid');
+          const addSelect = card.querySelector('.add-auto-select');
+          const active = AUTOMATIONS.filter(a => autoStates[a.key] === true);
+          const inactive = AUTOMATIONS.filter(a => !autoStates[a.key]);
+
+          grid.innerHTML = active.length === 0
+            ? '<span class="no-autos-msg">No automations added yet.</span>'
+            : active.map(a => `
+                <div class="auto-card is-live" data-card-key="${a.key}">
+                  <div class="auto-card-top">
+                    <span class="auto-card-stage">${a.stage}</span>
+                    <label class="pill-toggle">
+                      <input type="checkbox" data-key="${a.key}" checked />
+                      <span class="pill-slider"></span>
+                    </label>
+                  </div>
+                  <div class="auto-card-name">${a.label}</div>
+                  <div class="auto-card-type">${a.type}</div>
+                </div>`).join('');
+
+          // Refresh toggle listeners
+          grid.querySelectorAll('.pill-toggle input').forEach(input => {
+            input.addEventListener('change', async () => {
+              autoStates[input.dataset.key] = false;
+              rebuildGrid();
+              refreshSummary();
+              await saveAutoStates();
+            });
+          });
+
+          // Refresh add select options
+          addSelect.innerHTML = `<option value="">— Pick one —</option>` +
+            inactive.map(a => `<option value="${a.key}">${a.label}</option>`).join('');
+        }
+
+        // Wire up initial toggles
+        card.querySelectorAll('.pill-toggle input').forEach(input => {
+          input.addEventListener('change', async () => {
+            autoStates[input.dataset.key] = false;
+            rebuildGrid();
+            refreshSummary();
+            await saveAutoStates();
+          });
+        });
+
+        // Add automation button
+        const addBtn = card.querySelector('.add-auto-btn');
+        const addSelect = card.querySelector('.add-auto-select');
+        addBtn.addEventListener('click', () => {
+          addSelect.style.display = addSelect.style.display === 'inline-block' ? 'none' : 'inline-block';
+        });
+        addSelect.addEventListener('change', async () => {
+          const key = addSelect.value;
+          if (!key) return;
+          autoStates[key] = true;
+          addSelect.style.display = 'none';
+          rebuildGrid();
+          refreshSummary();
+          await saveAutoStates();
+        });
+      });
+    }
+  </script>
+</body>
+</html>
