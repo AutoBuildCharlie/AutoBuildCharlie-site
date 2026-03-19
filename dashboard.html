@@ -1392,7 +1392,12 @@ Never include JSON and text in the same response. It's one or the other.`;
           'taxes & licenses': 503705, 'taxi & parking': 503793, 'travel': 503787,
           'uncategorized expenses': 503807, 'utilities': 503795,
           'vehicle insurance': 503727, 'vehicle licensing': 503729, 'vehicles': 503777,
-          'wages': 503707
+          'wages': 503707,
+          'general business expense': 503691, 'general': 503691, 'misc': 503691,
+          'miscellaneous': 503691, 'other': 503691, 'subscription': 503711,
+          'subscriptions': 503711, 'meals': 503749, 'dining': 503751,
+          'rent': 503775, 'insurance': 503695, 'marketing': 503717,
+          'office': 503757, 'training': 503733, 'legal': 503745
         };
         const cats = Array.isArray(data.categories) ? data.categories : [data.categories || ''];
         const categoryId = FB_CATEGORIES[cats[0].toLowerCase()] || 503807;
