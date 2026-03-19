@@ -1093,8 +1093,7 @@
       document.getElementById('dashContent').style.display = 'block';
 
       // Build Charlie's system prompt dynamically from user data
-      const autoStates = meta.automations || {};
-      const activeAutoNames = Object.entries(autoStates).filter(([,v]) => v === true).map(([k]) => k);
+      const activeAutoNames = Object.entries(autoStatesEarly).filter(([,v]) => v === true).map(([k]) => k);
       const activeAutoList = activeAutoNames.length > 0
         ? activeAutoNames.map(k => `- ${k}`).join('\n')
         : 'None yet';
