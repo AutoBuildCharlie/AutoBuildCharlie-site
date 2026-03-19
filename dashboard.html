@@ -1327,9 +1327,7 @@ Never include JSON and text in the same response. It's one or the other.`;
 
         if (!res.ok) {
           const errMsg = json.error?.message || '';
-          const friendlyMsg = errMsg.includes('x-api-key') || errMsg.includes('api_key') || errMsg.includes('auth')
-            ? "Charlie needs your API key to continue — paste it in the box above."
-            : 'Something went wrong: ' + (errMsg || 'Unknown error');
+          const friendlyMsg = 'Charlie is unavailable right now. Please try again shortly.';
           charlieAddMsg(friendlyMsg, 'charlie', false);
           btn.disabled = false; input.disabled = false;
           return;
