@@ -1366,6 +1366,8 @@ Never include JSON and text in the same response. It's one or the other.`;
         payload = { clientName: data.client_name, service: data.service, amount: data.amount, email: data.client_email };
       } else if (agent === 'invoice') {
         payload = { clientName: data.client_name, email: data.client_email, service: data.service, amount: data.amount };
+      } else if (agent === 'freshbooks-expense') {
+        payload = { action: data.action, description: data.description, amount: data.amount, categories: data.categories, date: data.date };
       } else {
         payload = { clientName: data.client_name, amount: data.amount, email: data.client_email };
       }
@@ -1434,10 +1436,19 @@ Never include JSON and text in the same response. It's one or the other.`;
 
           if (parsed.action === 'fire' && parsed.agent && parsed.data) {
             const agentNames = { gratitude: 'Gratitude', reminder: 'Reminder', welcome: 'Welcome', intake: 'Client Intake' };
-            charlieAddMsg(`Firing ${agentNames[parsed.agent] || parsed.agent} Agent for ${parsed.data.client_name}...`, 'charlie', false);
-            await charlieFireWebhook(parsed.agent, parsed.data);
-            logTask(parsed.agent);
-            charlieAddMsg(`✓ Done! ${agentNames[parsed.agent]} Agent fired for ${parsed.data.client_name}. Check Gmail Drafts in ~30 seconds.`, 'charlie', true);
+            if (parsed.agent === 'freshbooks-expense') {
+              const actionLabel = parsed.data.action === 'delete' ? 'Deleting' : parsed.data.action === 'edit' ? 'Updating' : 'Logging';
+              charlieAddMsg(`${actionLabel} expense in FreshBooks...`, 'charlie', false);
+              await charlieFireWebhook(parsed.agent, parsed.data);
+              logTask(parsed.agent);
+              const doneLabel = parsed.data.action === 'delete' ? 'deleted' : parsed.data.action === 'edit' ? 'updated' : 'logged';
+              charlieAddMsg(`✓ Done! Expense ${doneLabel} in FreshBooks — ${parsed.data.description}, $${parsed.data.amount}.`, 'charlie', true);
+            } else {
+              charlieAddMsg(`Firing ${agentNames[parsed.agent] || parsed.agent} Agent for ${parsed.data.client_name}...`, 'charlie', false);
+              await charlieFireWebhook(parsed.agent, parsed.data);
+              logTask(parsed.agent);
+              charlieAddMsg(`✓ Done! ${agentNames[parsed.agent]} Agent fired for ${parsed.data.client_name}. Check Gmail Drafts in ~30 seconds.`, 'charlie', true);
+            }
 
           } else if (parsed.action === 'edit_client' && parsed.data) {
             charlieAddMsg(`Updating ${parsed.data.client_name} in your sheet...`, 'charlie', false);
