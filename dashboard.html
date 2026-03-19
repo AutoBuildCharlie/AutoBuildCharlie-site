@@ -1055,8 +1055,8 @@
       const checklistSteps = [
         { label: 'Create your account',              done: true },
         { label: 'Complete your onboarding form',    done: !!meta.onboarding_complete },
-        { label: 'Automations reviewed & configured', done: !!meta.automations_configured },
-        { label: 'First automation goes live',       done: anyLiveEarly }
+        { label: 'Automations reviewed & configured', done: anyLiveEarly },
+        { label: 'First automation goes live',        done: anyLiveEarly }
       ];
       const checklistEl = document.getElementById('checklistItems');
       checklistEl.innerHTML = checklistSteps.map(s => `
