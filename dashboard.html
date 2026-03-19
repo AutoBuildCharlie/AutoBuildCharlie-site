@@ -918,7 +918,7 @@
       invoice:   'https://hooks.zapier.com/hooks/catch/26833980/up1tr5g'
     };
     let charlieHistory = [];
-    let charlieKey = localStorage.getItem(CHARLIE_KEY_STORAGE) || '__ANTHROPIC_KEY__';
+    const CHARLIE_WORKER_URL = 'https://charlie-proxy.aestheticcal22.workers.dev';
     let activeAutoCount = 0;
 
     // Register listener FIRST so we catch the SIGNED_IN event from Google OAuth redirect
@@ -1306,13 +1306,10 @@ Never include JSON and text in the same response. It's one or the other.`;
       charlieShowTyping();
 
       try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetch('https://charlie-proxy.aestheticcal22.workers.dev', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': charlieKey,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
           },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
