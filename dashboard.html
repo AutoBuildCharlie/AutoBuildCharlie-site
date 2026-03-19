@@ -1431,7 +1431,8 @@ Never include JSON and text in the same response. It's one or the other.`;
 
         // Check if it's an action JSON
         try {
-          const parsed = JSON.parse(reply);
+          const cleanReply = reply.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+          const parsed = JSON.parse(cleanReply);
           const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzENVBm9PzF51q5Uq0w0U-0OgI0qvsNgj8LN5MBqI7xnhJf31CPOmXbB1fqQZNLM_FD/exec';
 
           if (parsed.action === 'fire' && parsed.agent && parsed.data) {
