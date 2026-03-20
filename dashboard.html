@@ -1366,6 +1366,11 @@ Never include JSON and text in the same response. It's one or the other.`;
       let payload;
       if (agent === 'intake') {
         payload = { clientName: data.client_name, service: data.service, amount: data.amount, email: data.client_email };
+        // Also create client in FreshBooks
+        fetch('https://hook.us2.make.com/jpho1y69l84jrjvqo1csohcamlwgfoeu', {
+          method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clientName: data.client_name, email: data.client_email, service: data.service, amount: data.amount })
+        });
       } else if (agent === 'invoice') {
         payload = { clientName: data.client_name, email: data.client_email, service: data.service, amount: data.amount };
       } else if (agent === 'freshbooks-expense') {
