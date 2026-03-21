@@ -416,52 +416,91 @@
       line-height: 1.7;
     }
 
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3.5rem;
+    /* AUTOMATION STORY */
+    .story-section {
+      margin-top: 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
     }
 
-    .feature-card {
+    .story-block {}
+
+    .story-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .story-icon {
+      font-size: 1.1rem;
+    }
+
+    .story-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .story-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .story-card {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 2rem;
-      transition: box-shadow 0.25s, transform 0.25s, border-color 0.25s;
-      box-shadow: 0 0 12px rgba(191,90,242,0.06);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
     }
 
-    .feature-card:hover {
-      box-shadow: var(--glow-purple);
+    .story-card:hover {
       border-color: var(--accent);
+      box-shadow: var(--glow-purple);
       transform: translateY(-3px);
     }
 
-    .feature-icon {
-      width: 44px;
-      height: 44px;
-      background: rgba(191,90,242,0.12);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      margin-bottom: 1.25rem;
-      box-shadow: var(--glow-sm);
-    }
-
-    .feature-card h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
+    .story-card-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      text-transform: uppercase;
       margin-bottom: 0.5rem;
+      letter-spacing: 0.5px;
     }
 
-    .feature-card p {
-      font-size: 0.9rem;
+    .story-card-desc {
+      font-size: 0.88rem;
       color: var(--text-muted);
       line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+
+    .story-flow {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+
+    .flow-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      letter-spacing: 0.5px;
+    }
+
+    .flow-arrow {
+      font-size: 0.7rem;
+      color: var(--text-muted);
     }
 
     /* HOW IT WORKS */
@@ -1428,40 +1467,174 @@
   <!-- FEATURES -->
   <section id="features">
     <div class="section-inner">
-      <div class="section-label">Features</div>
-      <h2 class="section-title">Everything Charlie can do for your business.</h2>
-      <p class="section-sub">Real automations. Real results. Built around how you actually work — and your only limit is your imagination.</p>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">&#9993;</div>
-          <h3>Automated Emails</h3>
-          <p>Welcome new clients, send follow-ups, payment reminders, and thank you messages — without touching your inbox.</p>
+      <div class="section-label">What Charlie Does</div>
+      <h2 class="section-title">Real automations for real businesses.</h2>
+      <p class="section-sub">Every one of these is live and running for clients right now. Tell us what's eating your time — we'll automate it.</p>
+
+      <div class="story-section">
+
+        <!-- ONBOARDING -->
+        <div class="story-block">
+          <div class="story-header">
+            <span class="story-icon">👋</span>
+            <span class="story-label">Onboarding</span>
+          </div>
+          <div class="story-cards">
+            <div class="story-card">
+              <div class="story-card-title">New Client Added Instantly</div>
+              <p class="story-card-desc">Tell Charlie a new client's name, service, and contact info. They're added to your client sheet automatically — no manual entry, no spreadsheet headaches.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Google Sheets</span>
+              </div>
+            </div>
+            <div class="story-card">
+              <div class="story-card-title">Welcome Email Sent Automatically</div>
+              <p class="story-card-desc">The moment a new client is added, a warm welcome email goes out from your address. First impression handled — before you even look up from your work.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Zapier</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Gmail</span>
+              </div>
+            </div>
+            <div class="story-card">
+              <div class="story-card-title">Appointment Reminders</div>
+              <p class="story-card-desc">Clients get an automatic reminder 24 hours before their booking. Fewer no-shows, fewer last-minute cancellations, less chasing.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Calendly</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Email / SMS</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#128196;</div>
-          <h3>Invoicing on Autopilot</h3>
-          <p>Charlie creates and sends invoices the moment a job is done. Get paid faster without the admin.</p>
+
+        <!-- FOLLOW-UP -->
+        <div class="story-block">
+          <div class="story-header">
+            <span class="story-icon">🔄</span>
+            <span class="story-label">Follow-Up</span>
+          </div>
+          <div class="story-cards">
+            <div class="story-card">
+              <div class="story-card-title">Payment Reminder Sent for You</div>
+              <p class="story-card-desc">Overdue invoice? Tell Charlie and a polite, professional reminder goes out instantly. No awkward conversations. No chasing people down.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Zapier</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Gmail</span>
+              </div>
+            </div>
+            <div class="story-card">
+              <div class="story-card-title">Thank You After Every Job</div>
+              <p class="story-card-desc">When a payment comes in, Charlie sends a thank you email automatically. Clients feel appreciated without you lifting a finger.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Stripe</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Gmail</span>
+              </div>
+            </div>
+            <div class="story-card">
+              <div class="story-card-title">Weekly Check-In to Keep Clients Engaged</div>
+              <p class="story-card-desc">Clients who go quiet don't disappear — they get a check-in. Automatic, personal-feeling, and consistent. Retention goes up without any extra work from you.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Zapier</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Gmail</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#128101;</div>
-          <h3>Client Management</h3>
-          <p>Add, update, or remove clients just by asking Charlie. No spreadsheets, no manual data entry.</p>
+
+        <!-- BILLING -->
+        <div class="story-block">
+          <div class="story-header">
+            <span class="story-icon">💰</span>
+            <span class="story-label">Billing</span>
+          </div>
+          <div class="story-cards">
+            <div class="story-card">
+              <div class="story-card-title">Invoice Created the Moment the Job Is Done</div>
+              <p class="story-card-desc">Tell Charlie the client, service, and amount. A professional invoice is created and sent — before you've even packed up your tools.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">FreshBooks</span>
+              </div>
+            </div>
+            <div class="story-card">
+              <div class="story-card-title">Deposits Collected Upfront</div>
+              <p class="story-card-desc">New client books → Charlie sends a deposit link. You get paid before you show up. No deposit, no appointment. Simple as that.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Stripe</span>
+              </div>
+            </div>
+            <div class="story-card">
+              <div class="story-card-title">Expenses Logged Automatically</div>
+              <p class="story-card-desc">Tell Charlie what you spent, how much, and what category. It's logged in your accounting software instantly — tax time just got a lot less painful.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Make.com</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">FreshBooks</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#128337;</div>
-          <h3>Appointment Reminders</h3>
-          <p>Clients get automatic reminders before their booking. Fewer no-shows, less chasing.</p>
+
+        <!-- ADMIN -->
+        <div class="story-block">
+          <div class="story-header">
+            <span class="story-icon">⚡</span>
+            <span class="story-label">Admin on Autopilot</span>
+          </div>
+          <div class="story-cards">
+            <div class="story-card">
+              <div class="story-card-title">Update or Remove a Client</div>
+              <p class="story-card-desc">Client moved? Changed their number? Just tell Charlie. Your records are updated instantly — no digging through spreadsheets or logging into anything.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Google Sheets</span>
+              </div>
+            </div>
+            <div class="story-card">
+              <div class="story-card-title">Review Request After Every Job</div>
+              <p class="story-card-desc">Happy client? Charlie sends a review request automatically a day after the job. More 5-star reviews, more new clients — without asking awkwardly in person.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Zapier</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Gmail</span>
+              </div>
+            </div>
+            <div class="story-card">
+              <div class="story-card-title">FAQ Auto-Responder</div>
+              <p class="story-card-desc">Common questions about your hours, services, or prices? Charlie answers them instantly on your website — 24/7, even while you sleep.</p>
+              <div class="story-flow">
+                <span class="flow-tag">Charlie</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-tag">Website Chatbot</span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#128179;</div>
-          <h3>Payment Collection</h3>
-          <p>Stripe built in. Charlie handles deposits and payments so you don't have to ask twice.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon">&#9889;</div>
-          <h3>One Message to Charlie, Done</h3>
-          <p>Need something sent, logged, or followed up? Just tell Charlie. It handles the rest.</p>
-        </div>
+
       </div>
     </div>
   </section>
