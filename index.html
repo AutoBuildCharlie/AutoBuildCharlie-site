@@ -383,6 +383,38 @@
       letter-spacing: -0.5px;
     }
 
+    .demo-client {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      text-decoration: none;
+      padding: 0.75rem 1.25rem;
+      border: 1px solid rgba(191,90,242,0.2);
+      border-radius: 12px;
+      background: rgba(191,90,242,0.04);
+      transition: all 0.2s;
+    }
+    .demo-client:hover {
+      border-color: var(--accent);
+      background: rgba(191,90,242,0.1);
+      box-shadow: var(--glow-purple);
+      transform: translateY(-2px);
+    }
+    .demo-client-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.3px;
+    }
+    .demo-client-tag {
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
     /* FEATURES */
     section {
       padding: 5rem 2rem;
@@ -1433,11 +1465,10 @@
   <div class="social-proof">
     <p>Built for businesses like</p>
     <div class="logo-row">
-      <span class="logo-placeholder">Barbershops</span>
-      <span class="logo-placeholder">Personal Trainers</span>
-      <span class="logo-placeholder">Dog Walkers</span>
-      <span class="logo-placeholder">Salons</span>
-      <span class="logo-placeholder">Contractors</span>
+      <a href="https://autobuildcharlie.github.io/NeilDang/" target="_blank" class="demo-client">
+        <span class="demo-client-name">Neil Dang Fitness</span>
+        <span class="demo-client-tag">View Demo →</span>
+      </a>
     </div>
   </div>
 
