@@ -1615,7 +1615,7 @@ Never include JSON and text in the same response. It's one or the other.`;
 
     function charlieGetSystem(msg) {
       const m = msg.toLowerCase();
-      const wantsProposal = /proposal|pitch|write.*for|create.*for|draft.*for|send.*proposal|make.*proposal/.test(m);
+      const wantsProposal = /proposal|pitch|write.*for|create.*for|draft.*for|send.*proposal|make.*proposal|put together.*for|something.*for|write.*up.*for|close.*deal|send.*offer|offer.*to|write.*pitch|send.*pitch/.test(m);
       const wantsAuto    = /send|shoot|drop|fire|hit|trigger|automat|email|message|notify|reach out|follow.?up|remind|chase|nudge|thank|appreciat|welcom|onboard|invoice|bill|charge|paid|pay|settl|cleared|what.*do|what.*can|what.*you|help|agent|\blog\b|expense|freshbooks.*expense|log.*expense|add.*expense|edit.*expense|delete.*expense|remove.*expense|categor|record.*expense|advertising|accounting|airfare|bank.*fee|insurance|contractor|commission|depreciation/.test(m);
       const wantsClient  = /\bclient\b|intake|onboard|sign.*up|add.*(?:client|person|someone|contact)|new.*(?:client|person|contact)|edit|update|change|delete|remove|get rid/.test(m);
       const wantsSuggest = /suggest|idea|recommend|what.*should|could.*automat|help.*business|improve|optim|save.*time|barber|trainer|restaurant|salon|gym|shop|clinic|dentist|plumber|coach|freelanc|studio/.test(m);
