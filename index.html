@@ -18,6 +18,8 @@
   <meta name="twitter:title" content="AutoBuildCharlie — AI Automation for Small Businesses" />
   <meta name="twitter:description" content="Stop doing the same tasks over and over. Let Charlie handle follow-ups, reminders, invoices, and more." />
 
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -183,13 +185,18 @@
       letter-spacing: 0.02em;
     }
 
+    h1, h2, h3, .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+    }
+
     .hero h1 {
-      font-size: clamp(2.4rem, 5vw, 3.75rem);
-      font-weight: 800;
-      letter-spacing: -1.5px;
-      line-height: 1.1;
-      max-width: 760px;
+      font-size: clamp(3rem, 6vw, 5rem);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.0;
+      max-width: 820px;
       margin: 0 auto 1.25rem;
+      text-transform: uppercase;
     }
 
     .hero h1 em {
@@ -500,63 +507,147 @@
       line-height: 1.65;
     }
 
-    /* TESTIMONIALS */
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.5rem;
-      margin-top: 3.5rem;
+    /* MARQUEE */
+    .marquee-section {
+      background: var(--accent);
+      padding: 0.85rem 0;
+      overflow: hidden;
+      white-space: nowrap;
     }
 
-    .testimonial {
+    .marquee-track {
+      display: inline-flex;
+      animation: marquee 25s linear infinite;
+    }
+
+    .marquee-track span {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #fff;
+      padding: 0 2rem;
+    }
+
+    .marquee-track span::before {
+      content: '★';
+      margin-right: 2rem;
+      opacity: 0.6;
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* TESTIMONIAL CAROUSEL */
+    .t-carousel-wrapper { position: relative; margin-top: 3rem; }
+
+    .t-carousel-track {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+
+    .t-slide {
+      min-width: 100%;
       background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 1.75rem;
+      padding: 3rem;
       box-shadow: 0 0 12px rgba(191,90,242,0.06);
-      transition: box-shadow 0.25s, border-color 0.25s;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
 
-    .testimonial:hover {
-      border-color: rgba(0,212,255,0.5);
-      box-shadow: var(--glow-cyan);
-    }
-
-    .stars {
+    .t-stars {
       color: #f59e0b;
-      font-size: 0.85rem;
-      margin-bottom: 0.75rem;
+      font-size: 1rem;
+      letter-spacing: 2px;
     }
 
-    .testimonial blockquote {
-      font-size: 0.92rem;
+    .t-quote {
+      font-size: 1.2rem;
       color: var(--text);
-      line-height: 1.65;
-      margin-bottom: 1.25rem;
+      line-height: 1.75;
+      font-style: italic;
+      max-width: 720px;
     }
 
-    .testimonial-author {
+    .t-author {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 1rem;
     }
 
-    .avatar {
-      width: 36px;
-      height: 36px;
+    .t-avatar {
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.85rem;
-      font-weight: 700;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
       color: #fff;
       flex-shrink: 0;
     }
 
-    .avatar-name {
-      font-size: 0.85rem;
-      font-weight: 600;
+    .t-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .t-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    .t-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .t-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .t-btn:hover {
+      border-color: var(--accent);
+      box-shadow: var(--glow-purple);
+    }
+
+    .t-dots { display: flex; gap: 0.5rem; }
+
+    .t-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #333;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .t-dot.active {
+      background: var(--accent);
+      transform: scale(1.3);
     }
 
     .avatar-role {
@@ -1311,6 +1402,28 @@
     </div>
   </div>
 
+  <!-- MARQUEE -->
+  <div class="marquee-section">
+    <div class="marquee-track">
+      <span>AI Automation</span>
+      <span>Zero Coding Required</span>
+      <span>Save 5+ Hours a Week</span>
+      <span>Set It and Forget It</span>
+      <span>Done For You</span>
+      <span>Automated Follow-Ups</span>
+      <span>Instant Reminders</span>
+      <span>Small Business AI</span>
+      <span>AI Automation</span>
+      <span>Zero Coding Required</span>
+      <span>Save 5+ Hours a Week</span>
+      <span>Set It and Forget It</span>
+      <span>Done For You</span>
+      <span>Automated Follow-Ups</span>
+      <span>Instant Reminders</span>
+      <span>Small Business AI</span>
+    </div>
+  </div>
+
   <!-- WHAT IS A WORKFLOW -->
   <!-- FEATURES -->
   <section id="features">
@@ -1384,39 +1497,50 @@
     <div class="section-inner">
       <div class="section-label">Testimonials</div>
       <h2 class="section-title">What our clients are saying.</h2>
-      <div class="testimonials-grid">
-        <div class="testimonial">
-          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <blockquote>"I was spending an hour every night texting appointment reminders. Now it happens automatically. My no-shows dropped and I got that hour back."</blockquote>
-          <div class="testimonial-author">
-            <div class="avatar" style="background:#5b5fc7;">DM</div>
-            <div>
-              <div class="avatar-name">DeShawn M.</div>
-              <div class="avatar-role">Barber, Fresh Cutz ATL</div>
+      <div class="t-carousel-wrapper">
+        <div class="t-carousel-track" id="tTrack">
+
+          <div class="t-slide">
+            <div class="t-stars">★★★★★</div>
+            <p class="t-quote">"I was spending an hour every night texting appointment reminders. Now it happens automatically. My no-shows dropped and I got that hour back. Charlie paid for itself in the first week."</p>
+            <div class="t-author">
+              <div class="t-avatar" style="background:#5b5fc7;">DM</div>
+              <div>
+                <div class="t-name">DeShawn M.</div>
+                <div class="t-role">Barber, Fresh Cutz ATL</div>
+              </div>
             </div>
           </div>
+
+          <div class="t-slide">
+            <div class="t-stars">★★★★★</div>
+            <p class="t-quote">"I run my dog walking business solo. Charlie sends booking confirmations, follow-ups, and review requests — all without me touching a thing. It literally feels like I have an assistant."</p>
+            <div class="t-author">
+              <div class="t-avatar" style="background:#059669;">KL</div>
+              <div>
+                <div class="t-name">Kayla L.</div>
+                <div class="t-role">Owner, Happy Paws Dog Walking</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="t-slide">
+            <div class="t-stars">★★★★★</div>
+            <p class="t-quote">"My clients used to fall off after a few weeks. Now they get a check-in email every Sunday automatically. Retention went up and I didn't change a single thing about how I train."</p>
+            <div class="t-author">
+              <div class="t-avatar" style="background:#d97706;">MR</div>
+              <div>
+                <div class="t-name">Marcus R.</div>
+                <div class="t-role">Personal Trainer, Self-Employed</div>
+              </div>
+            </div>
+          </div>
+
         </div>
-        <div class="testimonial">
-          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <blockquote>"I run my dog walking business solo. Charlie sends booking confirmations, follow-ups, and review requests for me. It literally feels like I have an assistant."</blockquote>
-          <div class="testimonial-author">
-            <div class="avatar" style="background:#059669;">KL</div>
-            <div>
-              <div class="avatar-name">Kayla L.</div>
-              <div class="avatar-role">Owner, Happy Paws Dog Walking</div>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial">
-          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <blockquote>"My clients used to fall off after a few weeks. Now they get a check-in email every Sunday automatically. Retention went up and I didn't change a thing."</blockquote>
-          <div class="testimonial-author">
-            <div class="avatar" style="background:#d97706;">MR</div>
-            <div>
-              <div class="avatar-name">Marcus R.</div>
-              <div class="avatar-role">Personal Trainer, Self-Employed</div>
-            </div>
-          </div>
+        <div class="t-controls">
+          <button class="t-btn" onclick="moveT(-1)">&#8592;</button>
+          <div class="t-dots" id="tDots"></div>
+          <button class="t-btn" onclick="moveT(1)">&#8594;</button>
         </div>
       </div>
     </div>
@@ -1646,6 +1770,31 @@
     /* ---------- CHATBOT ---------- */
     let lastTopic = null;
 
+    // ── TESTIMONIAL CAROUSEL ──
+    let tCurrent = 0;
+    const tTotal = 3;
+    const tTrack = document.getElementById('tTrack');
+    const tDotsEl = document.getElementById('tDots');
+
+    for (let i = 0; i < tTotal; i++) {
+      const d = document.createElement('div');
+      d.className = 't-dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => goT(i);
+      tDotsEl.appendChild(d);
+    }
+
+    function goT(index) {
+      tCurrent = (index + tTotal) % tTotal;
+      tTrack.style.transform = `translateX(-${tCurrent * 100}%)`;
+      document.querySelectorAll('.t-dot').forEach((d, i) => d.classList.toggle('active', i === tCurrent));
+    }
+
+    function moveT(dir) { goT(tCurrent + dir); resetT(); }
+
+    let tTimer = setInterval(() => goT(tCurrent + 1), 5000);
+    function resetT() { clearInterval(tTimer); tTimer = setInterval(() => goT(tCurrent + 1), 5000); }
+
+    // ── CHAT ──
     function toggleChat() {
       document.getElementById('chatWindow').classList.toggle('open');
     }
