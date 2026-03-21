@@ -667,6 +667,21 @@
     }
     .charlie-typing span:nth-child(2) { animation-delay: 0.2s; }
     .charlie-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+    /* ── JOURNAL ── */
+    .journal-tabs { display: flex; gap: 8px; margin-bottom: 1.25rem; }
+    .journal-tab { padding: 0.45rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); font-size: 0.82rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; }
+    .journal-tab.active { background: rgba(191,90,242,0.12); border-color: rgba(191,90,242,0.4); color: var(--accent); }
+    .journal-entry { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.7rem 0; border-bottom: 1px solid var(--border); }
+    .journal-entry:last-child { border-bottom: none; }
+    .journal-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+    .journal-time { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; padding-top: 2px; min-width: 46px; }
+    .journal-label { font-size: 0.85rem; color: var(--text); line-height: 1.4; }
+    .journal-day-header { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-muted); padding: 0.9rem 0 0.35rem 0; }
+    .journal-summary { background: rgba(191,90,242,0.06); border: 1px solid rgba(191,90,242,0.15); border-radius: 10px; padding: 0.85rem 1.1rem; margin-bottom: 1rem; display: flex; gap: 2rem; flex-wrap: wrap; }
+    .journal-stat-num { font-size: 1.3rem; font-weight: 800; }
+    .journal-stat-label { font-size: 0.7rem; color: var(--text-muted); margin-top: 1px; }
+    .journal-empty { text-align: center; color: var(--text-muted); padding: 2.5rem 0; font-size: 0.85rem; }
     @keyframes typingDot {
       0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
       30% { transform: translateY(-5px); opacity: 1; }
@@ -730,6 +745,17 @@
           <textarea class="charlie-chat-input" id="charlieInput" placeholder="Tell Charlie what to do..." rows="1"></textarea>
           <button class="charlie-send-btn" id="charlieSendBtn">Send →</button>
         </div>
+      </div>
+
+      <!-- ACTIVITY JOURNAL -->
+      <div class="section-title">📋 Activity Journal</div>
+      <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:2.5rem;">
+        <div class="journal-tabs">
+          <button class="journal-tab active" onclick="showJournalTab('daily',this)">Today</button>
+          <button class="journal-tab" onclick="showJournalTab('weekly',this)">This Week</button>
+          <button class="journal-tab" onclick="showJournalTab('monthly',this)">This Month</button>
+        </div>
+        <div id="journalContent"></div>
       </div>
 
       <!-- ONBOARDING SUMMARY -->
@@ -1180,6 +1206,7 @@ ${window.CHARLIE_CTX_CLIENTS}
 ${window.CHARLIE_CTX_SUGGEST}`;
 
       initCharlieChat();
+      renderJournal();
     } // end initDashboard
 
     document.getElementById('editTasksBtn').addEventListener('click', () => {
@@ -1334,11 +1361,68 @@ Never include JSON and text in the same response. It's one or the other.`;
       if (t) t.remove();
     }
 
-    function logTask(type) {
+    function logTask(type, details = {}) {
       const log = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
-      log.push({ type, ts: Date.now() });
+      log.push({ type, ts: Date.now(), label: details.label || type, clientName: details.clientName || '', amount: details.amount || '' });
       localStorage.setItem('abc_task_log', JSON.stringify(log));
       updateReportStats();
+      renderJournal();
+    }
+
+    const JOURNAL_COLORS = { gratitude: '#bf5af2', reminder: '#bf5af2', welcome: '#00d4ff', intake: '#00d4ff', invoice: '#ff9f0a', 'freshbooks-expense': '#34c759', edit_client: '#00d4ff', delete_client: '#ff453a' };
+    const JOURNAL_TYPE_LABELS = { gratitude: 'Thank Yous Sent', reminder: 'Reminders Sent', welcome: 'Welcome Emails Sent', intake: 'Clients Added', invoice: 'Invoices Created', 'freshbooks-expense': 'Expenses Logged', edit_client: 'Clients Updated', delete_client: 'Clients Removed' };
+    let currentJournalTab = 'daily';
+
+    function showJournalTab(tab, btn) {
+      currentJournalTab = tab;
+      document.querySelectorAll('.journal-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderJournal();
+    }
+
+    function renderJournal() {
+      const content = document.getElementById('journalContent');
+      if (!content) return;
+      const log = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
+
+      const entryHtml = e => {
+        const color = JOURNAL_COLORS[e.type] || '#888';
+        const time = new Date(e.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return `<div class="journal-entry"><div class="journal-dot" style="background:${color};box-shadow:0 0 5px ${color};"></div><div class="journal-time">${time}</div><div class="journal-label">${e.label}</div></div>`;
+      };
+
+      if (currentJournalTab === 'daily') {
+        const start = new Date(); start.setHours(0,0,0,0);
+        const entries = log.filter(e => e.ts >= start.getTime()).reverse();
+        content.innerHTML = entries.length ? entries.map(entryHtml).join('') : '<div class="journal-empty">No activity yet today.<br>Tell Charlie what to do!</div>';
+
+      } else if (currentJournalTab === 'weekly') {
+        const start = new Date(); start.setDate(start.getDate() - start.getDay()); start.setHours(0,0,0,0);
+        const entries = log.filter(e => e.ts >= start.getTime());
+        if (!entries.length) { content.innerHTML = '<div class="journal-empty">No activity this week yet.</div>'; return; }
+        const invoiced = entries.filter(e => e.type === 'invoice').reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
+        const byDay = {};
+        entries.forEach(e => {
+          const key = new Date(e.ts).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
+          (byDay[key] = byDay[key] || []).push(e);
+        });
+        const summary = `<div class="journal-summary"><div><div class="journal-stat-num" style="color:var(--accent);">${entries.length}</div><div class="journal-stat-label">Actions This Week</div></div>${invoiced > 0 ? `<div><div class="journal-stat-num" style="color:#ff9f0a;">$${invoiced.toFixed(0)}</div><div class="journal-stat-label">Invoiced This Week</div></div>` : ''}</div>`;
+        const days = Object.entries(byDay).reverse().map(([day, es]) => `<div class="journal-day-header">${day}</div>${es.reverse().map(entryHtml).join('')}`).join('');
+        content.innerHTML = summary + days;
+
+      } else {
+        const start = new Date(); start.setDate(1); start.setHours(0,0,0,0);
+        const entries = log.filter(e => e.ts >= start.getTime());
+        if (!entries.length) { content.innerHTML = '<div class="journal-empty">No activity this month yet.</div>'; return; }
+        const invoiced = entries.filter(e => e.type === 'invoice').reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
+        const typeCounts = {};
+        entries.forEach(e => { typeCounts[e.type] = (typeCounts[e.type] || 0) + 1; });
+        const breakdown = Object.entries(typeCounts).map(([type, count]) => {
+          const color = JOURNAL_COLORS[type] || '#888';
+          return `<div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid var(--border);"><div style="display:flex;align-items:center;gap:0.6rem;"><div style="width:8px;height:8px;border-radius:50%;background:${color};"></div><div style="font-size:0.85rem;color:var(--text);">${JOURNAL_TYPE_LABELS[type] || type}</div></div><div style="font-size:0.85rem;font-weight:700;color:var(--accent);">${count}</div></div>`;
+        }).join('');
+        content.innerHTML = `<div class="journal-summary"><div><div class="journal-stat-num" style="color:var(--accent);">${entries.length}</div><div class="journal-stat-label">Total Actions</div></div>${invoiced > 0 ? `<div><div class="journal-stat-num" style="color:#ff9f0a;">$${invoiced.toFixed(0)}</div><div class="journal-stat-label">Invoiced This Month</div></div>` : ''}</div><div>${breakdown}</div>`;
+      }
     }
 
     function updateReportStats() {
@@ -1496,13 +1580,14 @@ Never include JSON and text in the same response. It's one or the other.`;
               const actionLabel = parsed.data.action === 'delete' ? 'Deleting' : parsed.data.action === 'edit' ? 'Updating' : 'Logging';
               charlieAddMsg(`${actionLabel} expense in FreshBooks...`, 'charlie', false);
               await charlieFireWebhook(parsed.agent, parsed.data);
-              logTask(parsed.agent);
               const doneLabel = parsed.data.action === 'delete' ? 'deleted' : parsed.data.action === 'edit' ? 'updated' : 'logged';
+              logTask(parsed.agent, { label: `Expense ${doneLabel}: ${parsed.data.description} — $${parsed.data.amount}`, amount: parsed.data.amount });
               charlieAddMsg(`✓ Done! Expense ${doneLabel} in FreshBooks — ${parsed.data.description}, $${parsed.data.amount}.`, 'charlie', true);
             } else {
               charlieAddMsg(`Firing ${agentNames[parsed.agent] || parsed.agent} Agent for ${parsed.data.client_name}...`, 'charlie', false);
               await charlieFireWebhook(parsed.agent, parsed.data);
-              logTask(parsed.agent);
+              const agentLogLabels = { gratitude: 'Sent thank-you email', reminder: 'Sent payment reminder', welcome: 'Sent welcome email', intake: 'Added new client' };
+              logTask(parsed.agent, { label: `${agentLogLabels[parsed.agent] || parsed.agent}: ${parsed.data.client_name}${parsed.data.amount ? ' — $' + parsed.data.amount : ''}`, clientName: parsed.data.client_name, amount: parsed.data.amount || '' });
               charlieAddMsg(`✓ Done! ${agentNames[parsed.agent]} Agent fired for ${parsed.data.client_name}. Check Gmail Drafts in ~30 seconds.`, 'charlie', true);
             }
 
@@ -1513,7 +1598,7 @@ Never include JSON and text in the same response. It's one or the other.`;
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ action: 'edit', ...parsed.data })
             });
-            logTask('edit_client');
+            logTask('edit_client', { label: `Updated client: ${parsed.data.client_name}`, clientName: parsed.data.client_name });
             charlieAddMsg(`✓ Done! ${parsed.data.client_name}'s record has been updated in Google Sheets.`, 'charlie', true);
 
           } else if (parsed.action === 'delete_client' && parsed.data) {
@@ -1523,7 +1608,7 @@ Never include JSON and text in the same response. It's one or the other.`;
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ action: 'delete', clientName: parsed.data.client_name })
             });
-            logTask('delete_client');
+            logTask('delete_client', { label: `Removed client: ${parsed.data.client_name}`, clientName: parsed.data.client_name });
             charlieAddMsg(`✓ Done! ${parsed.data.client_name} has been removed from Google Sheets.`, 'charlie', true);
 
           } else {
