@@ -434,6 +434,86 @@
 
     #dashContent { display: none; }
 
+    /* PROPOSAL CARD */
+    .proposal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .proposal-overlay.visible { display: flex; }
+    .proposal-card {
+      background: linear-gradient(160deg, #1a1a1a 0%, #111 100%);
+      border: 1px solid rgba(191,90,242,0.35);
+      border-radius: 20px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 0 60px rgba(191,90,242,0.2);
+      animation: fadeUp 0.3s ease both;
+    }
+    .proposal-card h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #f0f0f0;
+      margin-bottom: 0.3rem;
+      letter-spacing: 0.03em;
+    }
+    .proposal-card .proposal-sub {
+      font-size: 0.8rem;
+      color: #888;
+      margin-bottom: 1rem;
+    }
+    .proposal-card textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      color: #f0f0f0;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      resize: vertical;
+      min-height: 220px;
+      outline: none;
+      font-family: inherit;
+      margin-bottom: 1rem;
+    }
+    .proposal-card textarea:focus { border-color: rgba(191,90,242,0.5); }
+    .proposal-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+    .proposal-btn {
+      flex: 1;
+      padding: 0.65rem 1rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      min-width: 100px;
+    }
+    .proposal-btn-send {
+      background: linear-gradient(135deg, #bf5af2, #9b42cc);
+      color: #fff;
+    }
+    .proposal-btn-send:hover { box-shadow: 0 0 20px rgba(191,90,242,0.5); transform: translateY(-1px); }
+    .proposal-btn-copy {
+      background: rgba(255,255,255,0.08);
+      color: #f0f0f0;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .proposal-btn-copy:hover { background: rgba(255,255,255,0.12); }
+    .proposal-btn-cancel {
+      background: transparent;
+      color: #888;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .proposal-btn-cancel:hover { color: #f0f0f0; }
+
     /* MODAL */
     .modal-overlay {
       display: none;
@@ -694,6 +774,20 @@
   <div class="bg-orb bg-orb-2"></div>
 
   <!-- COMPANY INFO MODAL -->
+  <!-- PROPOSAL CONFIRMATION CARD -->
+  <div class="proposal-overlay" id="proposalOverlay">
+    <div class="proposal-card">
+      <h3>Proposal for <span id="proposalClientName"></span></h3>
+      <p class="proposal-sub">Review and edit before sending. Charlie will email this directly.</p>
+      <textarea id="proposalText"></textarea>
+      <div class="proposal-actions">
+        <button class="proposal-btn proposal-btn-send" id="proposalSendBtn">Send Email</button>
+        <button class="proposal-btn proposal-btn-copy" id="proposalCopyBtn">Copy</button>
+        <button class="proposal-btn proposal-btn-cancel" id="proposalCancelBtn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="companyModal">
     <div class="modal">
       <div class="modal-title">One quick thing &#128075;</div>
@@ -1164,6 +1258,12 @@ HOW THEY WORK:
 - "invoice" — FreshBooks invoice. Required: client_name, client_email, service, amount.
 - "freshbooks-expense" — add, edit, or delete a FreshBooks expense. Required: action (add/edit/delete), description, amount, categories (one or more). Date is optional — if the user mentions a date (e.g. "on March 10th", "last Tuesday"), convert it to YYYY-MM-DD format and include it. If no date is mentioned, use today's date in YYYY-MM-DD format.
 
+PROPOSAL GENERATOR — write a short text-style business proposal for a potential client:
+Required: client_name, client_email, business_type, automations (what they need).
+Respond with ONLY JSON:
+{"action":"proposal","data":{"client_name":"Marcus","client_email":"marcus@gmail.com","business_type":"barber shop","proposal_text":"Hey Marcus,\n\nHere's what I'm setting up for your barber shop:\n\n• Automated appointment reminders\n• Follow-up text after each visit\n• FAQ chatbot on your website\n\nWhat this means for you:\n• No more no-shows\n• Clients feel taken care of\n• Saves you ~3 hrs/week\n\nInvestment: [price]\n\nReady to start? Just reply yes.\n\n— Cal"}}
+Keep it short, casual, and outcome-focused. Leave [price] as a placeholder. Never use formal business language.
+
 If asked what you can do: only list the ACTIVE automations above. If they ask for one not listed, say it's not set up yet and they can ask the AutoBuildCharlie team.
 To fire (respond with ONLY JSON, no text): {"action":"fire","agent":"gratitude","data":{"client_name":"John Smith","amount":"150","client_email":"john@email.com"}}
 QuickBooks expense examples:
@@ -1370,7 +1470,7 @@ Never include JSON and text in the same response. It's one or the other.`;
     }
 
     const JOURNAL_COLORS = { gratitude: '#bf5af2', reminder: '#bf5af2', welcome: '#00d4ff', intake: '#00d4ff', invoice: '#ff9f0a', 'freshbooks-expense': '#34c759', edit_client: '#00d4ff', delete_client: '#ff453a' };
-    const JOURNAL_TYPE_LABELS = { gratitude: 'Thank Yous Sent', reminder: 'Reminders Sent', welcome: 'Welcome Emails Sent', intake: 'Clients Added', invoice: 'Invoices Created', 'freshbooks-expense': 'Expenses Logged', edit_client: 'Clients Updated', delete_client: 'Clients Removed' };
+    const JOURNAL_TYPE_LABELS = { gratitude: 'Thank Yous Sent', reminder: 'Reminders Sent', welcome: 'Welcome Emails Sent', intake: 'Clients Added', invoice: 'Invoices Created', 'freshbooks-expense': 'Expenses Logged', edit_client: 'Clients Updated', delete_client: 'Clients Removed', proposal: 'Proposals Sent' };
     let currentJournalTab = 'daily';
 
     function showJournalTab(tab, btn) {
@@ -1515,6 +1615,7 @@ Never include JSON and text in the same response. It's one or the other.`;
 
     function charlieGetSystem(msg) {
       const m = msg.toLowerCase();
+      const wantsProposal = /proposal|pitch|write.*for|create.*for|draft.*for|send.*proposal|make.*proposal/.test(m);
       const wantsAuto    = /send|shoot|drop|fire|hit|trigger|automat|email|message|notify|reach out|follow.?up|remind|chase|nudge|thank|appreciat|welcom|onboard|invoice|bill|charge|paid|pay|settl|cleared|what.*do|what.*can|what.*you|help|agent|\blog\b|expense|freshbooks.*expense|log.*expense|add.*expense|edit.*expense|delete.*expense|remove.*expense|categor|record.*expense|advertising|accounting|airfare|bank.*fee|insurance|contractor|commission|depreciation/.test(m);
       const wantsClient  = /\bclient\b|intake|onboard|sign.*up|add.*(?:client|person|someone|contact)|new.*(?:client|person|contact)|edit|update|change|delete|remove|get rid/.test(m);
       const wantsSuggest = /suggest|idea|recommend|what.*should|could.*automat|help.*business|improve|optim|save.*time|barber|trainer|restaurant|salon|gym|shop|clinic|dentist|plumber|coach|freelanc|studio/.test(m);
@@ -1522,6 +1623,7 @@ Never include JSON and text in the same response. It's one or the other.`;
       const BASE = `You are Charlie — the AI assistant for the AutoBuildCharlie dashboard. You help business owners trigger automations, manage client records, and discover automation ideas. Keep replies short and friendly. Never include JSON and text in the same response — it's one or the other. Only talk about what is actually set up — never mention integrations, connections to external tools, or features that aren't listed in your active automations or client management instructions.`;
 
       let sys = BASE;
+      if (wantsProposal) sys += '\n\n' + (window.CHARLIE_CTX_AUTOS || '');
       if (wantsAuto)    sys += '\n\n' + (window.CHARLIE_CTX_AUTOS   || '');
       if (wantsClient)  sys += '\n\n' + (window.CHARLIE_CTX_CLIENTS  || '');
       if (wantsSuggest) sys += '\n\n' + (window.CHARLIE_CTX_SUGGEST  || '') + '\n\n' + (window.CHARLIE_CTX_USER || '');
@@ -1611,6 +1713,14 @@ Never include JSON and text in the same response. It's one or the other.`;
             logTask('delete_client', { label: `Removed client: ${parsed.data.client_name}`, clientName: parsed.data.client_name });
             charlieAddMsg(`✓ Done! ${parsed.data.client_name} has been removed from Google Sheets.`, 'charlie', true);
 
+          } else if (parsed.action === 'proposal' && parsed.data) {
+            const pd = parsed.data;
+            document.getElementById('proposalClientName').textContent = pd.client_name;
+            document.getElementById('proposalText').value = pd.proposal_text;
+            document.getElementById('proposalOverlay').classList.add('visible');
+            window._proposalData = pd;
+            charlieAddMsg(`✓ Proposal ready for ${pd.client_name}. Review it above and hit Send when you're happy.`, 'charlie', true);
+
           } else {
             charlieAddMsg(reply, 'charlie', false);
           }
@@ -1626,6 +1736,32 @@ Never include JSON and text in the same response. It's one or the other.`;
       input.disabled = false;
       input.focus();
     }
+
+    // Proposal card buttons
+    document.getElementById('proposalCancelBtn').addEventListener('click', () => {
+      document.getElementById('proposalOverlay').classList.remove('visible');
+    });
+
+    document.getElementById('proposalCopyBtn').addEventListener('click', () => {
+      const text = document.getElementById('proposalText').value;
+      navigator.clipboard.writeText(text).then(() => {
+        const btn = document.getElementById('proposalCopyBtn');
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 2000);
+      });
+    });
+
+    document.getElementById('proposalSendBtn').addEventListener('click', () => {
+      const pd = window._proposalData || {};
+      const text = document.getElementById('proposalText').value;
+      const subject = encodeURIComponent(`Proposal — AI Automation for ${pd.business_type || 'Your Business'}`);
+      const body = encodeURIComponent(text);
+      const email = pd.client_email || '';
+      window.open(`https://mail.google.com/mail/?view=cm&to=${email}&su=${subject}&body=${body}`, '_blank');
+      logTask('proposal', { label: `Proposal sent: ${pd.client_name}`, clientName: pd.client_name });
+      document.getElementById('proposalOverlay').classList.remove('visible');
+      charlieAddMsg(`✓ Gmail opened with the proposal for ${pd.client_name}. Hit Send when ready!`, 'charlie', true);
+    });
 
     function initCharlieChat() {
       charlieAddMsg("Hey! I'm Charlie. Tell me what to do — e.g. \"Send a thank you to Sarah at sarah@email.com for $200\".", 'charlie', false);
