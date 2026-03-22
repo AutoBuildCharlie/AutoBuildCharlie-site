@@ -1023,9 +1023,9 @@
         </div>
 
         <div class="dash-card">
-          <div class="card-icon">&#128203;</div>
-          <div class="card-title">Getting Started</div>
-          <p class="card-desc" style="margin-bottom:1.25rem;">Your setup progress with AutoBuildCharlie.</p>
+          <div class="card-icon">⚡</div>
+          <div class="card-title">Your Automations</div>
+          <p class="card-desc" style="margin-bottom:1.25rem;">Live stats for everything you've fired.</p>
           <ul id="checklistItems" style="list-style:none;display:flex;flex-direction:column;gap:0.6rem;"></ul>
         </div>
 
@@ -1244,21 +1244,35 @@
       // Workflows
       const workflows = meta.workflows || [];
 
-      // Checklist — based on real user state
+      // Scoreboard — live counts per active automation
       const autoStatesEarly = meta.automations || {};
       const anyLiveEarly = Object.values(autoStatesEarly).some(v => v === true);
-      const checklistSteps = [
-        { label: 'Create your account',              done: true },
-        { label: 'Complete your onboarding form',    done: !!meta.onboarding_complete },
-        { label: 'Automations reviewed & configured', done: anyLiveEarly },
-        { label: 'First automation goes live',        done: anyLiveEarly }
-      ];
       const checklistEl = document.getElementById('checklistItems');
-      checklistEl.innerHTML = checklistSteps.map(s => `
-        <li class="checklist-item">
-          <div class="checklist-icon ${s.done ? 'done' : ''}">${s.done ? '✓' : ''}</div>
-          <span class="checklist-label ${s.done ? 'done' : ''}">${s.label}</span>
-        </li>`).join('');
+
+      const SCOREBOARD_MAP = [
+        { key: 'gratitude',           label: 'Thank You Emails',    icon: '💜', type: 'gratitude' },
+        { key: 'reminder',            label: 'Payment Reminders',   icon: '🔔', type: 'reminder' },
+        { key: 'welcome',             label: 'Welcome Emails',      icon: '👋', type: 'welcome' },
+        { key: 'invoice',             label: 'Invoices Sent',       icon: '🧾', type: 'invoice' },
+        { key: 'freshbooks-expense',  label: 'Expenses Logged',     icon: '💸', type: 'freshbooks-expense' },
+        { key: 'intake',              label: 'Clients Added',       icon: '🧑', type: 'intake' },
+      ];
+
+      // Fetch counts from activity_log then render
+      supabase.from('activity_log').select('type').eq('user_id', currentUserId).then(({ data }) => {
+        const counts = {};
+        (data || []).forEach(r => { counts[r.type] = (counts[r.type] || 0) + 1; });
+        const activeItems = SCOREBOARD_MAP.filter(item => autoStatesEarly[item.key] !== false);
+        checklistEl.innerHTML = activeItems.map(item => {
+          const count = counts[item.type] || 0;
+          const fired = count > 0;
+          return `<li class="checklist-item">
+            <div class="checklist-icon ${fired ? 'done' : 'pending'}">${fired ? '✓' : item.icon}</div>
+            <span class="checklist-label ${fired ? 'done' : 'pending'}" style="flex:1;">${item.label}</span>
+            <span style="font-size:0.8rem;font-weight:700;color:${fired ? '#22c55e' : 'var(--text-muted)'};">${fired ? `${count}x` : 'Not yet'}</span>
+          </li>`;
+        }).join('');
+      });
 
       // Show automations section based on per-automation toggles
       const autoStates = autoStatesEarly;
