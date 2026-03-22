@@ -1310,7 +1310,14 @@ ${window.CHARLIE_CTX_SUGGEST}`;
 
       initCharlieChat();
       renderJournal();
+      loadRecentActivityLog();
     } // end initDashboard
+
+    async function loadRecentActivityLog() {
+      if (!currentUserId) return;
+      const { data } = await supabase.from('activity_log').select('label,ts').eq('user_id', currentUserId).order('ts', { ascending: false }).limit(30);
+      window._recentActivityLog = data || [];
+    }
 
     document.getElementById('editTasksBtn').addEventListener('click', () => {
       const area = document.getElementById('tasksEditArea');
@@ -1477,6 +1484,7 @@ Never include JSON and text in the same response. It's one or the other.`;
       }
       updateReportStats();
       renderJournal();
+      loadRecentActivityLog();
     }
 
     const JOURNAL_COLORS = { gratitude: '#bf5af2', reminder: '#bf5af2', welcome: '#00d4ff', intake: '#00d4ff', invoice: '#ff9f0a', 'freshbooks-expense': '#34c759', edit_client: '#00d4ff', delete_client: '#ff453a' };
@@ -1634,9 +1642,8 @@ Never include JSON and text in the same response. It's one or the other.`;
       const wantsClient  = /\bclient\b|intake|onboard|sign.*up|add.*(?:client|person|someone|contact)|new.*(?:client|person|contact)|edit|update|change|delete|remove|get rid/.test(m);
       const wantsSuggest = /suggest|idea|recommend|what.*should|could.*automat|help.*business|improve|optim|save.*time|barber|trainer|restaurant|salon|gym|shop|clinic|dentist|plumber|coach|freelanc|studio/.test(m);
 
-      // Build task log summary for context
-      const taskLog = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
-      const recentTasks = taskLog.slice(-30).map(t => `- ${new Date(t.ts).toLocaleDateString()} | ${t.label}`).join('\n');
+      // Build task log summary from cached window variable (populated on load)
+      const recentTasks = (window._recentActivityLog || []).map(t => `- ${new Date(t.ts).toLocaleDateString()} | ${t.label}`).join('\n');
       const taskContext = recentTasks ? `\n\nRECENT ACTIVITY LOG (last 30 actions):\n${recentTasks}` : '';
 
       const BASE = `You are Charlie — the AI assistant for the AutoBuildCharlie dashboard. You help business owners trigger automations, manage client records, and discover automation ideas. Keep replies short and friendly. Never include JSON and text in the same response — it's one or the other. Only talk about what is actually set up — never mention integrations, connections to external tools, or features that aren't listed in your active automations or client management instructions.${taskContext}`;
