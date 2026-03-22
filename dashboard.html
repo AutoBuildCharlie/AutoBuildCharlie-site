@@ -1063,6 +1063,7 @@
     let charlieHistory = [];
     const CHARLIE_WORKER_URL = 'https://charlie-proxy.aestheticcal22.workers.dev';
     let activeAutoCount = 0;
+    let currentUserId = null;
 
     // Register listener FIRST so we catch the SIGNED_IN event from Google OAuth redirect
     supabase.auth.onAuthStateChange((event, session) => {
@@ -1089,6 +1090,7 @@
     function initDashboard(session) {
       if (window._dashboardLoaded) return;
       window._dashboardLoaded = true;
+      currentUserId = session.user.id;
       const email = session.user.email || '';
       document.getElementById('userEmail').textContent = email;
 
@@ -1461,10 +1463,17 @@ Never include JSON and text in the same response. It's one or the other.`;
       if (t) t.remove();
     }
 
-    function logTask(type, details = {}) {
-      const log = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
-      log.push({ type, ts: Date.now(), label: details.label || type, clientName: details.clientName || '', amount: details.amount || '' });
-      localStorage.setItem('abc_task_log', JSON.stringify(log));
+    async function logTask(type, details = {}) {
+      const ts = Date.now();
+      if (currentUserId) {
+        await supabase.from('activity_log').insert({
+          user_id: currentUserId,
+          type,
+          label: details.label || type,
+          amount: details.amount ? parseFloat(details.amount) : null,
+          ts
+        });
+      }
       updateReportStats();
       renderJournal();
     }
@@ -1480,10 +1489,9 @@ Never include JSON and text in the same response. It's one or the other.`;
       renderJournal();
     }
 
-    function renderJournal() {
+    async function renderJournal() {
       const content = document.getElementById('journalContent');
-      if (!content) return;
-      const log = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
+      if (!content || !currentUserId) return;
 
       const entryHtml = e => {
         const color = JOURNAL_COLORS[e.type] || '#888';
@@ -1493,12 +1501,14 @@ Never include JSON and text in the same response. It's one or the other.`;
 
       if (currentJournalTab === 'daily') {
         const start = new Date(); start.setHours(0,0,0,0);
-        const entries = log.filter(e => e.ts >= start.getTime()).reverse();
+        const { data } = await supabase.from('activity_log').select('*').eq('user_id', currentUserId).gte('ts', start.getTime()).order('ts', { ascending: false });
+        const entries = data || [];
         content.innerHTML = entries.length ? entries.map(entryHtml).join('') : '<div class="journal-empty">No activity yet today.<br>Tell Charlie what to do!</div>';
 
       } else if (currentJournalTab === 'weekly') {
         const start = new Date(); start.setDate(start.getDate() - start.getDay()); start.setHours(0,0,0,0);
-        const entries = log.filter(e => e.ts >= start.getTime());
+        const { data } = await supabase.from('activity_log').select('*').eq('user_id', currentUserId).gte('ts', start.getTime()).order('ts', { ascending: true });
+        const entries = data || [];
         if (!entries.length) { content.innerHTML = '<div class="journal-empty">No activity this week yet.</div>'; return; }
         const invoiced = entries.filter(e => e.type === 'invoice').reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
         const byDay = {};
@@ -1512,7 +1522,8 @@ Never include JSON and text in the same response. It's one or the other.`;
 
       } else {
         const start = new Date(); start.setDate(1); start.setHours(0,0,0,0);
-        const entries = log.filter(e => e.ts >= start.getTime());
+        const { data } = await supabase.from('activity_log').select('*').eq('user_id', currentUserId).gte('ts', start.getTime());
+        const entries = data || [];
         if (!entries.length) { content.innerHTML = '<div class="journal-empty">No activity this month yet.</div>'; return; }
         const invoiced = entries.filter(e => e.type === 'invoice').reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
         const typeCounts = {};
@@ -1525,13 +1536,15 @@ Never include JSON and text in the same response. It's one or the other.`;
       }
     }
 
-    function updateReportStats() {
-      const log = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
+    async function updateReportStats() {
+      if (!currentUserId) return;
       const now = Date.now();
-      const oneWeek = 7 * 24 * 60 * 60 * 1000;
-      const oneMonth = 30 * 24 * 60 * 60 * 1000;
-      const thisWeek = log.filter(e => now - e.ts < oneWeek).length;
-      const thisMonth = log.filter(e => now - e.ts < oneMonth).length;
+      const oneWeek = now - 7 * 24 * 60 * 60 * 1000;
+      const oneMonth = now - 30 * 24 * 60 * 60 * 1000;
+      const { data: weekData } = await supabase.from('activity_log').select('id').eq('user_id', currentUserId).gte('ts', oneWeek);
+      const { data: monthData } = await supabase.from('activity_log').select('id').eq('user_id', currentUserId).gte('ts', oneMonth);
+      const thisWeek = (weekData || []).length;
+      const thisMonth = (monthData || []).length;
       const totalMins = thisWeek * 5;
       let timeSaved, timeLabel;
       if (totalMins < 60) {
