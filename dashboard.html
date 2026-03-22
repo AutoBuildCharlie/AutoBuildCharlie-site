@@ -1284,7 +1284,7 @@
         const activeCommands = QUICK_COMMANDS.filter(c => autoStatesEarly[c.key] !== false);
         const shuffled = activeCommands.sort(() => Math.random() - 0.5).slice(0, 5);
         qcEl.innerHTML = shuffled.map(c =>
-          `<li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">${c.cmd}</li>`
+          `<li onclick="document.getElementById('charlieInput').value=${JSON.stringify(c.cmd.replace(/^"|"$/g,''))};document.getElementById('charlieInput').focus();" style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;cursor:pointer;transition:background 0.15s;" onmouseenter="this.style.background='rgba(191,90,242,0.12)';this.style.color='#e0e0e0';" onmouseleave="this.style.background='rgba(255,255,255,0.04)';this.style.color='#888';">${c.cmd}</li>`
         ).join('');
       }
 
