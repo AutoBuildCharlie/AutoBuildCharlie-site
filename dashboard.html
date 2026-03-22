@@ -1524,7 +1524,7 @@ Delete a client:
 
 If any required fields are missing, ask for them in a short, friendly message.
 If the user is just chatting or asking a question, reply in plain conversational text — short and helpful.
-Never include JSON and text in the same response. It's one or the other.`;
+CRITICAL RULE: Never include JSON and text in the same response. It is ONE or the OTHER — never both. If you are firing an automation, respond with ONLY the raw JSON and absolutely nothing else. No explanation, no confirmation text, no sentences before or after the JSON. The system will handle showing the user a confirmation message.`;
 
     function charlieRender(text) {
       return text
