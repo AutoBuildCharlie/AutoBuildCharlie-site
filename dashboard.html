@@ -1034,6 +1034,17 @@
     </div>
   </main>
 
+  <script>
+    // Global journal state — must be global for onclick handlers
+    let currentJournalTab = 'daily';
+    function showJournalTab(tab, btn) {
+      currentJournalTab = tab;
+      document.querySelectorAll('.journal-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (window._renderJournal) window._renderJournal();
+    }
+  </script>
+
   <script type="module">
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
 
@@ -1489,14 +1500,6 @@ Never include JSON and text in the same response. It's one or the other.`;
 
     const JOURNAL_COLORS = { gratitude: '#bf5af2', reminder: '#bf5af2', welcome: '#00d4ff', intake: '#00d4ff', invoice: '#ff9f0a', 'freshbooks-expense': '#34c759', edit_client: '#00d4ff', delete_client: '#ff453a' };
     const JOURNAL_TYPE_LABELS = { gratitude: 'Thank Yous Sent', reminder: 'Reminders Sent', welcome: 'Welcome Emails Sent', intake: 'Clients Added', invoice: 'Invoices Created', 'freshbooks-expense': 'Expenses Logged', edit_client: 'Clients Updated', delete_client: 'Clients Removed', proposal: 'Proposals Sent' };
-    let currentJournalTab = 'daily';
-
-    function showJournalTab(tab, btn) {
-      currentJournalTab = tab;
-      document.querySelectorAll('.journal-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderJournal();
-    }
 
     async function renderJournal() {
       const content = document.getElementById('journalContent');
@@ -1545,6 +1548,7 @@ Never include JSON and text in the same response. It's one or the other.`;
         content.innerHTML = summary + `<div style="margin-top:0.75rem;">${listItems}</div>`;
       }
     }
+    window._renderJournal = renderJournal;
 
     async function updateReportStats() {
       if (!currentUserId) return;
