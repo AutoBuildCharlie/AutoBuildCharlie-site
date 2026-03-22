@@ -1012,13 +1012,7 @@
           <div class="card-icon">💬</div>
           <div class="card-title">Quick Commands</div>
           <p class="card-desc" style="margin-bottom:1.1rem;">Things you can say to Charlie right now.</p>
-          <ul style="list-style:none;display:flex;flex-direction:column;gap:0.55rem;">
-            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Add new client Sarah at sarah@email.com for Personal Training, $150"</li>
-            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Send a reminder to John at john@email.com for $300"</li>
-            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Send a thank you to Mike at mike@email.com for $200"</li>
-            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Create an invoice for Lisa at lisa@email.com for $500 for Coaching"</li>
-            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Update John's email to newemail@gmail.com"</li>
-            <li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">"Remove Sarah from the sheet"</li>
+          <ul id="quickCommandsList" style="list-style:none;display:flex;flex-direction:column;gap:0.55rem;">
           </ul>
         </div>
 
@@ -1273,6 +1267,25 @@
           </li>`;
         }).join('');
       });
+
+      // Quick Commands — only show commands for active automations
+      const QUICK_COMMANDS = [
+        { key: 'intake',           cmd: '"Add new client Sarah at sarah@email.com for Personal Training, $150"' },
+        { key: 'reminder',         cmd: '"Send a reminder to John at john@email.com for $300"' },
+        { key: 'gratitude',        cmd: '"Send a thank you to Mike at mike@email.com for $200"' },
+        { key: 'invoice',          cmd: '"Create an invoice for Lisa at lisa@email.com for $500 for Coaching"' },
+        { key: 'freshbooks-expense', cmd: '"Log an expense for Canva Pro — $15 — on March 10th"' },
+        { key: 'welcome',          cmd: '"Send a welcome email to Sarah at sarah@email.com"' },
+        { key: 'edit_client',      cmd: '"Update John\'s email to newemail@gmail.com"' },
+        { key: 'delete_client',    cmd: '"Remove Sarah from my clients"' },
+      ];
+      const qcEl = document.getElementById('quickCommandsList');
+      if (qcEl) {
+        const activeCommands = QUICK_COMMANDS.filter(c => autoStatesEarly[c.key] !== false);
+        qcEl.innerHTML = activeCommands.map(c =>
+          `<li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">${c.cmd}</li>`
+        ).join('');
+      }
 
       // Show automations section based on per-automation toggles
       const autoStates = autoStatesEarly;
