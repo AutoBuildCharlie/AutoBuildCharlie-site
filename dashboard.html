@@ -1490,6 +1490,7 @@ Never include JSON and text in the same response. It's one or the other.`;
           type,
           label: details.label || type,
           amount: details.amount ? parseFloat(details.amount) : null,
+          expense_date: details.expense_date || null,
           ts
         });
       }
@@ -1540,8 +1541,10 @@ Never include JSON and text in the same response. It's one or the other.`;
         const invoiced = entries.filter(e => e.type === 'invoice').reduce((s, e) => s + (parseFloat(e.amount) || 0), 0);
         const sorted = [...entries].sort((a, b) => b.ts - a.ts);
         const formatDate = ts => { const d = new Date(ts); return `${d.getMonth()+1}.${d.getDate()}.${String(d.getFullYear()).slice(2)}`; };
+        const formatExpenseDate = str => { const [y,m,d] = str.split('-'); const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']; return `${months[parseInt(m)-1]} ${parseInt(d)}`; };
         const listItems = sorted.map(e => {
-          return `<div style="padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.875rem;color:var(--text);">${formatDate(e.ts)} — ${e.label}</div>`;
+          const expenseTag = e.expense_date ? ` <span style="color:#888;font-size:0.78rem;">(expense: ${formatExpenseDate(e.expense_date)})</span>` : '';
+          return `<div style="padding:0.5rem 0;border-bottom:1px solid var(--border);font-size:0.875rem;color:var(--text);">${formatDate(e.ts)} — ${e.label}${expenseTag}</div>`;
         }).join('');
         const summary = `<div class="journal-summary"><div><div class="journal-stat-num" style="color:var(--accent);">${entries.length}</div><div class="journal-stat-label">Total Actions</div></div>${invoiced > 0 ? `<div><div class="journal-stat-num" style="color:#ff9f0a;">$${invoiced.toFixed(0)}</div><div class="journal-stat-label">Invoiced This Month</div></div>` : ''}</div>`;
         content.innerHTML = summary + `<div style="margin-top:0.75rem;">${listItems}</div>`;
@@ -1713,7 +1716,7 @@ Never include JSON and text in the same response. It's one or the other.`;
               charlieAddMsg(`${actionLabel} expense in FreshBooks...`, 'charlie', false);
               await charlieFireWebhook(parsed.agent, parsed.data);
               const doneLabel = parsed.data.action === 'delete' ? 'deleted' : parsed.data.action === 'edit' ? 'updated' : 'logged';
-              logTask(parsed.agent, { label: `Expense ${doneLabel}: ${parsed.data.description} — $${parsed.data.amount}`, amount: parsed.data.amount });
+              logTask(parsed.agent, { label: `Expense ${doneLabel}: ${parsed.data.description} — $${parsed.data.amount}`, amount: parsed.data.amount, expense_date: parsed.data.date || null });
               charlieAddMsg(`✓ Done! Expense ${doneLabel} in FreshBooks — ${parsed.data.description}, $${parsed.data.amount}.`, 'charlie', true);
             } else {
               charlieAddMsg(`Firing ${agentNames[parsed.agent] || parsed.agent} Agent for ${parsed.data.client_name}...`, 'charlie', false);
