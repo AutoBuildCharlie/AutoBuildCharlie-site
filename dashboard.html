@@ -1252,21 +1252,23 @@
         { key: 'intake',              label: 'Clients Added',       icon: '🧑', type: 'intake' },
       ];
 
-      // Fetch counts from activity_log then render
-      supabase.from('activity_log').select('type').eq('user_id', currentUserId).then(({ data }) => {
-        const counts = {};
-        (data || []).forEach(r => { counts[r.type] = (counts[r.type] || 0) + 1; });
-        const activeItems = SCOREBOARD_MAP.filter(item => autoStatesEarly[item.key] !== false);
-        checklistEl.innerHTML = activeItems.map(item => {
-          const count = counts[item.type] || 0;
-          const fired = count > 0;
-          return `<li class="checklist-item">
-            <div class="checklist-icon ${fired ? 'done' : 'pending'}">${fired ? '✓' : item.icon}</div>
-            <span class="checklist-label ${fired ? 'done' : 'pending'}" style="flex:1;">${item.label}</span>
-            <span style="font-size:0.8rem;font-weight:700;color:${fired ? '#22c55e' : 'var(--text-muted)'};">${fired ? `${count}x` : 'Not yet'}</span>
-          </li>`;
-        }).join('');
-      });
+      window.renderScoreboard = function() {
+        supabase.from('activity_log').select('type').eq('user_id', currentUserId).then(({ data }) => {
+          const counts = {};
+          (data || []).forEach(r => { counts[r.type] = (counts[r.type] || 0) + 1; });
+          const activeItems = SCOREBOARD_MAP.filter(item => autoStatesEarly[item.key] !== false);
+          checklistEl.innerHTML = activeItems.map(item => {
+            const count = counts[item.type] || 0;
+            const fired = count > 0;
+            return `<li class="checklist-item">
+              <div class="checklist-icon ${fired ? 'done' : 'pending'}">${fired ? '✓' : item.icon}</div>
+              <span class="checklist-label ${fired ? 'done' : 'pending'}" style="flex:1;">${item.label}</span>
+              <span style="font-size:0.8rem;font-weight:700;color:${fired ? '#22c55e' : 'var(--text-muted)'};">${fired ? `${count}x` : 'Not yet'}</span>
+            </li>`;
+          }).join('');
+        });
+      };
+      window.renderScoreboard();
 
       // Quick Commands — only show commands for active automations
       const QUICK_COMMANDS = [
@@ -1575,6 +1577,7 @@ Never include JSON and text in the same response. It's one or the other.`;
       updateReportStats();
       renderJournal();
       loadRecentActivityLog();
+      if (window.renderScoreboard) window.renderScoreboard();
     }
 
     const JOURNAL_COLORS = { gratitude: '#bf5af2', reminder: '#bf5af2', welcome: '#00d4ff', intake: '#00d4ff', invoice: '#ff9f0a', 'freshbooks-expense': '#34c759', edit_client: '#00d4ff', delete_client: '#ff453a' };
