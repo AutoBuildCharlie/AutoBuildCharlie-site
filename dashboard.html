@@ -1282,7 +1282,8 @@
       const qcEl = document.getElementById('quickCommandsList');
       if (qcEl) {
         const activeCommands = QUICK_COMMANDS.filter(c => autoStatesEarly[c.key] !== false);
-        qcEl.innerHTML = activeCommands.map(c =>
+        const shuffled = activeCommands.sort(() => Math.random() - 0.5).slice(0, 5);
+        qcEl.innerHTML = shuffled.map(c =>
           `<li style="font-size:0.78rem;color:#888;background:rgba(255,255,255,0.04);border-radius:8px;padding:0.55rem 0.75rem;line-height:1.4;">${c.cmd}</li>`
         ).join('');
       }
