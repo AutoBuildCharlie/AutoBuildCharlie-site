@@ -620,14 +620,31 @@
     }
     .charlie-chat-msgs {
       min-height: 270px;
-      max-height: 510px;
+      height: 270px;
       overflow-y: auto;
-      resize: vertical;
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
-      margin-bottom: 1rem;
       padding-right: 0.25rem;
+    }
+    .charlie-resize-handle {
+      width: 100%;
+      height: 10px;
+      cursor: ns-resize;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+    }
+    .charlie-resize-handle::after {
+      content: '';
+      width: 40px;
+      height: 3px;
+      background: rgba(191,90,242,0.3);
+      border-radius: 3px;
+    }
+    .charlie-resize-handle:hover::after {
+      background: rgba(191,90,242,0.7);
     }
     .charlie-chat-msgs::-webkit-scrollbar { width: 4px; }
     .charlie-chat-msgs::-webkit-scrollbar-track { background: transparent; }
@@ -836,6 +853,7 @@
           <button class="charlie-key-save" id="charlieKeySave">Save Key</button>
         </div>
         <div class="charlie-chat-msgs" id="charlieMsgs"></div>
+        <div class="charlie-resize-handle" id="charlieResizeHandle"></div>
         <div class="charlie-chat-input-row">
           <textarea class="charlie-chat-input" id="charlieInput" placeholder="Tell Charlie what to do..." rows="1"></textarea>
           <button class="charlie-send-btn" id="charlieSendBtn">Send →</button>
@@ -1035,6 +1053,26 @@
   </main>
 
   <script>
+    // Charlie chat box resize
+    (function() {
+      let dragging = false, startY = 0, startH = 0;
+      document.addEventListener('DOMContentLoaded', () => {
+        const handle = document.getElementById('charlieResizeHandle');
+        const msgs = document.getElementById('charlieMsgs');
+        if (!handle || !msgs) return;
+        handle.addEventListener('mousedown', e => {
+          dragging = true; startY = e.clientY; startH = msgs.offsetHeight;
+          e.preventDefault();
+        });
+        document.addEventListener('mousemove', e => {
+          if (!dragging) return;
+          const newH = Math.max(150, startH + (e.clientY - startY));
+          msgs.style.height = newH + 'px';
+        });
+        document.addEventListener('mouseup', () => { dragging = false; });
+      });
+    })();
+
     // Global journal state — must be global for onclick handlers
     let currentJournalTab = 'daily';
     function showJournalTab(tab, btn) {
