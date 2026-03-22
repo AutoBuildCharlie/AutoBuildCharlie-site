@@ -622,6 +622,7 @@
       min-height: 270px;
       max-height: 510px;
       overflow-y: auto;
+      resize: vertical;
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
@@ -1633,7 +1634,12 @@ Never include JSON and text in the same response. It's one or the other.`;
       const wantsClient  = /\bclient\b|intake|onboard|sign.*up|add.*(?:client|person|someone|contact)|new.*(?:client|person|contact)|edit|update|change|delete|remove|get rid/.test(m);
       const wantsSuggest = /suggest|idea|recommend|what.*should|could.*automat|help.*business|improve|optim|save.*time|barber|trainer|restaurant|salon|gym|shop|clinic|dentist|plumber|coach|freelanc|studio/.test(m);
 
-      const BASE = `You are Charlie — the AI assistant for the AutoBuildCharlie dashboard. You help business owners trigger automations, manage client records, and discover automation ideas. Keep replies short and friendly. Never include JSON and text in the same response — it's one or the other. Only talk about what is actually set up — never mention integrations, connections to external tools, or features that aren't listed in your active automations or client management instructions.`;
+      // Build task log summary for context
+      const taskLog = JSON.parse(localStorage.getItem('abc_task_log') || '[]');
+      const recentTasks = taskLog.slice(-30).map(t => `- ${new Date(t.ts).toLocaleDateString()} | ${t.label}`).join('\n');
+      const taskContext = recentTasks ? `\n\nRECENT ACTIVITY LOG (last 30 actions):\n${recentTasks}` : '';
+
+      const BASE = `You are Charlie — the AI assistant for the AutoBuildCharlie dashboard. You help business owners trigger automations, manage client records, and discover automation ideas. Keep replies short and friendly. Never include JSON and text in the same response — it's one or the other. Only talk about what is actually set up — never mention integrations, connections to external tools, or features that aren't listed in your active automations or client management instructions.${taskContext}`;
 
       let sys = BASE;
       if (wantsProposal) sys += '\n\n' + (window.CHARLIE_CTX_AUTOS || '');
