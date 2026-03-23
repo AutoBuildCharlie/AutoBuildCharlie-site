@@ -807,6 +807,14 @@
     .wish-delete:hover { color: #ff453a; }
     .wish-wa-btn { display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1rem; border-radius: 100px; background: rgba(37,211,102,0.12); border: 1px solid rgba(37,211,102,0.3); color: #25d366; font-size: 0.78rem; font-weight: 700; text-decoration: none; transition: background 0.2s, box-shadow 0.2s; }
     .wish-wa-btn:hover { background: rgba(37,211,102,0.22); box-shadow: 0 0 12px rgba(37,211,102,0.25); }
+    .wish-save-btn { display: inline-block; margin-top: 0.75rem; margin-left: 0.5rem; padding: 0.5rem 1rem; border-radius: 100px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); color: var(--text-muted); font-size: 0.78rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.2s, border-color 0.2s, color 0.2s; }
+    .wish-save-btn:hover { background: rgba(191,90,242,0.1); border-color: rgba(191,90,242,0.3); color: var(--accent); }
+    .wish-save-btn.saved { background: rgba(191,90,242,0.12); border-color: rgba(191,90,242,0.35); color: var(--accent); }
+    .wishlist-saved-section { margin-bottom: 1.25rem; }
+    .wishlist-saved-header { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+    .wish-saved-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; border-radius: 100px; background: rgba(191,90,242,0.1); border: 1px solid rgba(191,90,242,0.25); color: var(--accent); font-size: 0.78rem; margin: 0.25rem 0.25rem 0.25rem 0; cursor: default; }
+    .wish-saved-chip button { background: none; border: none; color: rgba(191,90,242,0.5); font-size: 0.75rem; cursor: pointer; padding: 0; line-height: 1; }
+    .wish-saved-chip button:hover { color: #ff453a; }
   </style>
 </head>
 <body>
@@ -1605,21 +1613,36 @@ CRITICAL RULE: Never include JSON and text in the same response. It is ONE or th
         possible:  '<span class="wish-badge possible">🔄 Possible</span>',
         'not-yet': '<span class="wish-badge not-yet">⏳ Not Yet</span>'
       };
-      container.innerHTML = items.slice().reverse().map(item => {
+      const savedItems = items.filter(i => i.saved);
+      const savedSection = savedItems.length ? `
+        <div class="wishlist-saved-section">
+          <div class="wishlist-saved-header">⭐ Saved for Later</div>
+          <div>${savedItems.map(i => `
+            <span class="wish-saved-chip">
+              "${i.text}"
+              <button onclick="unsaveWish('${i.id}')" title="Remove">✕</button>
+            </span>`).join('')}
+          </div>
+        </div>` : '';
+
+      const cards = items.slice().reverse().map(item => {
         const waMsg = encodeURIComponent(`Hey Cal! I saw that automating "${item.text}" is buildable. I'd love to get this set up for my business.`);
         const waBtn = item.badge === 'buildable'
           ? `<a class="wish-wa-btn" href="https://wa.me/17149445409?text=${waMsg}" target="_blank">💬 Build this for me →</a>`
           : '';
+        const saveBtn = `<button class="wish-save-btn ${item.saved ? 'saved' : ''}" onclick="toggleSaveWish('${item.id}')">${item.saved ? '⭐ Saved' : '☆ Save for Later'}</button>`;
         return `
           <div class="wish-card">
             <button class="wish-delete" onclick="deleteWish('${item.id}')">✕</button>
             ${BADGE_MAP[item.badge] || ''}
             <div class="wish-text">"${item.text}"</div>
             <div class="wish-eval">${item.eval}</div>
-            ${waBtn}
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.25rem;">${waBtn}${saveBtn}</div>
           </div>
         `;
       }).join('');
+
+      container.innerHTML = savedSection + cards;
     }
 
     async function addWish() {
@@ -1668,6 +1691,18 @@ NOT YET = genuinely not practical to automate right now.`,
 
     window.deleteWish = function(id) {
       saveWishlistItems(loadWishlistItems().filter(i => i.id !== id));
+      renderWishlist();
+    }
+
+    window.toggleSaveWish = function(id) {
+      const items = loadWishlistItems().map(i => i.id === id ? { ...i, saved: !i.saved } : i);
+      saveWishlistItems(items);
+      renderWishlist();
+    }
+
+    window.unsaveWish = function(id) {
+      const items = loadWishlistItems().map(i => i.id === id ? { ...i, saved: false } : i);
+      saveWishlistItems(items);
       renderWishlist();
     }
 
