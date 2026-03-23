@@ -2440,10 +2440,10 @@ REASON: [2 short casual sentences. Sound like a friend, not a brochure. Real exa
     (function(){if(!window.chatbase||window.chatbase("getState")!=="initialized"){window.chatbase=(...arguments)=>{if(!window.chatbase.q){window.chatbase.q=[]}window.chatbase.q.push(arguments)};window.chatbase=new Proxy(window.chatbase,{get(target,prop){if(prop==="q"){return target.q}return(...args)=>target(prop,...args)}})}const onLoad=function(){const script=document.createElement("script");script.src="https://www.chatbase.co/embed.min.js";script.id="NFdEhgeNQsaxvbj0sTuXm";script.domain="www.chatbase.co";document.body.appendChild(script)};if(document.readyState==="complete"){onLoad()}else{window.addEventListener("load",onLoad)}})();
   </script>
   <style>
-    /* suppress Chatbase auto-popup greeting */
-    #chatbase-bubble-window, [class*="chatbase-"][class*="popup"], [class*="chatbase-"][class*="greeting"],
-    [class*="chatbase-"][class*="message"], [class*="chatbase-"][class*="welcome"],
-    [class*="chatbase-"][class*="open"], iframe[src*="chatbase"] + * { display: none !important; }
+    /* suppress Chatbase auto-popup greeting bubble only */
+    [class*="chatbase-"][class*="greeting"],
+    [class*="chatbase-"][class*="welcome"],
+    [class*="chatbase-"][class*="popup"] { display: none !important; }
   </style>
   <script>
     // Kill Chatbase greeting popup aggressively
@@ -2451,10 +2451,8 @@ REASON: [2 short casual sentences. Sound like a friend, not a brochure. Real exa
       function hideChatbasePopup() {
         document.querySelectorAll('*').forEach(el => {
           const cls = (el.className || '').toString();
-          const id = (el.id || '').toString();
-          if ((cls.includes('chatbase') || id.includes('chatbase')) &&
-              (cls.includes('message') || cls.includes('popup') || cls.includes('greeting') ||
-               cls.includes('welcome') || cls.includes('bubble-window') || cls.includes('open'))) {
+          if (cls.includes('chatbase') &&
+              (cls.includes('greeting') || cls.includes('welcome') || cls.includes('popup'))) {
             el.style.setProperty('display', 'none', 'important');
           }
         });
