@@ -2448,9 +2448,9 @@ REASON: [1-2 sentences in plain everyday English — no jargon. Talk like a help
     [class*="chatbase-"][class*="open"], iframe[src*="chatbase"] + * { display: none !important; }
   </style>
   <script>
-    // Kill Chatbase greeting popup the moment it appears in the DOM
+    // Kill Chatbase greeting popup aggressively
     (function() {
-      const observer = new MutationObserver(() => {
+      function hideChatbasePopup() {
         document.querySelectorAll('*').forEach(el => {
           const cls = (el.className || '').toString();
           const id = (el.id || '').toString();
@@ -2460,8 +2460,22 @@ REASON: [1-2 sentences in plain everyday English — no jargon. Talk like a help
             el.style.setProperty('display', 'none', 'important');
           }
         });
-      });
+        // Also target by text content
+        document.querySelectorAll('div, p, span').forEach(el => {
+          if (el.innerText && el.innerText.includes("Hi! I'm Charlie")) {
+            let parent = el;
+            for (let i = 0; i < 6; i++) {
+              if (parent && parent.parentElement) parent = parent.parentElement;
+            }
+            if (parent) parent.style.setProperty('display', 'none', 'important');
+          }
+        });
+      }
+      const observer = new MutationObserver(hideChatbasePopup);
       observer.observe(document.body, { childList: true, subtree: true, attributes: true });
+      // Interval fallback for first 15 seconds
+      const interval = setInterval(hideChatbasePopup, 300);
+      setTimeout(() => clearInterval(interval), 15000);
     })();
   </script>
 </body>
