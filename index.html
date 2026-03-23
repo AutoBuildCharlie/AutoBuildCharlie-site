@@ -1706,6 +1706,90 @@
     </div>
   </section>
 
+  <!-- AUTOMATION WISHLIST -->
+  <section id="wishlist" style="background: var(--bg-subtle); border-top: 1px solid var(--border); padding: 5rem 1.5rem;">
+    <div class="section-inner" style="max-width: 720px; margin: 0 auto;">
+      <div style="text-align:center; margin-bottom: 2.5rem;">
+        <p style="font-size:0.8rem;font-weight:700;letter-spacing:0.12em;color:var(--accent);text-transform:uppercase;margin-bottom:0.75rem;">⚡ Try It Now</p>
+        <h2 style="font-size:2.2rem;font-weight:800;line-height:1.2;margin-bottom:1rem;">What do you wish you didn't have to do every week?</h2>
+        <p style="color:var(--text-muted);font-size:1rem;">Type anything — Charlie will tell you if it can be automated.</p>
+      </div>
+
+      <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;">
+        <input id="landing-wish-input" type="text" autocomplete="off" placeholder='I wish I didn\'t have to ___ every week...'
+          style="flex:1;background:#0b1425;border:1px solid rgba(212,95,255,0.4);border-radius:12px;padding:0.9rem 1.25rem;color:#e8f4ff;font-size:1rem;outline:none;"
+          onkeydown="if(event.key==='Enter')askLandingCharlie()" />
+        <button onclick="askLandingCharlie()" id="landing-wish-btn"
+          style="background:var(--accent);color:#fff;font-weight:700;font-size:0.95rem;padding:0.9rem 1.5rem;border:none;border-radius:12px;cursor:pointer;white-space:nowrap;">
+          Ask Charlie →
+        </button>
+      </div>
+
+      <div id="landing-wish-result" style="display:none;background:#0b1425;border:1px solid rgba(212,95,255,0.3);border-radius:16px;padding:1.5rem;margin-bottom:1rem;">
+        <div id="landing-wish-badge" style="display:inline-block;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;padding:0.3rem 0.75rem;border-radius:100px;margin-bottom:0.75rem;text-transform:uppercase;"></div>
+        <p id="landing-wish-text" style="font-weight:700;font-size:1rem;margin-bottom:0.5rem;"></p>
+        <p id="landing-wish-eval" style="color:#a0b8d0;font-size:0.95rem;line-height:1.6;margin-bottom:1.25rem;"></p>
+        <a href="signup.html" id="landing-wish-cta"
+          style="display:inline-block;background:linear-gradient(135deg,#00e5ff,#d45fff);color:#000;font-weight:800;font-size:0.95rem;padding:0.8rem 1.75rem;border-radius:12px;text-decoration:none;">
+          Sign up to get this built →
+        </a>
+      </div>
+
+      <p style="text-align:center;color:var(--text-muted);font-size:0.85rem;">No credit card required to try. Charlie evaluates your wish instantly.</p>
+    </div>
+  </section>
+
+  <script>
+  async function askLandingCharlie() {
+    const input = document.getElementById('landing-wish-input');
+    const btn = document.getElementById('landing-wish-btn');
+    const result = document.getElementById('landing-wish-result');
+    const badge = document.getElementById('landing-wish-badge');
+    const textEl = document.getElementById('landing-wish-text');
+    const evalEl = document.getElementById('landing-wish-eval');
+    const text = input.value.trim();
+    if (!text) return;
+    btn.disabled = true;
+    btn.textContent = 'Asking Charlie...';
+    result.style.display = 'none';
+    try {
+      const res = await fetch('https://abc-proxy.aestheticcal22.workers.dev/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 150,
+          system: `You are Charlie, a friendly assistant for small to medium business owners — personal trainers, barbers, dog walkers, salons, gyms, cleaning companies, real estate agents, restaurants, retail shops, and more. They are not tech-savvy.
+
+A business owner tells you something they wish they didn't have to do manually. Tell them honestly if it can be automated.
+
+Respond in exactly this format:
+VERDICT: [BUILDABLE or POSSIBLE or NOT YET]
+REASON: [1-2 sentences in plain everyday English — no jargon. Talk like a helpful friend over coffee. Give a real example of what it looks like in their day. If BUILDABLE or POSSIBLE, end with: "Our team can set this up for you." If NOT YET, be honest but kind.]`,
+          messages: [{ role: 'user', content: `I wish I didn't have to ${text} every week.` }]
+        })
+      });
+      const json = await res.json();
+      const reply = json.content?.[0]?.text || '';
+      const verdictMatch = reply.match(/VERDICT:\s*(BUILDABLE|POSSIBLE|NOT YET)/i);
+      const reasonMatch = reply.match(/REASON:\s*([\s\S]+)/i);
+      const verdictRaw = verdictMatch ? verdictMatch[1].toUpperCase() : 'POSSIBLE';
+      const evalText = reasonMatch ? reasonMatch[1].trim() : reply.trim();
+      const isBuildable = verdictRaw === 'BUILDABLE';
+      const isNotYet = verdictRaw === 'NOT YET';
+      badge.textContent = isBuildable ? '⚡ Buildable' : isNotYet ? '⏳ Not Yet' : '🔧 Possible';
+      badge.style.background = isBuildable ? 'rgba(0,200,100,0.15)' : isNotYet ? 'rgba(255,100,50,0.15)' : 'rgba(212,95,255,0.15)';
+      badge.style.color = isBuildable ? '#00c864' : isNotYet ? '#ff6432' : '#d45fff';
+      badge.style.border = `1px solid ${isBuildable ? '#00c864' : isNotYet ? '#ff6432' : '#d45fff'}`;
+      textEl.textContent = `"${text}"`;
+      evalEl.textContent = evalText;
+      result.style.display = 'block';
+    } catch(e) { console.error(e); }
+    btn.disabled = false;
+    btn.textContent = 'Ask Charlie →';
+  }
+  </script>
+
   <!-- PRICING -->
   <section id="pricing" style="background: #050505; border-top: 1px solid var(--border);">
     <div class="section-inner">
