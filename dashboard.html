@@ -1666,7 +1666,7 @@ NOT YET = genuinely not practical to automate right now.`,
       input.focus();
     }
 
-    function deleteWish(id) {
+    window.deleteWish = function(id) {
       saveWishlistItems(loadWishlistItems().filter(i => i.id !== id));
       renderWishlist();
     }
