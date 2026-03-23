@@ -1600,7 +1600,7 @@ CRITICAL RULE: Never include JSON and text in the same response. It is ONE or th
         content.innerHTML = entries.length ? entries.map(entryHtml).join('') : '<div class="journal-empty">No activity yet today.<br>Tell Charlie what to do!</div>';
 
       } else if (currentJournalTab === 'weekly') {
-        const start = new Date(); start.setDate(start.getDate() - start.getDay()); start.setHours(0,0,0,0);
+        const start = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         const { data } = await supabase.from('activity_log').select('*').eq('user_id', currentUserId).gte('ts', start.getTime()).order('ts', { ascending: true });
         const entries = data || [];
         if (!entries.length) { content.innerHTML = '<div class="journal-empty">No activity this week yet.</div>'; return; }
