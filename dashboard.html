@@ -805,6 +805,8 @@
     .wish-eval { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
     .wish-delete { position: absolute; top: 0.75rem; right: 0.9rem; background: none; border: none; color: rgba(255,255,255,0.18); font-size: 0.95rem; cursor: pointer; padding: 0; line-height: 1; transition: color 0.15s; }
     .wish-delete:hover { color: #ff453a; }
+    .wish-wa-btn { display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1rem; border-radius: 100px; background: rgba(37,211,102,0.12); border: 1px solid rgba(37,211,102,0.3); color: #25d366; font-size: 0.78rem; font-weight: 700; text-decoration: none; transition: background 0.2s, box-shadow 0.2s; }
+    .wish-wa-btn:hover { background: rgba(37,211,102,0.22); box-shadow: 0 0 12px rgba(37,211,102,0.25); }
   </style>
 </head>
 <body>
@@ -1663,14 +1665,21 @@ CRITICAL RULE: Never include JSON and text in the same response. It is ONE or th
         possible:  '<span class="wish-badge possible">🔄 Possible</span>',
         'not-yet': '<span class="wish-badge not-yet">⏳ Not Yet</span>'
       };
-      container.innerHTML = items.slice().reverse().map(item => `
-        <div class="wish-card">
-          <button class="wish-delete" onclick="deleteWish('${item.id}')">✕</button>
-          ${BADGE_MAP[item.badge] || ''}
-          <div class="wish-text">"${item.text}"</div>
-          <div class="wish-eval">${item.eval}</div>
-        </div>
-      `).join('');
+      container.innerHTML = items.slice().reverse().map(item => {
+        const waMsg = encodeURIComponent(`Hey Cal! I saw that automating "${item.text}" is buildable. I'd love to get this set up for my business.`);
+        const waBtn = item.badge === 'buildable'
+          ? `<a class="wish-wa-btn" href="https://wa.me/17149445409?text=${waMsg}" target="_blank">💬 Build this for me →</a>`
+          : '';
+        return `
+          <div class="wish-card">
+            <button class="wish-delete" onclick="deleteWish('${item.id}')">✕</button>
+            ${BADGE_MAP[item.badge] || ''}
+            <div class="wish-text">"${item.text}"</div>
+            <div class="wish-eval">${item.eval}</div>
+            ${waBtn}
+          </div>
+        `;
+      }).join('');
     }
 
     async function addWish() {
