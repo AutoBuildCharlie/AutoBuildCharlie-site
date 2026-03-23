@@ -1400,7 +1400,7 @@ ${window.CHARLIE_CTX_CLIENTS}
 
 ${window.CHARLIE_CTX_SUGGEST}`;
 
-      initCharlieChat(name);
+      initCharlieChat(name, autoStatesEarly);
       renderJournal();
       renderWishlist();
       loadRecentActivityLog();
@@ -1918,10 +1918,25 @@ NOT YET = genuinely not practical to automate right now.`,
       charlieAddMsg(`✓ Gmail opened with the proposal for ${pd.client_name}. Hit Send when ready!`, 'charlie', true);
     });
 
-    function initCharlieChat(name) {
-      const greeting = name
-        ? `Hey ${name}! I'm Charlie. Tell me what you want to get done — I can send reminders, add clients, log invoices, and more. What do you need?`
-        : `Hey! I'm Charlie. Tell me what you want to get done — I can send reminders, add clients, log invoices, and more. What do you need?`;
+    function initCharlieChat(name, autoStates) {
+      const AUTO_LABELS = {
+        intake:              'add clients',
+        welcome:             'send welcome emails',
+        reminder:            'send payment reminders',
+        gratitude:           'send thank you emails',
+        invoice:             'create invoices',
+        'freshbooks-expense':'log expenses',
+        edit_client:         'update or remove clients',
+        proposal:            'send proposals'
+      };
+      const live = Object.entries(autoStates || {})
+        .filter(([, v]) => v === true)
+        .map(([k]) => AUTO_LABELS[k])
+        .filter(Boolean);
+      const canDo = live.length
+        ? live.slice(0, -1).join(', ') + (live.length > 1 ? ', and ' + live[live.length - 1] : live[0])
+        : 'help you manage your business';
+      const greeting = `Hey${name ? ' ' + name : ''}! I'm Charlie. Tell me what you want to get done — I can ${canDo}. What do you need?`;
       charlieAddMsg(greeting, 'charlie', false);
 
       document.getElementById('charlieSendBtn').addEventListener('click', () => {
