@@ -83,29 +83,36 @@
     /* COMPANY HEADER */
     .company-header {
       margin-bottom: 2rem;
-      padding: 2rem 2.5rem;
+      padding: 1.25rem 1.75rem;
       background: linear-gradient(160deg, #161616 0%, #0f0f0f 100%);
       border: 1px solid rgba(191,90,242,0.2);
-      border-radius: 20px;
+      border-radius: 16px;
       box-shadow: 0 0 40px rgba(191,90,242,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
+    .company-header-left { display: flex; flex-direction: column; gap: 0.15rem; }
+
     .company-name {
-      font-size: 2.6rem;
+      font-size: 1.6rem;
       font-weight: 900;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.02em;
       background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.8) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      line-height: 1.1;
-      margin-bottom: 0.4rem;
+      line-height: 1.2;
     }
 
     .company-field {
-      font-size: 1rem;
+      font-size: 0.78rem;
       color: var(--accent);
-      font-weight: 600;
-      letter-spacing: 0.02em;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     /* ENCOURAGEMENT */
@@ -868,11 +875,15 @@
 
       <!-- COMPANY HEADER -->
       <div class="company-header">
-        <div style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.4rem;" id="greetingLine"></div>
-        <div class="company-name" id="companyName"></div>
-        <div class="company-field" id="companyField"></div>
-        <div id="planBadge"></div>
-        <div class="encouragement" id="encouragementMsg"></div>
+        <div class="company-header-left">
+          <div style="font-size:0.78rem;color:var(--text-muted);" id="greetingLine"></div>
+          <div class="company-name" id="companyName"></div>
+          <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+            <div class="company-field" id="companyField"></div>
+            <div id="planBadge"></div>
+          </div>
+        </div>
+        <div class="encouragement" id="encouragementMsg" style="margin-top:0;flex:1;min-width:200px;max-width:420px;"></div>
       </div>
 
       <!-- CHARLIE AI CHAT -->
