@@ -865,7 +865,7 @@
       <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;margin-bottom:2.5rem;">
         <div class="journal-tabs">
           <button class="journal-tab active" onclick="showJournalTab('daily',this)">Today</button>
-          <button class="journal-tab" onclick="showJournalTab('weekly',this)">This Week</button>
+          <button class="journal-tab" onclick="showJournalTab('weekly',this)">Last 7 Days</button>
           <button class="journal-tab" onclick="showJournalTab('monthly',this)">This Month</button>
         </div>
         <div id="journalContent"></div>
@@ -1610,7 +1610,7 @@ CRITICAL RULE: Never include JSON and text in the same response. It is ONE or th
           const key = new Date(e.ts).toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' });
           (byDay[key] = byDay[key] || []).push(e);
         });
-        const summary = `<div class="journal-summary"><div><div class="journal-stat-num" style="color:var(--accent);">${entries.length}</div><div class="journal-stat-label">Actions This Week</div></div>${invoiced > 0 ? `<div><div class="journal-stat-num" style="color:#ff9f0a;">$${invoiced.toFixed(0)}</div><div class="journal-stat-label">Invoiced This Week</div></div>` : ''}</div>`;
+        const summary = `<div class="journal-summary"><div><div class="journal-stat-num" style="color:var(--accent);">${entries.length}</div><div class="journal-stat-label">Actions This Week</div></div>${invoiced > 0 ? `<div><div class="journal-stat-num" style="color:#ff9f0a;">$${invoiced.toFixed(0)}</div><div class="journal-stat-label">Invoiced (7 Days)</div></div>` : ''}</div>`;
         const days = Object.entries(byDay).reverse().map(([day, es]) => `<div class="journal-day-header">${day}</div>${es.reverse().map(entryHtml).join('')}`).join('');
         content.innerHTML = summary + days;
 
