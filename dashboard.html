@@ -813,9 +813,8 @@
     .wish-save-btn.saved { background: rgba(191,90,242,0.12); border-color: rgba(191,90,242,0.35); color: var(--accent); }
     .wishlist-saved-section { margin-bottom: 1.25rem; }
     .wishlist-saved-header { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
-    .wish-saved-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; border-radius: 100px; background: rgba(191,90,242,0.1); border: 1px solid rgba(191,90,242,0.25); color: var(--accent); font-size: 0.78rem; margin: 0.25rem 0.25rem 0.25rem 0; cursor: default; }
-    .wish-saved-chip button { background: none; border: none; color: rgba(191,90,242,0.5); font-size: 0.75rem; cursor: pointer; padding: 0; line-height: 1; }
-    .wish-saved-chip button:hover { color: #ff453a; }
+    .wish-saved-chip { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.35rem 0.75rem; border-radius: 100px; background: rgba(191,90,242,0.1); border: 1px solid rgba(191,90,242,0.25); color: var(--accent); font-size: 0.78rem; margin: 0.25rem 0.25rem 0.25rem 0; cursor: pointer; transition: background 0.2s, box-shadow 0.2s; }
+    .wish-saved-chip:hover { background: rgba(191,90,242,0.2); box-shadow: 0 0 10px rgba(191,90,242,0.2); }
   </style>
 </head>
 <body>
@@ -1619,14 +1618,13 @@ CRITICAL RULE: Never include JSON and text in the same response. It is ONE or th
         <div class="wishlist-saved-section">
           <div class="wishlist-saved-header">⭐ Saved for Later</div>
           <div>${savedItems.map(i => `
-            <span class="wish-saved-chip">
-              "${i.text}"
-              <button onclick="unsaveWish('${i.id}')" title="Remove">✕</button>
+            <span class="wish-saved-chip" onclick="unsaveWish('${i.id}')" title="Click to bring back">
+              "${i.text}" ↩
             </span>`).join('')}
           </div>
         </div>` : '';
 
-      const cards = items.slice().reverse().map(item => {
+      const cards = items.filter(i => !i.saved).slice().reverse().map(item => {
         const waMsg = encodeURIComponent(`Hey Cal! I saw that automating "${item.text}" is buildable. I'd love to get this set up for my business.`);
         const waBtn = item.badge === 'buildable'
           ? `<a class="wish-wa-btn" href="https://wa.me/17149445409?text=${waMsg}" target="_blank">💬 Build this for me →</a>`
