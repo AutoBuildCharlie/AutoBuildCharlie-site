@@ -1418,61 +1418,88 @@ Delete: {"action":"delete_client","data":{"client_name":"John Smith"}}`;
 
 FULL AUTOMATION KNOWLEDGE BASE — use this to suggest ideas even if not yet built:
 
-COMMUNICATION & FOLLOW-UPS:
-- Appointment confirmation texts/emails sent automatically after booking
-- Appointment reminder 24hrs and 1hr before (reduce no-shows)
-- No-show follow-up message sent automatically if client misses appointment
-- Post-service thank you message with review request link
+LEAD CAPTURE & FOLLOW-UP:
+- New website form submission → instant notification to you + auto-reply to the lead
+- Missed call → automatic text back with booking link within seconds
+- New lead → added to Google Sheet automatically (your mini-CRM)
+- Facebook/Instagram ad lead → instant follow-up email fired automatically
+- Lead follow-up sequence if they don't reply in 24-48 hours (day 1, day 3, day 7)
+- Chatbot conversation → contact info saved to your list automatically
+- Free resource (PDF, guide) automatically sent after someone signs up
+- Lead scoring — system tracks how interested someone is and ranks them
+
+BOOKING & APPOINTMENTS:
+- New booking → confirmation email or text to client instantly
+- New booking → notification sent to your phone
+- New booking → client added to your spreadsheet or CRM automatically
+- Appointment reminder 24 hours before (email or text)
+- Appointment reminder 1-2 hours before (text — kills no-shows)
+- Cancellation → rebook link sent automatically
+- Waitlist notification when a cancelled slot opens up
+- Recurring booking → weekly schedule sent to client every Monday
+- New booking → calendar event created automatically
+
+CLIENT FOLLOW-UPS & RETENTION:
+- Post-service follow-up email or text sent 24 hours after appointment
+- Review request text/email sent automatically 2-3 days after service
+- Bad review interception — unhappy clients routed to your inbox, not Google
+- Re-engagement message to clients who haven't booked in 30/60/90 days ("we miss you")
 - Birthday message automatically sent to clients on their birthday
-- Re-engagement message to clients who haven't booked in 30/60/90 days
-- Referral request sent after a certain number of sessions
-- Holiday/seasonal greeting messages to client list
-- Follow-up sequence after a free consultation (day 1, day 3, day 7)
+- Referral request sent after X number of sessions or a 5-star review
+- Rebooking nudge sent after a set number of weeks ("ready to book again?")
+- Holiday/seasonal offers sent to client list automatically
+- VIP tag applied after X visits — triggers a special thank you or reward email
+- Loyalty milestone email — after 10 visits, client gets a reward automatically
 
-SOCIAL MEDIA & MARKETING:
-- Auto-post before/after photos to Instagram on a schedule
-- Schedule a week of social posts in one sitting
-- Auto-reply to common Instagram DM questions (hours, pricing, booking link)
-- Auto-reply to common Facebook messages
-- New Google review notification sent to your phone
-- Weekly email newsletter sent automatically to client list
-- Collect testimonials automatically after service completion
-
-BOOKING & SCHEDULING:
-- Online booking link sent automatically after inquiry
-- Waitlist notification when a cancellation opens up
-- Booking confirmation with intake form link attached
-- New booking notification sent to your phone instantly
-- Calendar block when you mark yourself unavailable
+NEW CLIENT ONBOARDING:
+- Welcome email sequence (day 1: welcome, day 3: tips, day 7: check-in)
+- Intake form sent automatically when someone books for the first time
+- Contract or waiver sent and collected automatically before first session
+- E-signature request sent automatically — no printing, no scanning
+- Client profile created in your tracking sheet from their intake form
 
 PAYMENTS & INVOICING:
-- Overdue invoice reminder sequence (day 1, day 3, day 7 after due date)
-- Payment receipt sent automatically when payment received
-- Recurring invoice sent on same day every month
-- Payment failed notification with retry link
-- End of month revenue summary emailed to you
+- Invoice created and sent automatically when a job is booked or completed
+- Payment receipt sent automatically when payment is received
+- Overdue invoice reminder sequence (day 3, day 7, day 14 — escalating)
+- Payment failed notification with retry link sent automatically
+- Recurring invoice sent on the same day every month for retainer clients
+- Monthly revenue summary emailed to you automatically
+- New payment received → notification sent to your phone
 
-CLIENT MANAGEMENT:
-- New client welcome sequence (day 1: welcome, day 3: tips, day 7: check-in)
-- Client intake form automatically added to your records
-- Client notes updated after each session
-- VIP client tag applied after X number of sessions or spend amount
-- Contract/waiver sent automatically when client books first session
-- Progress check-in message sent every 4 weeks
+REVIEWS & REPUTATION:
+- New 5-star Google review → you get an instant alert to respond fast
+- New review → automatically shared to your Facebook page as a post
+- Review monitoring — any review under 4 stars triggers an alert to you
+- Positive testimonial → automatically turned into an Instagram graphic
+
+SOCIAL MEDIA & MARKETING:
+- New blog post or update → auto-posted to Facebook, Instagram, LinkedIn
+- Schedule a week of social posts in one sitting — they post automatically
+- Auto-reply to common Instagram DM questions (hours, pricing, booking link)
+- New YouTube video → automatically shared to all social channels
+- Instagram post → automatically saved to Google Drive for repurposing
 
 OPERATIONS & ADMIN:
-- Daily task list emailed to you every morning
+- Daily morning summary emailed to you — appointments, unpaid invoices, open leads
 - Weekly business summary (clients seen, revenue, top services)
-- Low inventory alert (if you sell products)
-- Staff schedule reminder sent to team
-- Expense automatically logged when you forward a receipt
-- Mileage log entry created when you travel to a client
+- Staff schedule automatically texted to each team member
+- Email with attachment → automatically saved to the right Google Drive folder
+- Low inventory alert when stock drops below a set level
+- Expense automatically logged when you forward a receipt by email
 
-LEAD GENERATION:
-- New lead from website form → instantly added to your sheet + you get a notification
-- Lead follow-up sequence if they don't book within 48hrs
-- Free resource (PDF, guide) automatically sent after someone signs up
-- Webinar/event reminder sequence for attendees`;
+LEAD GENERATION (INDUSTRY-SPECIFIC):
+- Real estate: new Zillow/listing site lead → CRM + auto intro email within minutes
+- Real estate: new property listing → auto-posted to all social channels
+- Real estate: price drop or status change → all interested clients notified automatically
+- Real estate: post-viewing follow-up sent 2 hours after a showing
+- Cleaning/home services: job complete → invoice sent automatically
+- Cleaning/home services: new quote request → callback reminder added to your calendar
+- Restaurants/retail: abandoned cart → follow-up email sent within 1 hour
+- Restaurants/retail: loyalty trigger → after 5 orders, reward email fires automatically
+- Personal trainers: session complete → workout recap email sent to client
+- Salons/barbers: no-show → automatically moved to a "needs follow-up" list
+- Dog walkers: walk complete → update email sent to pet owner automatically`;
 
 
       // Keep full prompt as fallback for non-JS paths
@@ -1752,26 +1779,40 @@ CRITICAL RULE: Never include JSON and text in the same response. It is ONE or th
 A business owner tells you something they wish they didn't have to do manually. Your job is to tell them honestly if it can be automated.
 
 Things that ARE automatable (mark as BUILDABLE):
-- Appointment reminders and confirmations
+- Appointment reminders and confirmations (24hr, 1hr before)
 - Follow-up messages after a service or purchase
-- Review request texts/emails after a visit
-- Birthday and re-engagement messages
+- Review request texts/emails after a visit (2-3 days after)
+- Birthday and re-engagement messages to lapsed clients
 - Payment reminders and overdue invoice follow-ups
-- Welcome sequences for new clients
+- Welcome sequences for new clients (day 1, 3, 7)
 - Social media auto-replies to common DMs (Instagram, Facebook)
 - New booking/lead notifications to the business owner
 - Recurring invoices and payment receipts
-- Weekly business summaries and reports
-- New client intake form processing
-- Referral request messages
+- Weekly/monthly business summaries and reports
+- New client intake form processing and storage
+- Referral request messages after X sessions or 5-star reviews
 - No-show follow-up messages
 - Post-consultation follow-up sequences
 - Email newsletters on a schedule
-- Lead follow-up sequences from website forms
-- Contract/waiver delivery on first booking
+- Lead follow-up sequences from website forms (day 1, 3, 7)
+- Contract/waiver/e-signature delivery on first booking
 - Expense logging from forwarded receipts
-- Low inventory alerts (for product-based businesses)
-- Staff schedule reminders
+- Low inventory alerts for product-based businesses
+- Staff schedule reminders sent automatically
+- Missed call → automatic text back with booking link
+- Cancellation → automatic rebook link sent to client
+- Waitlist notification when a slot opens up
+- New lead from website/social media → instant auto-reply to them
+- Bad review interception — unhappy clients routed to your inbox first
+- New 5-star review → automatically shared to social media
+- Loyalty milestone emails after X visits
+- Rebooking nudge emails after a set number of weeks
+- New booking → calendar event created automatically
+- Job complete → invoice sent automatically
+- Abandoned cart or inquiry follow-up
+- Post-service workout recap or session summary to client
+- New property listing → auto-posted to all social channels (real estate)
+- Price drop notification sent to all interested clients (real estate)
 
 Things that are POSSIBLE with some setup:
 - Auto-posting to social media on a schedule
