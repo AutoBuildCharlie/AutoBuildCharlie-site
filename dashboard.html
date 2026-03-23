@@ -813,8 +813,8 @@
     .wish-eval { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
     .wish-delete { position: absolute; top: 0.75rem; right: 0.9rem; background: none; border: none; color: rgba(255,255,255,0.18); font-size: 0.95rem; cursor: pointer; padding: 0; line-height: 1; transition: color 0.15s; }
     .wish-delete:hover { color: #ff453a; }
-    .wish-wa-btn { display: inline-block; margin-top: 0.75rem; padding: 0.5rem 1rem; border-radius: 100px; background: rgba(37,211,102,0.12); border: 1px solid rgba(37,211,102,0.3); color: #25d366; font-size: 0.78rem; font-weight: 700; text-decoration: none; transition: background 0.2s, box-shadow 0.2s; }
-    .wish-wa-btn:hover { background: rgba(37,211,102,0.22); box-shadow: 0 0 12px rgba(37,211,102,0.25); }
+    .wishlist-build-all { display: block; width: 100%; margin-top: 1.25rem; padding: 0.9rem 1.5rem; border-radius: 12px; background: linear-gradient(135deg, #1a3d2b 0%, #0f2419 100%); border: 1px solid rgba(37,211,102,0.35); color: #25d366; font-size: 0.95rem; font-weight: 700; font-family: inherit; cursor: pointer; text-align: center; text-decoration: none; box-shadow: 0 0 18px rgba(37,211,102,0.12); transition: box-shadow 0.2s, transform 0.15s; }
+    .wishlist-build-all:hover { box-shadow: 0 0 28px rgba(37,211,102,0.25); transform: translateY(-1px); }
     .wish-save-btn { display: inline-block; margin-top: 0.75rem; margin-left: 0.5rem; padding: 0.5rem 1rem; border-radius: 100px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.12); color: var(--text-muted); font-size: 0.78rem; font-weight: 700; font-family: inherit; cursor: pointer; transition: background 0.2s, border-color 0.2s, color 0.2s; }
     .wish-save-btn:hover { background: rgba(191,90,242,0.1); border-color: rgba(191,90,242,0.3); color: var(--accent); }
     .wish-save-btn.saved { background: rgba(191,90,242,0.12); border-color: rgba(191,90,242,0.35); color: var(--accent); }
@@ -922,6 +922,7 @@
           <button class="wishlist-add-btn" id="wishlistAddBtn">Ask Charlie →</button>
         </div>
         <div id="wishlistCards"></div>
+        <div id="wishlistBuildBtn"></div>
       </div>
 
       <!-- ACTIVE AUTOMATIONS -->
@@ -1635,11 +1636,8 @@ CRITICAL RULE: Never include JSON and text in the same response. It is ONE or th
           </div>
         </div>` : '';
 
-      const cards = items.filter(i => !i.saved).slice().reverse().map(item => {
-        const waMsg = encodeURIComponent(`Hey Cal! I saw that automating "${item.text}" is buildable. I'd love to get this set up for my business.`);
-        const waBtn = item.badge === 'buildable'
-          ? `<a class="wish-wa-btn" href="https://wa.me/17149445409?text=${waMsg}" target="_blank">💬 Build this for me →</a>`
-          : '';
+      const visibleItems = items.filter(i => !i.saved);
+      const cards = visibleItems.slice().reverse().map(item => {
         const saveBtn = `<button class="wish-save-btn ${item.saved ? 'saved' : ''}" onclick="toggleSaveWish('${item.id}')">${item.saved ? '⭐ Saved' : '☆ Save for Later'}</button>`;
         return `
           <div class="wish-card">
@@ -1647,12 +1645,25 @@ CRITICAL RULE: Never include JSON and text in the same response. It is ONE or th
             ${BADGE_MAP[item.badge] || ''}
             <div class="wish-text">"${item.text}"</div>
             <div class="wish-eval">${item.eval}</div>
-            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.25rem;">${waBtn}${saveBtn}</div>
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:0.25rem;">${saveBtn}</div>
           </div>
         `;
       }).join('');
 
       container.innerHTML = savedSection + cards;
+
+      // Build all button
+      const buildBtn = document.getElementById('wishlistBuildBtn');
+      if (buildBtn) {
+        const buildable = visibleItems.filter(i => i.badge === 'buildable' || i.badge === 'possible');
+        if (buildable.length) {
+          const wishList = buildable.map((i, n) => `${n + 1}. ${i.text}`).join('\n');
+          const waMsg = encodeURIComponent(`Hey Cal! Here are the automations I'd love to get built:\n\n${wishList}\n\nCan we make these happen?`);
+          buildBtn.innerHTML = `<a class="wishlist-build-all" href="https://wa.me/17149445409?text=${waMsg}" target="_blank">💬 Build these for me →</a>`;
+        } else {
+          buildBtn.innerHTML = '';
+        }
+      }
     }
 
     async function addWish() {
