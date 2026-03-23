@@ -1400,7 +1400,7 @@ ${window.CHARLIE_CTX_CLIENTS}
 
 ${window.CHARLIE_CTX_SUGGEST}`;
 
-      initCharlieChat();
+      initCharlieChat(name);
       renderJournal();
       renderWishlist();
       loadRecentActivityLog();
@@ -1918,8 +1918,11 @@ NOT YET = genuinely not practical to automate right now.`,
       charlieAddMsg(`✓ Gmail opened with the proposal for ${pd.client_name}. Hit Send when ready!`, 'charlie', true);
     });
 
-    function initCharlieChat() {
-      charlieAddMsg("Hey! I'm Charlie. Tell me what to do — e.g. \"Send a thank you to Sarah at sarah@email.com for $200\".", 'charlie', false);
+    function initCharlieChat(name) {
+      const greeting = name
+        ? `Hey ${name}! I'm Charlie. Tell me what you want to get done — I can send reminders, add clients, log invoices, and more. What do you need?`
+        : `Hey! I'm Charlie. Tell me what you want to get done — I can send reminders, add clients, log invoices, and more. What do you need?`;
+      charlieAddMsg(greeting, 'charlie', false);
 
       document.getElementById('charlieSendBtn').addEventListener('click', () => {
         const val = document.getElementById('charlieInput').value.trim();
