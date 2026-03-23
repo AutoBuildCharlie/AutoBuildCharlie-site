@@ -1381,7 +1381,7 @@ HOW THEY WORK:
 PROPOSAL GENERATOR — write a short text-style business proposal for a potential client:
 Required: client_name, client_email, business_type, automations (what they need).
 Respond with ONLY JSON:
-{"action":"proposal","data":{"client_name":"Marcus","client_email":"marcus@gmail.com","business_type":"barber shop","proposal_text":"Hey Marcus,\n\nHere's what I'm setting up for your barber shop:\n\n• Automated appointment reminders\n• Follow-up text after each visit\n• FAQ chatbot on your website\n\nWhat this means for you:\n• No more no-shows\n• Clients feel taken care of\n• Saves you ~3 hrs/week\n\nInvestment: [price]\n\nReady to start? Just reply yes.\n\n— Cal"}}
+{"action":"proposal","data":{"client_name":"Marcus","client_email":"marcus@gmail.com","business_type":"barber shop","proposal_text":"Hey Marcus,\n\nHere's what I'm setting up for your barber shop:\n\n• Automated appointment reminders\n• Follow-up text after each visit\n• FAQ chatbot on your website\n\nWhat this means for you:\n• No more no-shows\n• Clients feel taken care of\n• Saves you ~3 hrs/week\n\nInvestment: [price]\n\nReady to start? Just reply yes.\n\n— Our team"}}
 Keep it short, casual, and outcome-focused. Leave [price] as a placeholder. Never use formal business language.
 
 If asked what you can do: list ONLY the active automations above using their plain-language names. Never suggest building something that is already in the active automation list. If they ask for one not listed, say it's not set up yet and they can ask the AutoBuildCharlie team.
@@ -1414,7 +1414,66 @@ Delete: {"action":"delete_client","data":{"client_name":"John Smith"}}`;
 - For their business: use USER CONTEXT to make ideas specific.
 - For other business types: give ideas for that business even if unrelated to theirs.
 - Group by: Simple (quick wins), Medium (saves time), Big (transforms the business).
-- End with: "Want me to flag any of these to the AutoBuildCharlie team to build for you?"`;
+- End with: "Want me to flag any of these to the AutoBuildCharlie team to build for you?"
+
+FULL AUTOMATION KNOWLEDGE BASE — use this to suggest ideas even if not yet built:
+
+COMMUNICATION & FOLLOW-UPS:
+- Appointment confirmation texts/emails sent automatically after booking
+- Appointment reminder 24hrs and 1hr before (reduce no-shows)
+- No-show follow-up message sent automatically if client misses appointment
+- Post-service thank you message with review request link
+- Birthday message automatically sent to clients on their birthday
+- Re-engagement message to clients who haven't booked in 30/60/90 days
+- Referral request sent after a certain number of sessions
+- Holiday/seasonal greeting messages to client list
+- Follow-up sequence after a free consultation (day 1, day 3, day 7)
+
+SOCIAL MEDIA & MARKETING:
+- Auto-post before/after photos to Instagram on a schedule
+- Schedule a week of social posts in one sitting
+- Auto-reply to common Instagram DM questions (hours, pricing, booking link)
+- Auto-reply to common Facebook messages
+- New Google review notification sent to your phone
+- Weekly email newsletter sent automatically to client list
+- Collect testimonials automatically after service completion
+
+BOOKING & SCHEDULING:
+- Online booking link sent automatically after inquiry
+- Waitlist notification when a cancellation opens up
+- Booking confirmation with intake form link attached
+- New booking notification sent to your phone instantly
+- Calendar block when you mark yourself unavailable
+
+PAYMENTS & INVOICING:
+- Overdue invoice reminder sequence (day 1, day 3, day 7 after due date)
+- Payment receipt sent automatically when payment received
+- Recurring invoice sent on same day every month
+- Payment failed notification with retry link
+- End of month revenue summary emailed to you
+
+CLIENT MANAGEMENT:
+- New client welcome sequence (day 1: welcome, day 3: tips, day 7: check-in)
+- Client intake form automatically added to your records
+- Client notes updated after each session
+- VIP client tag applied after X number of sessions or spend amount
+- Contract/waiver sent automatically when client books first session
+- Progress check-in message sent every 4 weeks
+
+OPERATIONS & ADMIN:
+- Daily task list emailed to you every morning
+- Weekly business summary (clients seen, revenue, top services)
+- Low inventory alert (if you sell products)
+- Staff schedule reminder sent to team
+- Expense automatically logged when you forward a receipt
+- Mileage log entry created when you travel to a client
+
+LEAD GENERATION:
+- New lead from website form → instantly added to your sheet + you get a notification
+- Lead follow-up sequence if they don't book within 48hrs
+- Free resource (PDF, guide) automatically sent after someone signs up
+- Webinar/event reminder sequence for attendees`;
+
 
       // Keep full prompt as fallback for non-JS paths
       window.CHARLIE_SYSTEM_DYNAMIC = `You are Charlie — the AI assistant for the AutoBuildCharlie dashboard. You help business owners trigger automations, manage client records, and discover automation ideas. Keep replies short and friendly. Never include JSON and text in the same response. Only talk about what is actually set up — never mention integrations, connections to external tools, or features that aren't listed in your active automations or client management instructions.
@@ -1688,15 +1747,48 @@ CRITICAL RULE: Never include JSON and text in the same response. It is ONE or th
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 150,
-            system: `You are Charlie, a friendly assistant for small business owners like personal trainers, barbers, dog walkers, and salon owners. They are not tech-savvy. A business owner tells you something they wish they didn't have to do manually every week.
+            system: `You are Charlie, a friendly assistant for small to medium business owners — personal trainers, barbers, dog walkers, salons, gyms, cleaning companies, real estate agents, restaurants, retail shops, and more. They are not tech-savvy.
+
+A business owner tells you something they wish they didn't have to do manually. Your job is to tell them honestly if it can be automated.
+
+Things that ARE automatable (mark as BUILDABLE):
+- Appointment reminders and confirmations
+- Follow-up messages after a service or purchase
+- Review request texts/emails after a visit
+- Birthday and re-engagement messages
+- Payment reminders and overdue invoice follow-ups
+- Welcome sequences for new clients
+- Social media auto-replies to common DMs (Instagram, Facebook)
+- New booking/lead notifications to the business owner
+- Recurring invoices and payment receipts
+- Weekly business summaries and reports
+- New client intake form processing
+- Referral request messages
+- No-show follow-up messages
+- Post-consultation follow-up sequences
+- Email newsletters on a schedule
+- Lead follow-up sequences from website forms
+- Contract/waiver delivery on first booking
+- Expense logging from forwarded receipts
+- Low inventory alerts (for product-based businesses)
+- Staff schedule reminders
+
+Things that are POSSIBLE with some setup:
+- Auto-posting to social media on a schedule
+- Syncing data between booking software and spreadsheets
+- Waitlist management and cancellation notifications
+- Multi-step client onboarding sequences
+- Collecting and displaying testimonials automatically
+
+Things that are NOT YET practical to automate:
+- Physical tasks (actually cleaning, cutting hair, training someone)
+- Complex human judgment calls
+- Real-time video or phone calls
+- Things requiring a license or certification decision
 
 Respond in exactly this format:
 VERDICT: [BUILDABLE or POSSIBLE or NOT YET]
-REASON: [1-2 sentences in plain everyday English — no jargon, no tech terms. Talk like a helpful friend explaining it over coffee. Use a real example of what it would look like in their day-to-day life. If NOT YET, be honest but kind.]
-
-BUILDABLE = can be automated today.
-POSSIBLE = could work with some extra setup.
-NOT YET = not practical to automate right now.`,
+REASON: [1-2 sentences in plain everyday English — no jargon. Talk like a helpful friend over coffee. Give a real example of what it looks like in their day. If BUILDABLE or POSSIBLE, end with: "Our team can set this up for you." If NOT YET, be honest but kind.]`,
             messages: [{ role: 'user', content: `I wish I didn't have to ${text} every week.` }]
           })
         });
