@@ -1509,7 +1509,6 @@
       <span>Zero Coding Required</span>
       <span>Save 5+ Hours a Week</span>
       <span>Set It and Forget It</span>
-      <span>Done For You</span>
       <span>Automated Follow-Ups</span>
       <span>Instant Reminders</span>
       <span>Small Business AI</span>
@@ -1517,7 +1516,6 @@
       <span>Zero Coding Required</span>
       <span>Save 5+ Hours a Week</span>
       <span>Set It and Forget It</span>
-      <span>Done For You</span>
       <span>Automated Follow-Ups</span>
       <span>Instant Reminders</span>
       <span>Small Business AI</span>
@@ -2448,6 +2446,17 @@ REASON: [2 short casual sentences. Sound like a friend, not a brochure. Real exa
     [class*="chatbase-"][class*="open"], iframe[src*="chatbase"] + * { display: none !important; }
   </style>
   <script>
+    // Prevent Chatbase from auto-opening
+    (function() {
+      const _orig = window.chatbase;
+      window.chatbase = function(...args) {
+        // Block any open/show/init calls that auto-open the chat window
+        if (args[0] === 'open' || args[0] === 'show') return;
+        return _orig && _orig(...args);
+      };
+      Object.assign(window.chatbase, _orig || {});
+    })();
+
     // Kill Chatbase greeting popup aggressively
     (function() {
       function hideChatbasePopup() {
