@@ -1188,14 +1188,6 @@
       const timeGreet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
       document.getElementById('greetingLine').textContent = name ? timeGreet + ', ' + name + ' 👋' : timeGreet + ' 👋';
 
-      const tasks = meta.onboarding_tasks || '';
-      const goals = meta.onboarding_goal || '';
-
-      document.getElementById('summaryTasks').textContent = tasks || '';
-      document.getElementById('summaryGoals').textContent = goals || '';
-
-      if (!tasks) document.getElementById('summaryTasks').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
-      if (!goals) document.getElementById('summaryGoals').innerHTML = '<span class="summary-card-empty">Not filled in yet</span>';
 
       const plan = meta.plan || '';
 
@@ -1424,22 +1416,6 @@ ${window.CHARLIE_CTX_SUGGEST}`;
       window._recentActivityLog = data || [];
     }
 
-    document.getElementById('editTasksBtn').addEventListener('click', () => {
-      const area = document.getElementById('tasksEditArea');
-      const input = document.getElementById('tasksEditInput');
-      input.value = document.getElementById('summaryTasks').textContent;
-      area.style.display = area.style.display === 'block' ? 'none' : 'block';
-      if (area.style.display === 'block') input.focus();
-    });
-
-    document.getElementById('tasksSaveBtn').addEventListener('click', async () => {
-      const newTasks = document.getElementById('tasksEditInput').value.trim();
-      if (!newTasks) return;
-      await supabase.auth.updateUser({ data: { onboarding_tasks: newTasks } });
-      document.getElementById('summaryTasks').textContent = newTasks;
-      document.getElementById('tasksEditArea').style.display = 'none';
-    });
-
     const fieldSuggestions = {
       marketing:    ['Auto-send personalized email campaigns based on customer behavior', 'Automatically repurpose blog posts into social media content', 'Track competitor mentions and get daily alerts', 'Auto-schedule a month of social posts in one click', 'Send a weekly performance report to yourself automatically', 'Alert you when a campaign hits a spending threshold'],
       'real estate':['Auto-send follow-up emails to leads after property viewings', 'Generate and send listing reports to clients weekly', 'Alert you instantly when a new lead fills out a contact form', 'Auto-schedule showings from your website inquiry form', 'Send a market update digest to your client list monthly', 'Notify you when a property you track has a price change'],
@@ -1463,42 +1439,6 @@ ${window.CHARLIE_CTX_SUGGEST}`;
       const all = fieldSuggestions[key];
       return all.filter(s => !existingGoals.toLowerCase().includes(s.toLowerCase().slice(0, 20))).slice(0, 3);
     }
-
-    document.getElementById('editGoalBtn').addEventListener('click', () => {
-      const area = document.getElementById('goalEditArea');
-      const input = document.getElementById('goalEditInput');
-      const isOpen = area.style.display === 'block';
-      area.style.display = isOpen ? 'none' : 'block';
-      if (!isOpen) {
-        input.value = document.getElementById('summaryGoals').textContent;
-        // Populate suggestion chips
-        const field = document.getElementById('companyField').textContent || '';
-        const existing = input.value;
-        const suggestions = getSuggestions(field, existing);
-        const chipsEl = document.getElementById('suggestionChips');
-        chipsEl.innerHTML = '';
-        suggestions.forEach(s => {
-          const btn = document.createElement('button');
-          btn.className = 'suggestion-chip';
-          btn.textContent = s;
-          btn.addEventListener('click', () => {
-            input.value = input.value ? input.value + '\n' + s : s;
-            btn.style.opacity = '0.4';
-            btn.disabled = true;
-          });
-          chipsEl.appendChild(btn);
-        });
-        input.focus();
-      }
-    });
-
-    document.getElementById('goalSaveBtn').addEventListener('click', async () => {
-      const newGoal = document.getElementById('goalEditInput').value.trim();
-      if (!newGoal) return;
-      await supabase.auth.updateUser({ data: { onboarding_goal: newGoal } });
-      document.getElementById('summaryGoals').textContent = newGoal;
-      document.getElementById('goalEditArea').style.display = 'none';
-    });
 
     document.getElementById('logoutBtn').addEventListener('click', async () => {
       await supabase.auth.signOut();
