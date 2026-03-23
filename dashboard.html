@@ -50,6 +50,7 @@
       justify-content: space-between;
       padding: 1.25rem 2rem;
       border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 30px rgba(191,90,242,0.08);
     }
 
     .nav-logo { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
@@ -143,6 +144,12 @@
       border-radius: 14px;
       padding: 1.25rem 1.5rem;
       text-align: center;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+    .stat-card:hover {
+      border-color: rgba(191,90,242,0.4);
+      box-shadow: 0 0 24px rgba(191,90,242,0.12);
+      transform: translateY(-2px);
     }
 
     .stat-number {
@@ -171,6 +178,8 @@
       text-transform: uppercase;
       color: var(--text-muted);
       margin-bottom: 1rem;
+      padding-left: 0.75rem;
+      border-left: 2px solid var(--accent);
     }
 
     .summary-grid {
